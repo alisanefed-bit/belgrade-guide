@@ -1,4 +1,4 @@
-const CACHE='bg-guide-v1';
+const CACHE='bg-guide-v2';
 const LOCAL=['./','./index.html','./manifest.webmanifest','./icon.svg','./icon-192.png','./icon-512.png','./apple-touch-icon.png'];
 const EXTRA=['https://unpkg.com/leaflet@1.9.4/dist/leaflet.css','https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'];
 self.addEventListener('install',e=>{e.waitUntil((async()=>{
@@ -17,7 +17,15 @@ self.addEventListener('fetch',e=>{
   const url=new URL(req.url);
   // тайлы карты и роутинг — только сеть (не засоряем кэш)
   if(/cartocdn|openstreetmap|tile/.test(url.hostname)){ e.respondWith(fetch(req).catch(()=>caches.match(req))); return; }
-  // оболочка — сначала кэш, потом сеть
+  // HTML/навигация — СЕТЬ ВПЕРЁД, чтобы всегда была свежая версия; кэш как запас офлайн
+  const isDoc = req.mode==='navigate' || (req.destination==='document') || /\/(index\.html)?(\?.*)?$/.test(url.pathname);
+  if(isDoc && url.origin===location.origin){
+    e.respondWith(fetch(req).then(resp=>{
+      const copy=resp.clone(); caches.open(CACHE).then(c=>c.put('./index.html',copy)).catch(()=>{}); return resp;
+    }).catch(()=>caches.match('./index.html')));
+    return;
+  }
+  // остальное (leaflet, фото, иконки) — сначала кэш, потом сеть (и кэшируем)
   e.respondWith(caches.match(req).then(r=>r||fetch(req).then(resp=>{
     const copy=resp.clone(); caches.open(CACHE).then(c=>c.put(req,copy)).catch(()=>{}); return resp;
   }).catch(()=>caches.match('./index.html'))));

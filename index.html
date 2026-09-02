@@ -618,16 +618,18 @@ const opById = {};
 let activeLayer = null;
 const routeGroup = L.layerGroup().addTo(map);
 
+const DCOLOR={"stari-grad":"#FC3030","vracar":"#E7B780","savski-venac":"#8FD969","novi-beograd":"#95CBFB","zemun":"#F6765E","palilula":"#FFCF49","vozdovac":"#A940A4","zvezdara":"#0263FF","rakovica":"#923545","cukarica":"#055E00"};
 function renderOpstine(geo){
   const gj = L.geoJSON(geo,{
-    style:f=>({color:'#ffffff',weight:1.5,fillColor:f.properties.color,fillOpacity:.5}),
+    style:f=>{const col=DCOLOR[f.properties.slug]||f.properties.color;return {color:col,weight:2.5,fillColor:col,fillOpacity:0};},
     onEachFeature:(f,layer)=>{
       const p=f.properties;
+      const col=DCOLOR[p.slug]||p.color;
       let c; try{ c=layer.getCenter(); }catch(e){ c=layer.getBounds().getCenter(); }
-      opById[p.slug]={layer,name:p.name,color:p.color,center:c};
+      opById[p.slug]={layer,name:p.name,color:col,center:c};
       layer.on('click',()=>selectOpstina(p.slug));
-      layer.on('mouseover',()=>layer.setStyle({fillOpacity:.68}));
-      layer.on('mouseout',()=>{ if(layer!==activeLayer) layer.setStyle({fillOpacity:.5}); });
+      layer.on('mouseover',()=>{ if(layer!==activeLayer) layer.setStyle({weight:4}); });
+      layer.on('mouseout',()=>{ if(layer!==activeLayer) layer.setStyle({weight:2.5,fillOpacity:0}); });
       // круглый значок-логотип в центре района
       const badge=L.divIcon({className:'',iconSize:[46,46],iconAnchor:[23,23],
         html:`<div class="op-badge"><img src="logos/${p.slug}.png" alt="" loading="lazy"></div>`});
@@ -708,10 +710,10 @@ function closeSheet(){ sheet.classList.remove('open'); document.documentElement.
 function syncFabs(){ document.documentElement.style.setProperty('--sheet-h', sheet.classList.contains('open')? sheet.offsetHeight+'px':'0px'); }
 window.addEventListener('resize',syncFabs);
 
-function clearActive(){ if(activeLayer){ activeLayer.setStyle({fillOpacity:.5,weight:1.5}); activeLayer=null; } }
+function clearActive(){ if(activeLayer){ activeLayer.setStyle({fillOpacity:0,weight:2.5}); activeLayer=null; } }
 function highlightOp(slug){
   clearActive(); const o=opById[slug]; if(!o) return;
-  activeLayer=o.layer; o.layer.setStyle({fillOpacity:.78,weight:3}); o.layer.bringToFront();
+  activeLayer=o.layer; o.layer.setStyle({fillOpacity:.5,weight:4}); o.layer.bringToFront();
 }
 
 function render(){

@@ -154,15 +154,7 @@
   #loader{position:fixed;inset:0;z-index:2000;background:var(--paper);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;transition:opacity .45s ease}
   #loader.hidden{opacity:0;pointer-events:none}
   #loader img{width:min(40vw,150px);height:auto;display:block}
-  #loader .ldr-title{font-family:var(--font-title);font-size:30px;letter-spacing:.07em;margin-top:-6px;display:flex}
-  #loader .ldr-title span{animation:bgtitle 4.5s linear infinite}
-  #loader .ldr-title span:nth-child(2){animation-delay:-.5s}
-  #loader .ldr-title span:nth-child(3){animation-delay:-1s}
-  #loader .ldr-title span:nth-child(4){animation-delay:-1.5s}
-  #loader .ldr-title span:nth-child(5){animation-delay:-2s}
-  #loader .ldr-title span:nth-child(6){animation-delay:-2.5s}
-  #loader .ldr-title span:nth-child(7){animation-delay:-3s}
-  @keyframes bgtitle{0%{color:#019F69}11%{color:#0263FF}22%{color:#055E00}33%{color:#8FD969}44%{color:#923545}55%{color:#95CBFB}66%{color:#E7B780}77%{color:#F6765E}88%{color:#FC3030}100%{color:#019F69}}
+  #loader .ldr-title{font-family:var(--font-title);font-size:30px;letter-spacing:.07em;margin-top:-6px;display:flex;color:#D8CFCF}
   .toast{
     position:fixed;left:50%;top:calc(66px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:900;
     background:rgba(30,30,36,.94);color:#fff;padding:10px 16px;border-radius:12px;

@@ -991,7 +991,11 @@ map.whenReady(()=>setTimeout(hideLoader,300));
 startLocate(true);
 </script>
 <script>
-if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}
+if('serviceWorker' in navigator){
+  var _swReload=false;
+  navigator.serviceWorker.addEventListener('controllerchange',function(){ if(_swReload)return; _swReload=true; location.reload(); });
+  window.addEventListener('load',function(){ navigator.serviceWorker.register('sw.js').then(function(reg){ if(reg&&reg.update) reg.update(); }).catch(function(){}); });
+}
 </script>
 </body>
 </html>

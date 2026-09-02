@@ -1,4 +1,4 @@
-const CACHE='bg-guide-v5';
+const CACHE='bg-guide-v6';
 const LOCAL=['./','./index.html','./manifest.webmanifest','./icon.svg','./icon-192.png','./icon-512.png','./apple-touch-icon.png','./fonts/ProSRB.woff2','./fonts/ProSRB.otf','./loader.webp','./loader.apng'];
 const EXTRA=['https://unpkg.com/leaflet@1.9.4/dist/leaflet.css','https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'];
 self.addEventListener('install',e=>{e.waitUntil((async()=>{

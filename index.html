@@ -149,6 +149,9 @@
   .user-dot{width:16px;height:16px;border-radius:50%;background:#1a73e8;border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4);position:relative}
   .user-dot::after{content:"";position:absolute;left:50%;top:50%;width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;background:rgba(26,115,232,.45);animation:userpulse 2s ease-out infinite}
   @keyframes userpulse{0%{transform:scale(1);opacity:.6}100%{transform:scale(3);opacity:0}}
+  .op-badge{width:46px;height:46px;border-radius:50%;overflow:hidden;background:#fff;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.28)}
+  .op-badge img{width:100%;height:100%;object-fit:cover;display:block}
+  .op-logo{width:82px;height:82px;border-radius:50%;object-fit:cover;background:#fff;border:2px solid #eee;display:block;margin:0 auto 12px;box-shadow:0 2px 8px rgba(0,0,0,.1)}
   .leaflet-container{background:#e8e8e8}
   .leaflet-tile-pane{filter:saturate(.5) brightness(1.06) contrast(.96)}
   #loader{position:fixed;inset:0;z-index:2000;background:var(--paper);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;transition:opacity .45s ease}
@@ -620,10 +623,15 @@ function renderOpstine(geo){
     style:f=>({color:'#ffffff',weight:1.5,fillColor:f.properties.color,fillOpacity:.5}),
     onEachFeature:(f,layer)=>{
       const p=f.properties;
-      opById[p.slug]={layer,name:p.name,color:p.color};
+      let c; try{ c=layer.getCenter(); }catch(e){ c=layer.getBounds().getCenter(); }
+      opById[p.slug]={layer,name:p.name,color:p.color,center:c};
       layer.on('click',()=>selectOpstina(p.slug));
       layer.on('mouseover',()=>layer.setStyle({fillOpacity:.68}));
       layer.on('mouseout',()=>{ if(layer!==activeLayer) layer.setStyle({fillOpacity:.5}); });
+      // круглый значок-логотип в центре района
+      const badge=L.divIcon({className:'',iconSize:[46,46],iconAnchor:[23,23],
+        html:`<div class="op-badge"><img src="logos/${p.slug}.png" alt="" loading="lazy"></div>`});
+      L.marker(c,{icon:badge,zIndexOffset:-300,keyboard:false}).addTo(map).on('click',()=>selectOpstina(p.slug));
     }
   }).addTo(map);
   map.fitBounds(gj.getBounds(),{padding:[20,20]});
@@ -746,7 +754,7 @@ function renderDistrict(slug){
   const pois=POIS.filter(p=>p.op===slug);
   sheetTitle.textContent=opName(slug);
   sheetSub.innerHTML=`<span class="swatch" style="background:${o.color}"></span> ${t('officialMuni')}`;
-  let html=`<p>${ABOUT[slug]||''}</p>`;
+  let html=`<img class="op-logo" src="logos/${slug}.png" alt="" onerror="this.style.display='none'"><p>${ABOUT[slug]||''}</p>`;
   if(lang!=='ru' && ABOUT[slug]) html+=`<div class="ru-note">🇷🇺 ${t('ruOnly')}</div>`;
   if(pois.length){
     html+=`<div class="head">${t('attractions')} (${pois.length})</div><ul class="list">`+

@@ -153,7 +153,7 @@
   .leaflet-tile-pane{filter:saturate(.5) brightness(1.06) contrast(.96)}
   #loader{position:fixed;inset:0;z-index:2000;background:var(--paper);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;transition:opacity .45s ease}
   #loader.hidden{opacity:0;pointer-events:none}
-  #loader img{width:min(62vw,290px);height:auto;display:block}
+  #loader img{width:min(40vw,150px);height:auto;display:block}
   #loader .ldr-title{font-family:var(--font-title);font-size:30px;letter-spacing:.07em;margin-top:-6px;display:flex}
   #loader .ldr-title span{animation:bgtitle 4.5s linear infinite}
   #loader .ldr-title span:nth-child(2){animation-delay:-.5s}
@@ -175,7 +175,7 @@
   <div id="loader">
     <picture>
       <source srcset="loader.webp" type="image/webp">
-      <img src="loader.apng" alt="" width="290">
+      <img src="loader.apng" alt="" width="150">
     </picture>
     <div class="ldr-title"><span>B</span><span>E</span><span>O</span><span>G</span><span>R</span><span>A</span><span>D</span></div>
   </div>

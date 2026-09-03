@@ -1,4 +1,4 @@
-const CACHE='bg-guide-v11';
+const CACHE='bg-guide-v12';
 const LOGOS=['stari-grad','vracar','savski-venac','novi-beograd','zemun','palilula','vozdovac','zvezdara','rakovica','cukarica'].map(s=>'./logos/'+s+'.png');
 const LOCAL=['./','./index.html','./manifest.webmanifest','./icon.svg','./icon-192.png','./icon-512.png','./apple-touch-icon.png','./fonts/ProSRB.woff2','./fonts/ProSRB.otf','./loader.webp','./loader.apng','./burek.png','./pljeskavica.png'].concat(LOGOS);
 const EXTRA=['https://unpkg.com/leaflet@1.9.4/dist/leaflet.css','https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'];

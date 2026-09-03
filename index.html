@@ -67,6 +67,9 @@
   #nearbyBtn{background:#0263FF;color:#fff}
   #routesBtn{background:#F6765E;color:#fff}
   #savedBtn{background:#FFCF49;color:#5a4300}
+  .foodbtn{align-self:flex-end;width:40px;height:40px;padding:0;border:2px solid #fff;border-radius:50%;overflow:hidden;cursor:pointer;box-shadow:var(--shadow);background:#fff}
+  .foodbtn img{width:100%;height:100%;object-fit:cover;display:block}
+  .foodbtn:active{transform:scale(.94)}
 
   /* Трей выбора мест для маршрута */
   .tray{
@@ -196,6 +199,7 @@
   </div>
 
   <div class="fabs" id="fabs">
+    <button class="foodbtn" id="foodSwitch" aria-label="сменить бурек/плескавицу"><img src="burek.png" alt=""></button>
     <button class="fab" id="savedBtn"><span class="ic">⭐</span><span class="lbl"></span></button>
     <button class="fab" id="routesBtn"><span class="ic">🧭</span><span class="lbl"></span></button>
     <button class="fab" id="nearbyBtn"><span class="ic">✦</span><span class="lbl"></span></button>
@@ -239,7 +243,7 @@ const STR = {
    stopsN:"{0} остановок · {1} · ~{2}",routing:"Строим маршрут…",
    routingErr:"Не удалось построить по улицам — показана прямая линия",needTwo:"Выберите хотя бы 2 места",
    ruOnly:"Текст пока на русском — перевод готовится",
-   locating:"Определяем местоположение…",youHere:"Вы на карте — синяя точка.",youAre:"Вы",
+   locating:"Определяем местоположение…",youHere:"Вы на карте — синяя точка.",youAre:"Вы",onMapYouAre:"На карте вы —",nowYouAre:"Теперь вы —",
    geoDenied:"Доступ к геолокации запрещён",geoFail:"Не удалось определить позицию",
    geoTimeout:"Истекло время ожидания",geoNo:"Геолокация недоступна в этом браузере",
    needHttps:"Нужен https или localhost.",min:"мин",
@@ -257,7 +261,7 @@ const STR = {
    stopsN:"{0} stops · {1} · ~{2}",routing:"Building route…",
    routingErr:"Couldn't route along streets — showing a straight line",needTwo:"Pick at least 2 places",
    ruOnly:"Text is in Russian for now — translation coming",
-   locating:"Locating…",youHere:"You're on the map — the blue dot.",youAre:"You are",
+   locating:"Locating…",youHere:"You're on the map — the blue dot.",youAre:"You are",onMapYouAre:"On the map you're a",nowYouAre:"Now you're a",
    geoDenied:"Location access denied",geoFail:"Couldn't determine position",
    geoTimeout:"Request timed out",geoNo:"Geolocation not available in this browser",
    needHttps:"Needs https or localhost.",min:"min",
@@ -275,7 +279,7 @@ const STR = {
    stopsN:"{0} станица · {1} · ~{2}",routing:"Правимо руту…",
    routingErr:"Није успело рутирање улицама — приказана права линија",needTwo:"Изаберите бар 2 места",
    ruOnly:"Текст је засад на руском — превод у припреми",
-   locating:"Одређујемо локацију…",youHere:"Ви сте на мапи — плава тачка.",youAre:"Ви сте",
+   locating:"Одређујемо локацију…",youHere:"Ви сте на мапи — плава тачка.",youAre:"Ви сте",onMapYouAre:"На мапи сте —",nowYouAre:"Сада сте —",
    geoDenied:"Приступ локацији је одбијен",geoFail:"Није могуће одредити локацију",
    geoTimeout:"Истекло је време",geoNo:"Геолокација није доступна у овом прегледачу",
    needHttps:"Потребан је https или localhost.",min:"мин",
@@ -680,9 +684,18 @@ function setFav(id,state){
 /* ═══════════ ГЕОЛОКАЦИЯ ═══════════ */
 let userMarker=null, accCircle=null, userLL=null, watchId=null;
 const locBtn=document.getElementById('locBtn');
-const myFood = Math.random()<0.5 ? 'burek' : 'pljeskavica';
+let myFood = localStorage.getItem('bg_food') || (Math.random()<0.5 ? 'burek' : 'pljeskavica');
 const FOODNAME={burek:{ru:'бурек',en:'burek',sr:'бурек'},pljeskavica:{ru:'плескавица',en:'pljeskavica',sr:'плескавица'}};
 function foodName(f){ return FOODNAME[f][lang]||FOODNAME[f].ru; }
+function foodDivIcon(f){ return L.divIcon({className:'',iconSize:[44,44],iconAnchor:[22,22],html:`<div class="user-food"><img src="${f}.png" alt=""></div>`}); }
+function updateFoodBtn(){ const b=document.querySelector('#foodSwitch img'); if(b) b.src=myFood+'.png'; }
+function switchFood(){
+  myFood = myFood==='burek' ? 'pljeskavica' : 'burek';
+  localStorage.setItem('bg_food',myFood);
+  updateFoodBtn();
+  if(userMarker) userMarker.setIcon(foodDivIcon(myFood));
+  toast(t('nowYouAre')+' '+foodName(myFood), myFood+'.png');
+}
 function startLocate(auto){
   if(!('geolocation' in navigator)){ if(!auto) toast(t('geoNo')); return; }
   if(!auto) toast(t('locating'));
@@ -691,13 +704,11 @@ function startLocate(auto){
     const {latitude,longitude,accuracy}=pos.coords;
     userLL=[latitude,longitude];
     if(!userMarker){
-      const fic=L.divIcon({className:'',iconSize:[44,44],iconAnchor:[22,22],
-        html:`<div class="user-food"><img src="${myFood}.png" alt=""></div>`});
-      userMarker=L.marker(userLL,{icon:fic,zIndexOffset:1000}).addTo(map);
+      userMarker=L.marker(userLL,{icon:foodDivIcon(myFood),zIndexOffset:1000}).addTo(map);
       accCircle=L.circle(userLL,{radius:accuracy,color:'#019F69',weight:1,fillColor:'#019F69',fillOpacity:.1}).addTo(map);
       const inBG = latitude>44.2 && latitude<45.05 && longitude>19.9 && longitude<20.9;
       if(inBG) map.setView(userLL, Math.max(map.getZoom(),15));
-      toast(t('youAre')+' '+foodName(myFood), myFood+'.png');
+      toast(t('onMapYouAre')+' '+foodName(myFood), myFood+'.png');
     }else{ userMarker.setLatLng(userLL); accCircle.setLatLng(userLL).setRadius(accuracy); }
     locBtn.querySelector('.ic').textContent='◉';
   },err=>{
@@ -954,6 +965,8 @@ function renderRoute(){
 document.getElementById('routesBtn').addEventListener('click',showRoutes);
 document.getElementById('nearbyBtn').addEventListener('click',showNearby);
 document.getElementById('savedBtn').addEventListener('click',showSaved);
+document.getElementById('foodSwitch').addEventListener('click',switchFood);
+updateFoodBtn();
 
 function applyStatic(){
   document.documentElement.lang=lang;

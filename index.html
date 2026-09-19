@@ -67,9 +67,8 @@
   #nearbyBtn{background:#0263FF;color:#fff}
   #routesBtn{background:#F6765E;color:#fff}
   #savedBtn{background:#FFCF49;color:#5a4300}
-  .foodbtn{align-self:flex-end;width:40px;height:40px;padding:0;border:2px solid #fff;border-radius:50%;overflow:hidden;cursor:pointer;box-shadow:var(--shadow);background:#fff}
-  .foodbtn img{width:100%;height:100%;object-fit:cover;display:block}
-  .foodbtn:active{transform:scale(.94)}
+  #pinsBtn{background:#923545;color:#fff}
+  #pinsBtn.off{background:var(--paper);color:var(--ink)}
 
   /* Трей выбора мест для маршрута */
   .tray{
@@ -155,9 +154,6 @@
   .user-dot{width:16px;height:16px;border-radius:50%;background:#1a73e8;border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4);position:relative}
   .user-dot::after{content:"";position:absolute;left:50%;top:50%;width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;background:rgba(26,115,232,.45);animation:userpulse 2s ease-out infinite}
   @keyframes userpulse{0%{transform:scale(1);opacity:.6}100%{transform:scale(3);opacity:0}}
-  .user-food{width:44px;height:44px;border-radius:50%;overflow:hidden;border:3px solid #fff;box-shadow:0 2px 7px rgba(0,0,0,.45);position:relative}
-  .user-food img{width:100%;height:100%;object-fit:cover;display:block}
-  .user-food::after{content:"";position:absolute;inset:-3px;border-radius:50%;border:3px solid #019F69;opacity:.55;animation:userpulse 2s ease-out infinite}
   .toast-ic{width:26px;height:26px;border-radius:50%;object-fit:cover;flex:none}
   .op-badge{width:46px;height:46px;border-radius:50%;overflow:hidden;background:#fff;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.28)}
   .op-badge img{width:100%;height:100%;object-fit:cover;display:block}
@@ -198,7 +194,7 @@
   </div>
 
   <div class="fabs" id="fabs">
-    <button class="foodbtn" id="foodSwitch" aria-label="сменить бурек/плескавицу"><img src="burek.png" alt=""></button>
+    <button class="fab" id="pinsBtn"><span class="ic">◆</span><span class="lbl"></span></button>
     <button class="fab" id="savedBtn"><span class="ic">⭐</span><span class="lbl"></span></button>
     <button class="fab" id="routesBtn"><span class="ic">🧭</span><span class="lbl"></span></button>
     <button class="fab" id="nearbyBtn"><span class="ic">✦</span><span class="lbl"></span></button>
@@ -245,7 +241,7 @@ const STR = {
    stopsN:"{0} остановок · {1} · ~{2}",routing:"Строим маршрут…",
    routingErr:"Не удалось построить по улицам — показана прямая линия",needTwo:"Выберите хотя бы 2 места",
    ruOnly:"Текст пока на русском — перевод готовится",
-   locating:"Определяем местоположение…",youHere:"Вы на карте — синяя точка.",youAre:"Вы",onMapYouAre:"На карте вы —",nowYouAre:"Теперь вы —",
+   locating:"Определяем местоположение…",youHere:"Вы на карте — синяя точка.",pinsHide:"Скрыть метки",pinsShow:"Показать метки",pinsHidden:"Метки скрыты",pinsOn:"Метки на карте",
    geoDenied:"Доступ к геолокации запрещён",geoFail:"Не удалось определить позицию",
    geoTimeout:"Истекло время ожидания",geoNo:"Геолокация недоступна в этом браузере",
    needHttps:"Нужен https или localhost.",min:"мин",
@@ -263,7 +259,7 @@ const STR = {
    stopsN:"{0} stops · {1} · ~{2}",routing:"Building route…",
    routingErr:"Couldn't route along streets — showing a straight line",needTwo:"Pick at least 2 places",
    ruOnly:"Text is in Russian for now — translation coming",
-   locating:"Locating…",youHere:"You're on the map — the blue dot.",youAre:"You are",onMapYouAre:"On the map you're a",nowYouAre:"Now you're a",
+   locating:"Locating…",youHere:"You're on the map — the blue dot.",pinsHide:"Hide pins",pinsShow:"Show pins",pinsHidden:"Pins hidden",pinsOn:"Pins on map",
    geoDenied:"Location access denied",geoFail:"Couldn't determine position",
    geoTimeout:"Request timed out",geoNo:"Geolocation not available in this browser",
    needHttps:"Needs https or localhost.",min:"min",
@@ -281,7 +277,7 @@ const STR = {
    stopsN:"{0} станица · {1} · ~{2}",routing:"Правимо руту…",
    routingErr:"Није успело рутирање улицама — приказана права линија",needTwo:"Изаберите бар 2 места",
    ruOnly:"Текст је засад на руском — превод у припреми",
-   locating:"Одређујемо локацију…",youHere:"Ви сте на мапи — плава тачка.",youAre:"Ви сте",onMapYouAre:"На мапи сте —",nowYouAre:"Сада сте —",
+   locating:"Одређујемо локацију…",youHere:"Ви сте на мапи — плава тачка.",pinsHide:"Сакриј тачке",pinsShow:"Прикажи тачке",pinsHidden:"Тачке су сакривене",pinsOn:"Тачке на мапи",
    geoDenied:"Приступ локацији је одбијен",geoFail:"Није могуће одредити локацију",
    geoTimeout:"Истекло је време",geoNo:"Геолокација није доступна у овом прегледачу",
    needHttps:"Потребан је https или localhost.",min:"мин",
@@ -647,6 +643,10 @@ L.maplibreGL({style:BG_STYLE}).addTo(map);
 const opById = {};
 let activeLayer = null;
 const routeGroup = L.layerGroup().addTo(map);
+const poiLayer = L.layerGroup();
+const badgeLayer = L.layerGroup();
+let pinsHidden = localStorage.getItem('bg_pins_hidden')==='1';
+if(!pinsHidden){ poiLayer.addTo(map); badgeLayer.addTo(map); }
 
 const DCOLOR={"stari-grad":"#FC3030","vracar":"#E7B780","savski-venac":"#8FD969","novi-beograd":"#95CBFB","zemun":"#F6765E","palilula":"#FFCF49","vozdovac":"#A940A4","zvezdara":"#0263FF","rakovica":"#923545","cukarica":"#055E00"};
 function renderOpstine(geo){
@@ -663,7 +663,7 @@ function renderOpstine(geo){
       // круглый значок-логотип в центре района
       const badge=L.divIcon({className:'',iconSize:[46,46],iconAnchor:[23,23],
         html:`<div class="op-badge"><img src="logos/${p.slug}.png" alt="" loading="lazy"></div>`});
-      L.marker(c,{icon:badge,zIndexOffset:-300,keyboard:false}).addTo(map).on('click',()=>selectOpstina(p.slug));
+      L.marker(c,{icon:badge,zIndexOffset:-300,keyboard:false}).addTo(badgeLayer).on('click',()=>selectOpstina(p.slug));
     }
   }).addTo(map);
   map.fitBounds(gj.getBounds(),{padding:[20,20]});
@@ -691,7 +691,7 @@ function addPois(){
     const color=(opById[poi.op]||{}).color||'#2b7a78';
     const icon=L.divIcon({className:'',iconSize:[26,26],iconAnchor:[13,26],
       html:`<div class="poi-pin" style="background:${color}"><span>${poi.emoji}</span><b class="fav-badge"></b></div>`});
-    const m=L.marker(poi.ll,{icon}).addTo(map);
+    const m=L.marker(poi.ll,{icon}).addTo(poiLayer);
     m.on('click',()=>{ if(selecting) toggleSelect(poi.id); else selectPoi(poi.id); });
     poiMarkers[poi.id]=m;
     setPinFav(poi.id);
@@ -717,18 +717,7 @@ function setFav(id,state){
 /* ═══════════ ГЕОЛОКАЦИЯ ═══════════ */
 let userMarker=null, accCircle=null, userLL=null, watchId=null;
 const locBtn=document.getElementById('locBtn');
-let myFood = localStorage.getItem('bg_food') || (Math.random()<0.5 ? 'burek' : 'pljeskavica');
-const FOODNAME={burek:{ru:'бурек',en:'burek',sr:'бурек'},pljeskavica:{ru:'плескавица',en:'pljeskavica',sr:'плескавица'}};
-function foodName(f){ return FOODNAME[f][lang]||FOODNAME[f].ru; }
-function foodDivIcon(f){ return L.divIcon({className:'',iconSize:[44,44],iconAnchor:[22,22],html:`<div class="user-food"><img src="${f}.png" alt=""></div>`}); }
-function updateFoodBtn(){ const b=document.querySelector('#foodSwitch img'); if(b) b.src=myFood+'.png'; }
-function switchFood(){
-  myFood = myFood==='burek' ? 'pljeskavica' : 'burek';
-  localStorage.setItem('bg_food',myFood);
-  updateFoodBtn();
-  if(userMarker) userMarker.setIcon(foodDivIcon(myFood));
-  toast(t('nowYouAre')+' '+foodName(myFood), myFood+'.png');
-}
+const userDotIcon=L.divIcon({className:'',iconSize:[16,16],iconAnchor:[8,8],html:'<div class="user-dot"></div>'});
 function startLocate(auto){
   if(!('geolocation' in navigator)){ if(!auto) toast(t('geoNo')); return; }
   if(!auto) toast(t('locating'));
@@ -737,11 +726,11 @@ function startLocate(auto){
     const {latitude,longitude,accuracy}=pos.coords;
     userLL=[latitude,longitude];
     if(!userMarker){
-      userMarker=L.marker(userLL,{icon:foodDivIcon(myFood),zIndexOffset:1000}).addTo(map);
-      accCircle=L.circle(userLL,{radius:accuracy,color:'#019F69',weight:1,fillColor:'#019F69',fillOpacity:.1}).addTo(map);
+      userMarker=L.marker(userLL,{icon:userDotIcon,zIndexOffset:1000}).addTo(map);
+      accCircle=L.circle(userLL,{radius:accuracy,color:'#1a73e8',weight:1,fillColor:'#1a73e8',fillOpacity:.12}).addTo(map);
       const inBG = latitude>44.2 && latitude<45.05 && longitude>19.9 && longitude<20.9;
       if(inBG) map.setView(userLL, Math.max(map.getZoom(),15));
-      toast(t('onMapYouAre')+' '+foodName(myFood), myFood+'.png');
+      toast(t('youHere'));
     }else{ userMarker.setLatLng(userLL); accCircle.setLatLng(userLL).setRadius(accuracy); }
     locBtn.querySelector('.ic').textContent='◉';
   },err=>{
@@ -998,8 +987,22 @@ function renderRoute(){
 document.getElementById('routesBtn').addEventListener('click',showRoutes);
 document.getElementById('nearbyBtn').addEventListener('click',showNearby);
 document.getElementById('savedBtn').addEventListener('click',showSaved);
-document.getElementById('foodSwitch').addEventListener('click',switchFood);
-updateFoodBtn();
+function updatePinsBtn(){
+  const b=document.getElementById('pinsBtn');
+  b.classList.toggle('off',pinsHidden);
+  b.querySelector('.ic').textContent=pinsHidden?'◇':'◆';
+  b.querySelector('.lbl').textContent=t(pinsHidden?'pinsShow':'pinsHide');
+}
+function togglePins(){
+  pinsHidden=!pinsHidden;
+  localStorage.setItem('bg_pins_hidden',pinsHidden?'1':'0');
+  if(pinsHidden){ map.removeLayer(poiLayer); map.removeLayer(badgeLayer); }
+  else{ poiLayer.addTo(map); badgeLayer.addTo(map); }
+  updatePinsBtn();
+  toast(t(pinsHidden?'pinsHidden':'pinsOn'));
+}
+document.getElementById('pinsBtn').addEventListener('click',togglePins);
+updatePinsBtn();
 
 function applyStatic(){
   document.documentElement.lang=lang;
@@ -1009,6 +1012,7 @@ function applyStatic(){
   document.getElementById('savedBtn').querySelector('.lbl').textContent=t('saved');
   document.getElementById('nearbyBtn').querySelector('.lbl').textContent=t('nearby');
   document.getElementById('routesBtn').querySelector('.lbl').textContent=t('routes');
+  if(typeof updatePinsBtn==='function') updatePinsBtn();
   document.querySelectorAll('#langsw button').forEach(b=>b.classList.toggle('on',b.dataset.lang===lang));
   if(selecting) updateTray();
 }

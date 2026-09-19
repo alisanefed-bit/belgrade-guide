@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#2b7a78">
+<meta name="theme-color" content="#ffffff">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -25,6 +25,7 @@
     --accent:#019F69;
     --shadow:0 8px 30px rgba(0,0,0,.16);
     --radius:8px; --br:5px;
+    --tabbar-h:60px;
   }
   *{box-sizing:border-box}
   html,body{margin:0;height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink)}
@@ -52,27 +53,50 @@
   }
   .langsw button.on{background:var(--accent);color:#fff}
 
-  /* Кнопки-действия */
-  .fabs{position:fixed;right:12px;bottom:calc(12px + var(--sheet-h,0px) + env(safe-area-inset-bottom,0px));z-index:600;
-    display:flex;flex-direction:column;gap:10px;transition:bottom .25s ease}
-  .fabs.hide{display:none}
-  .fab{
-    min-width:48px;height:48px;padding:0 16px;border:none;cursor:pointer;
-    background:var(--paper);color:var(--ink);border-radius:var(--br);box-shadow:var(--shadow);
-    font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;justify-content:center;
+  /* Плавающие контролы карты (геолокация + метки) */
+  .mapctl{
+    position:fixed;right:14px;z-index:600;
+    bottom:calc(var(--tabbar-h) + 16px + env(safe-area-inset-bottom,0px));
+    display:flex;flex-direction:column;gap:11px;
+    transition:opacity .22s ease, transform .22s ease;
   }
-  .fab:active{transform:scale(.96)}
-  .fab .ic{font-size:17px;line-height:1}
-  #locBtn{background:#019F69;color:#fff}
-  #nearbyBtn{background:#0263FF;color:#fff}
-  #routesBtn{background:#F6765E;color:#fff}
-  #savedBtn{background:#FFCF49;color:#5a4300}
-  #pinsBtn{background:#923545;color:#fff}
-  #pinsBtn.off{background:var(--paper);color:var(--ink)}
+  .mapctl.faded{opacity:0;pointer-events:none;transform:translateY(10px)}
+  .mapbtn{
+    width:52px;height:52px;border-radius:50%;border:none;cursor:pointer;
+    background:var(--paper);color:var(--ink);box-shadow:var(--shadow);
+    display:flex;align-items:center;justify-content:center;line-height:1;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .mapbtn .ic{font-size:22px;line-height:1}
+  .mapbtn:active{transform:scale(.93)}
+  #locBtn{background:var(--accent);color:#fff}
+  #pinsBtn.off .ic{opacity:.45}
+
+  /* Нижняя навигация (bottom tab bar) */
+  .tabbar{
+    position:fixed;left:0;right:0;bottom:0;z-index:640;
+    display:flex;background:rgba(255,255,255,.98);backdrop-filter:blur(12px);
+    border-top:1px solid #ececf0;box-shadow:0 -3px 18px rgba(0,0,0,.06);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  .tab{
+    flex:1;border:none;background:none;cursor:pointer;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+    height:var(--tabbar-h);padding:7px 4px;color:var(--muted);
+    -webkit-tap-highlight-color:transparent;transition:color .15s;
+  }
+  .tab .ic{font-size:21px;line-height:1}
+  .tab .lbl{font-size:11px;font-weight:600;letter-spacing:.01em}
+  .tab:active{background:rgba(0,0,0,.045)}
+  .tab.active{color:var(--accent)}
+  .tab.active .ic{transform:translateY(-1px)}
+  .gone{display:none!important}
+  /* контролы зума Leaflet — над таб-панелью */
+  .leaflet-bottom{bottom:calc(var(--tabbar-h) + env(safe-area-inset-bottom,0px))}
 
   /* Трей выбора мест для маршрута */
   .tray{
-    position:fixed;left:12px;right:12px;bottom:calc(14px + var(--sheet-h,0px) + env(safe-area-inset-bottom,0px));
+    position:fixed;left:12px;right:12px;bottom:calc(var(--tabbar-h) + 14px + env(safe-area-inset-bottom,0px));
     z-index:660;background:var(--ink);color:#fff;border-radius:var(--radius);
     box-shadow:var(--shadow);padding:10px 12px;display:none;align-items:center;gap:10px;
   }
@@ -84,11 +108,12 @@
 
   /* Нижняя карточка */
   .sheet{
-    position:fixed;left:0;right:0;bottom:0;z-index:650;
+    position:fixed;left:0;right:0;bottom:calc(var(--tabbar-h) + env(safe-area-inset-bottom,0px));z-index:650;
     background:var(--paper);border-radius:var(--radius) var(--radius) 0 0;
     box-shadow:0 -10px 40px rgba(0,0,0,.18);
-    transform:translateY(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);
-    max-height:74vh;display:flex;flex-direction:column;padding-bottom:env(safe-area-inset-bottom,0px);
+    transform:translateY(calc(100% + var(--tabbar-h) + env(safe-area-inset-bottom,0px) + 16px));
+    transition:transform .28s cubic-bezier(.4,0,.2,1);
+    max-height:70vh;display:flex;flex-direction:column;padding-bottom:8px;
   }
   .sheet.open{transform:translateY(0)}
   .sheet-grab{width:40px;height:4px;border-radius:2px;background:#d5d5dd;margin:8px auto 4px;flex:none}
@@ -193,13 +218,17 @@
     <button data-lang="ru">RU</button>
   </div>
 
-  <div class="fabs" id="fabs">
-    <button class="fab" id="pinsBtn"><span class="ic">◆</span><span class="lbl"></span></button>
-    <button class="fab" id="savedBtn"><span class="ic">⭐</span><span class="lbl"></span></button>
-    <button class="fab" id="routesBtn"><span class="ic">🧭</span><span class="lbl"></span></button>
-    <button class="fab" id="nearbyBtn"><span class="ic">✦</span><span class="lbl"></span></button>
-    <button class="fab primary" id="locBtn"><span class="ic">◎</span><span class="lbl"></span></button>
+  <div class="mapctl" id="mapctl">
+    <button class="mapbtn" id="pinsBtn" aria-label=""><span class="ic">◆</span></button>
+    <button class="mapbtn" id="locBtn" aria-label=""><span class="ic">◎</span></button>
   </div>
+
+  <nav class="tabbar" id="tabbar">
+    <button class="tab" id="districtsBtn"><span class="ic">🗺️</span><span class="lbl"></span></button>
+    <button class="tab" id="nearbyBtn"><span class="ic">📍</span><span class="lbl"></span></button>
+    <button class="tab" id="routesBtn"><span class="ic">🧭</span><span class="lbl"></span></button>
+    <button class="tab" id="savedBtn"><span class="ic">⭐</span><span class="lbl"></span></button>
+  </nav>
 
   <div class="tray" id="tray">
     <span class="tray-info" id="trayInfo"></span>
@@ -231,8 +260,8 @@
 let lang = localStorage.getItem('bg_lang') || 'ru';
 const STR = {
  ru:{appTitle:"Белград",appSub:"Районы, места и пешие маршруты",
-   locate:"Я здесь",nearby:"Что рядом",routes:"Маршруты",
-   districtsTitle:"Районы Белграда",districtsSub:"17 официальных общин · тапните по любой",
+   locate:"Я здесь",nearby:"Что рядом",routes:"Маршруты",districts:"Районы",tabNear:"Рядом",
+   districtsTitle:"Районы Белграда",districtsSub:"городских общин · тапните по любой",
    officialMuni:"Официальная община",attractions:"Достопримечательности",noPlaces:"Отмеченных мест пока нет.",
    nearbyTitle:"Рядом с вами",nearbySub:"Места по удалённости",fromYou:"от вас",
    routesTitle:"Маршруты",presetsHead:"Готовые маршруты",customHead:"Свой маршрут",
@@ -249,8 +278,8 @@ const STR = {
    favWant:"Хочу посетить",favVisited:"Посещено",saved:"Избранное",
    savedWant:"Хочу посетить",savedVisited:"Уже посещено",savedEmpty:"Пока пусто. Открой место и отметь его кнопками «Хочу посетить» или «Посещено»."},
  en:{appTitle:"Belgrade",appSub:"Districts, sights & walking routes",
-   locate:"I'm here",nearby:"Nearby",routes:"Routes",
-   districtsTitle:"Belgrade districts",districtsSub:"17 official municipalities · tap any",
+   locate:"I'm here",nearby:"Nearby",routes:"Routes",districts:"Areas",tabNear:"Nearby",
+   districtsTitle:"Belgrade districts",districtsSub:"city municipalities · tap any",
    officialMuni:"Official municipality",attractions:"Sights",noPlaces:"No marked places yet.",
    nearbyTitle:"Near you",nearbySub:"Sights by distance",fromYou:"from you",
    routesTitle:"Routes",presetsHead:"Ready-made routes",customHead:"Your own route",
@@ -267,8 +296,8 @@ const STR = {
    favWant:"Want to visit",favVisited:"Visited",saved:"Saved",
    savedWant:"Want to visit",savedVisited:"Visited",savedEmpty:"Nothing yet. Open a place and mark it “Want to visit” or “Visited”."},
  sr:{appTitle:"Београд",appSub:"Општине, знаменитости и пешачке руте",
-   locate:"Ја сам овде",nearby:"У близини",routes:"Руте",
-   districtsTitle:"Општине Београда",districtsSub:"17 званичних општина · додирните било коју",
+   locate:"Ја сам овде",nearby:"У близини",routes:"Руте",districts:"Општине",tabNear:"Близу",
+   districtsTitle:"Општине Београда",districtsSub:"градских општина · додирните било коју",
    officialMuni:"Званична општина",attractions:"Знаменитости",noPlaces:"Још нема обележених места.",
    nearbyTitle:"У вашој близини",nearbySub:"Места по удаљености",fromYou:"од вас",
    routesTitle:"Руте",presetsHead:"Готове руте",customHead:"Сопствена рута",
@@ -749,10 +778,26 @@ const sheetBody=document.getElementById('sheetBody');
 document.getElementById('sheetClose').addEventListener('click',closeSheet);
 let currentView=null;   // {type, ...} — чтобы перерисовать при смене языка
 
-function openSheet(){ sheet.classList.add('open'); requestAnimationFrame(syncFabs); }
-function closeSheet(){ sheet.classList.remove('open'); document.documentElement.style.setProperty('--sheet-h','0px'); clearActive(); currentView=null; }
-function syncFabs(){ document.documentElement.style.setProperty('--sheet-h', sheet.classList.contains('open')? sheet.offsetHeight+'px':'0px'); }
-window.addEventListener('resize',syncFabs);
+const mapctl=document.getElementById('mapctl');
+const TABMAP={districts:'districtsBtn',district:'districtsBtn',nearby:'nearbyBtn',routes:'routesBtn',route:'routesBtn',saved:'savedBtn'};
+function setActiveTab(type){
+  document.querySelectorAll('.tab').forEach(el=>el.classList.remove('active'));
+  const id=type&&TABMAP[type];
+  if(id){ const el=document.getElementById(id); if(el) el.classList.add('active'); }
+}
+function openSheet(){ sheet.classList.add('open'); mapctl.classList.add('faded'); setActiveTab(currentView&&currentView.type); }
+function closeSheet(){ sheet.classList.remove('open'); mapctl.classList.remove('faded'); setActiveTab(null); clearActive(); currentView=null; }
+
+/* свайп вниз / тап по «ручке» — закрыть карточку */
+(function(){
+  const grab=sheet.querySelector('.sheet-grab'), head=sheet.querySelector('.sheet-head');
+  grab.style.cursor='pointer';
+  grab.addEventListener('click',closeSheet);
+  let y0=null;
+  const start=e=>{ y0=e.touches?e.touches[0].clientY:e.clientY; };
+  const end=e=>{ if(y0==null) return; const y=e.changedTouches?e.changedTouches[0].clientY:e.clientY; if(y-y0>60) closeSheet(); y0=null; };
+  [grab,head].forEach(el=>{ el.addEventListener('touchstart',start,{passive:true}); el.addEventListener('touchend',end); });
+})();
 
 function clearActive(){ if(activeLayer){ activeLayer.setStyle({weight:0,opacity:0}); activeLayer=null; } }
 function highlightOp(slug){
@@ -779,7 +824,7 @@ function renderDistricts(){
   const poiCount={}; POIS.forEach(p=>poiCount[p.op]=(poiCount[p.op]||0)+1);
   const slugs=Object.keys(opById).sort((a,b)=>opName(a).localeCompare(opName(b),'ru'));
   sheetTitle.textContent=t('districtsTitle');
-  sheetSub.textContent=t('districtsSub');
+  sheetSub.textContent=slugs.length+' '+t('districtsSub');
   sheetBody.innerHTML='<ul class="list">'+slugs.map(s=>{
     const o=opById[s], c=poiCount[s];
     return `<li data-op="${s}"><span class="swatch" style="background:${o.color}"></span>
@@ -912,7 +957,8 @@ const trayCancel=document.getElementById('trayCancel');
 function enterSelect(){
   selecting=true; selected=[];
   closeSheet();
-  document.getElementById('fabs').classList.add('hide');
+  document.getElementById('mapctl').classList.add('gone');
+  document.getElementById('tabbar').classList.add('gone');
   tray.classList.add('show'); updateTray();
   toast(t('makeOwnHint'));
 }
@@ -921,7 +967,8 @@ function exitSelect(){
   selected.forEach(id=>{ const el=pinEl(id); if(el) el.classList.remove('sel'); });
   selected=[];
   tray.classList.remove('show');
-  document.getElementById('fabs').classList.remove('hide');
+  document.getElementById('mapctl').classList.remove('gone');
+  document.getElementById('tabbar').classList.remove('gone');
 }
 function toggleSelect(id){
   const i=selected.indexOf(id);
@@ -984,6 +1031,7 @@ function renderRoute(){
 }
 
 /* ═══════════ КНОПКИ И ЯЗЫК ═══════════ */
+document.getElementById('districtsBtn').addEventListener('click',showDistricts);
 document.getElementById('routesBtn').addEventListener('click',showRoutes);
 document.getElementById('nearbyBtn').addEventListener('click',showNearby);
 document.getElementById('savedBtn').addEventListener('click',showSaved);
@@ -991,7 +1039,8 @@ function updatePinsBtn(){
   const b=document.getElementById('pinsBtn');
   b.classList.toggle('off',pinsHidden);
   b.querySelector('.ic').textContent=pinsHidden?'◇':'◆';
-  b.querySelector('.lbl').textContent=t(pinsHidden?'pinsShow':'pinsHide');
+  b.setAttribute('aria-label',t(pinsHidden?'pinsShow':'pinsHide'));
+  b.title=t(pinsHidden?'pinsShow':'pinsHide');
 }
 function togglePins(){
   pinsHidden=!pinsHidden;
@@ -1008,9 +1057,10 @@ function applyStatic(){
   document.documentElement.lang=lang;
   document.getElementById('appTitle').textContent='Beograd';
   document.getElementById('appSub').textContent=t('appSub');
-  locBtn.querySelector('.lbl').textContent=t('locate');
+  locBtn.setAttribute('aria-label',t('locate')); locBtn.title=t('locate');
+  document.getElementById('districtsBtn').querySelector('.lbl').textContent=t('districts');
   document.getElementById('savedBtn').querySelector('.lbl').textContent=t('saved');
-  document.getElementById('nearbyBtn').querySelector('.lbl').textContent=t('nearby');
+  document.getElementById('nearbyBtn').querySelector('.lbl').textContent=t('tabNear');
   document.getElementById('routesBtn').querySelector('.lbl').textContent=t('routes');
   if(typeof updatePinsBtn==='function') updatePinsBtn();
   document.querySelectorAll('#langsw button').forEach(b=>b.classList.toggle('on',b.dataset.lang===lang));

@@ -1,7 +1,7 @@
-const CACHE='bg-guide-v13';
+const CACHE='bg-guide-v14';
 const LOGOS=['stari-grad','vracar','savski-venac','novi-beograd','zemun','palilula','vozdovac','zvezdara','rakovica','cukarica'].map(s=>'./logos/'+s+'.png');
-const LOCAL=['./','./index.html','./manifest.webmanifest','./icon.svg','./icon-192.png','./icon-512.png','./apple-touch-icon.png','./fonts/ProSRB.woff2','./fonts/ProSRB.otf','./loader.webp','./loader.apng','./burek.png','./pljeskavica.png'].concat(LOGOS);
-const EXTRA=['https://unpkg.com/leaflet@1.9.4/dist/leaflet.css','https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'];
+const LOCAL=['./','./index.html','./manifest.webmanifest','./icon.svg','./icon-192.png','./icon-512.png','./apple-touch-icon.png','./fonts/ProSRB.woff2','./fonts/ProSRB.otf','./loader.webp','./loader.apng','./burek.png','./pljeskavica.png','./districts.geojson','./mask.geojson'].concat(LOGOS);
+const EXTRA=['https://unpkg.com/leaflet@1.9.4/dist/leaflet.css','https://unpkg.com/leaflet@1.9.4/dist/leaflet.js','https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css','https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js','https://unpkg.com/@maplibre/maplibre-gl-leaflet@0.0.22/leaflet-maplibre-gl.js'];
 self.addEventListener('install',e=>{e.waitUntil((async()=>{
   const c=await caches.open(CACHE);
   await c.addAll(LOCAL);

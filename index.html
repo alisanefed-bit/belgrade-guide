@@ -36,7 +36,8 @@
   }
   *{box-sizing:border-box}
   html,body{margin:0;height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink)}
-  #map{position:fixed;inset:0;z-index:0;background:#e8e8e8}
+  body{overflow:hidden;overscroll-behavior:none;-webkit-text-size-adjust:100%}
+  #map{position:fixed;inset:0;z-index:0;background:#fff}
 
   /* Заголовок (матовая пилюля) */
   .topbar{
@@ -111,20 +112,21 @@
     background:var(--glass);-webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
     color:var(--nav-ink);font-size:22px;font-weight:400;box-shadow:0 6px 18px rgba(20,60,35,.18);
   }
+  .leaflet-bar a:first-child,.leaflet-bar a:last-child{border-radius:50%}
   .leaflet-bar a:first-child{margin-bottom:10px}
   .leaflet-bar a:hover{background:rgba(255,255,255,.8);color:var(--nav-ink)}
   .leaflet-bar a.leaflet-disabled{opacity:.5}
 
   /* Трей выбора мест для маршрута */
   .tray{
-    position:fixed;left:14px;right:14px;bottom:calc(var(--dock) + 14px);
-    z-index:660;background:var(--ink);color:#fff;border-radius:var(--rlg);
-    box-shadow:0 12px 30px rgba(0,0,0,.28);padding:12px 14px;display:none;align-items:center;gap:10px;
+    position:fixed;left:14px;right:14px;bottom:calc(var(--tabbar-gap) + env(safe-area-inset-bottom,0px));
+    z-index:660;background:#fff;color:var(--ink);border:1px solid rgba(20,81,43,.14);border-radius:var(--rlg);
+    box-shadow:0 14px 34px rgba(20,60,35,.28), 0 0 0 4px rgba(255,255,255,.6);padding:12px 14px;display:none;align-items:center;gap:10px;
   }
   .tray.show{display:flex}
-  .tray-info{flex:1;font-size:14px;font-weight:600}
+  .tray-info{flex:1;font-size:14px;font-weight:600;color:var(--nav-ink)}
   .tray-btn{border:none;border-radius:14px;padding:11px 16px;font-size:13.5px;font-weight:700;cursor:pointer;background:var(--accent);color:#fff}
-  .tray-btn.ghost{background:rgba(255,255,255,.16);color:#fff}
+  .tray-btn.ghost{background:#f1f2f4;color:var(--ink)}
   .tray-btn:disabled{opacity:.4}
 
   /* Нижняя карточка (белый фон — читаемые описания) */
@@ -134,7 +136,7 @@
     box-shadow:0 -12px 44px rgba(20,60,35,.16);
     transform:translateY(calc(100% + var(--dock) + 20px));
     transition:transform .3s cubic-bezier(.32,.72,0,1);
-    max-height:70vh;display:flex;flex-direction:column;padding-bottom:8px;
+    max-height:70vh;max-height:70dvh;display:flex;flex-direction:column;padding-bottom:8px;
   }
   .sheet.open{transform:translateY(0)}
   .sheet-grab{width:42px;height:5px;border-radius:3px;background:#e0e0e6;margin:10px auto 4px;flex:none}
@@ -217,6 +219,26 @@
     display:flex;align-items:center;gap:9px;justify-content:center;
   }
   .toast.show{opacity:1}
+
+  /* Адаптация под маленькие/узкие экраны */
+  @media (max-width:400px){
+    .topbar h1{font-size:20px}
+    .topbar{padding:7px 13px}
+    .langsw button{padding:7px 9px;font-size:12px}
+    .tab .lbl{font-size:9.5px;letter-spacing:.02em}
+    .tab svg{width:22px;height:22px}
+    .sheet-head h2{font-size:22px}
+  }
+  @media (max-width:340px){
+    .tab .lbl{font-size:8.5px}
+    .langsw button{padding:6px 7px;font-size:11px}
+  }
+  @media (max-height:680px){
+    .sheet{max-height:66vh;max-height:66dvh}
+  }
+  /* высокие DPI / чтобы иконки и текст были чёткие */
+  .tab .lbl{white-space:nowrap}
+  .mapbtn svg,.tab svg{shape-rendering:geometricPrecision}
 </style>
 </head>
 <body>
@@ -710,8 +732,8 @@ const BG_STYLE={
     {id:'water',type:'fill',source:'om','source-layer':'water',paint:{'fill-color':'rgba(255,255,255,0.55)'}},
     {id:'landcover',type:'fill',source:'om','source-layer':'landcover',minzoom:11,paint:{'fill-color':'rgba(255,255,255,0.22)'}},
     {id:'building',type:'fill',source:'om','source-layer':'building',minzoom:13.5,paint:{'fill-color':'rgba(255,255,255,0.4)','fill-antialias':false}},
-    {id:'roads',type:'line',source:'om','source-layer':'transportation',paint:{'line-color':'rgba(0,0,0,0.24)','line-width':['interpolate',['linear'],['zoom'],10,0.3,13,0.8,15,1.8,17,4.5]}},
-    {id:'mask',type:'fill',source:'mask',paint:{'fill-color':'rgba(210,213,219,0.74)'}},
+    {id:'mask',type:'fill',source:'mask',paint:{'fill-color':'#ffffff'}},
+    {id:'roads',type:'line',source:'om','source-layer':'transportation',paint:{'line-color':'rgba(38,42,52,0.34)','line-width':['interpolate',['linear'],['zoom'],10,0.6,12,1.2,14,2.1,16,3.6,18,6]}},
     {id:'border',type:'line',source:'districts',paint:{'line-color':['coalesce',['get','color'],'#999'],'line-width':1.4,'line-opacity':.9}}
   ]
 };
@@ -743,7 +765,8 @@ function renderOpstine(geo){
       L.marker(c,{icon:badge,zIndexOffset:-300,keyboard:false}).addTo(badgeLayer).on('click',()=>selectOpstina(p.slug));
     }
   }).addTo(map);
-  map.fitBounds(gj.getBounds(),{padding:[20,20]});
+  window._bgBounds=gj.getBounds();
+  map.fitBounds(window._bgBounds,{padding:[20,20]});
   addPois();
 }
 function districtOuterRings(layer){
@@ -1002,11 +1025,15 @@ const tray=document.getElementById('tray');
 const trayInfo=document.getElementById('trayInfo');
 const trayBuild=document.getElementById('trayBuild');
 const trayCancel=document.getElementById('trayCancel');
+let _pinsWereHidden=false;
 function enterSelect(){
   selecting=true; selected=[];
   closeSheet();
   document.getElementById('mapctl').classList.add('gone');
   document.getElementById('tabbar').classList.add('gone');
+  // всегда показываем метки — по ним и выбирают точки маршрута
+  _pinsWereHidden=pinsHidden;
+  if(!map.hasLayer(poiLayer)){ poiLayer.addTo(map); badgeLayer.addTo(map); }
   tray.classList.add('show'); updateTray();
   toast(t('makeOwnHint'));
 }
@@ -1017,6 +1044,8 @@ function exitSelect(){
   tray.classList.remove('show');
   document.getElementById('mapctl').classList.remove('gone');
   document.getElementById('tabbar').classList.remove('gone');
+  // если метки были скрыты до входа — снова скрываем
+  if(_pinsWereHidden){ map.removeLayer(poiLayer); map.removeLayer(badgeLayer); }
 }
 function toggleSelect(id){
   const i=selected.indexOf(id);
@@ -1149,6 +1178,9 @@ setTimeout(hideLoader,6000); /* страховка */
 applyStatic();
 renderOpstine(BG_GEO);
 map.whenReady(()=>setTimeout(hideLoader,300));
+// подстраховка размеров карты (мобильные бары/поворот) — чтобы fitBounds не увёл в дальний зум
+function _refit(){ map.invalidateSize(false); if(window._bgBounds && !userLL) map.fitBounds(window._bgBounds,{padding:[20,20]}); }
+setTimeout(_refit,350); window.addEventListener('resize',()=>{ map.invalidateSize(false); }); window.addEventListener('orientationchange',()=>setTimeout(_refit,300));
 
 /* авто-старт геолокации при открытии — точка обновляется, пока идёшь */
 startLocate(true);

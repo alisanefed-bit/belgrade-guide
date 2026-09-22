@@ -410,7 +410,7 @@ const NAMES = {
  "sopot":{ru:"Сопот",en:"Sopot",sr:"Сопот",nl:"Sopot"},
  "surcin":{ru:"Сурчин",en:"Surčin",sr:"Сурчин",nl:"Surčin"},
 };
-function opName(slug){ const n=NAMES[slug]; return n?(n.nl||n[lang]||n.ru):((opById[slug]||{}).name||slug); }
+function opName(slug){ const n=NAMES[slug]; return n?(n[lang]||n.nl||n.ru):((opById[slug]||{}).name||slug); }
 
 // Описания районов (пока русский)
 const ABOUT = {
@@ -442,15 +442,15 @@ const POIS = [
  {id:"knez",op:"stari-grad",ll:[44.8168,20.4573],emoji:"🚶",
   name:{ru:"Кнез-Михайлова",en:"Knez Mihailova",sr:"Кнез Михаилова"},
   nl:"Knez Mihailova",
-  story:"Главная пешеходная улица, проложенная по линии римского Белграда. Особняки эпохи модерна, книжные, кафе и уличные музыканты — от площади Республики к воротам Калемегдана.",img:"img/knez.png",wiki:"https://sr.wikipedia.org/wiki/%D0%A3%D0%BB%D0%B8%D1%86%D0%B0_%D0%BA%D0%BD%D0%B5%D0%B7%D0%B0_%D0%9C%D0%B8%D1%85%D0%B0%D0%B8%D0%BB%D0%B0_(%D0%91%D0%B5%D0%BE%D0%B3%D1%80%D0%B0%D0%B4)",gq:"Knez Mihailova, Beograd"},
+  story:"Главная пешеходная улица, проложенная по линии римского Белграда. Особняки эпохи модерна, книжные, кафе и уличные музыканты — от площади Республики к воротам Калемегдана.",img:"img/knez.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%A3%D0%BB%D0%B8%D1%86%D0%B0_%D0%BA%D0%BD%D0%B5%D0%B7%D0%B0_%D0%9C%D0%B8%D1%85%D0%B0%D0%B8%D0%BB%D0%B0_(%D0%91%D0%B5%D0%BE%D0%B3%D1%80%D0%B0%D0%B4)",gq:"Knez Mihailova, Beograd"},
  {id:"trg",op:"stari-grad",ll:[44.8165,20.4601],emoji:"🐎",
   name:{ru:"Площадь Республики",en:"Republic Square",sr:"Трг републике"},
   nl:"Trg republike",
-  story:"Сердце пешеходного центра с конным памятником князю Михаилу, Народным театром и Народным музеем Сербии. Классическое место встреч: «код коња» — «у коня».",img:"img/trg.png",wiki:"https://sr.wikipedia.org/wiki/%D0%A2%D1%80%D0%B3_%D1%80%D0%B5%D0%BF%D1%83%D0%B1%D0%BB%D0%B8%D0%BA%D0%B5_(%D0%91%D0%B5%D0%BE%D0%B3%D1%80%D0%B0%D0%B4)",gq:"Trg republike, Beograd"},
+  story:"Сердце пешеходного центра с конным памятником князю Михаилу, Народным театром и Народным музеем Сербии. Классическое место встреч: «код коња» — «у коня».",img:"img/trg.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%A2%D1%80%D0%B3_%D1%80%D0%B5%D0%BF%D1%83%D0%B1%D0%BB%D0%B8%D0%BA%D0%B5_(%D0%91%D0%B5%D0%BE%D0%B3%D1%80%D0%B0%D0%B4)",gq:"Trg republike, Beograd"},
  {id:"skadarlija",op:"stari-grad",ll:[44.8188,20.4629],emoji:"🎻",
   name:{ru:"Скадарлия",en:"Skadarlija",sr:"Скадарлија"},
   nl:"Skadarlija",
-  story:"Мощёная богемная улочка — «белградский Монмартр». С конца XIX века здесь собирались поэты и художники; и сегодня в старых кафанах под липами играют оркестры.",img:"img/skadarlija.png",wiki:"https://sr.wikipedia.org/wiki/%D0%A1%D0%BA%D0%B0%D0%B4%D0%B0%D1%80%D0%BB%D0%B8%D1%98%D0%B0",gq:"Skadarlija, Beograd"},
+  story:"Мощёная богемная улочка — «белградский Монмартр». С конца XIX века здесь собирались поэты и художники; и сегодня в старых кафанах под липами играют оркестры.",img:"img/skadarlija.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%A1%D0%BA%D0%B0%D0%B4%D0%B0%D1%80%D0%BB%D0%B8%D1%98%D0%B0",gq:"Skadarlija, Beograd"},
  {id:"sava-temple",op:"vracar",ll:[44.7983,20.469],emoji:"⛪",
   name:{ru:"Храм Святого Саввы",en:"Church of Saint Sava",sr:"Храм Светог Саве"},
   nl:"Hram Svetog Save",
@@ -550,7 +550,7 @@ const POIS = [
  {id:"zemunski-kej",op:"zemun",ll:[44.8455,20.41544],emoji:"⚓",
   name:{ru:"Земунская набережная",en:"Zemun Quay",sr:"Земунски кеј"},
   nl:"Zemunski kej",
-  story:"Дунайская набережная старого Земуна — длинная зелёная променада вдоль реки с видом на воду, лодки и традиционные рыбные рестораны. Любимое место прогулок горожан.",img:"img/zemunski-kej.png",wiki:"https://sr.wikipedia.org/wiki/%D0%97%D0%B5%D0%BC%D1%83%D0%BD%D1%81%D0%BA%D0%B8_%D0%BA%D0%B5%D1%98",gq:"Zemunski kej, Zemun"},
+  story:"Дунайская набережная старого Земуна — длинная зелёная променада вдоль реки с видом на воду, лодки и традиционные рыбные рестораны. Любимое место прогулок горожан.",img:"img/zemunski-kej.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%97%D0%B5%D0%BC%D1%83%D0%BD%D1%81%D0%BA%D0%B8_%D0%BA%D0%B5%D1%98",gq:"Zemunski kej, Zemun"},
  {id:"most-na-adi",op:"novi-beograd",ll:[44.797,20.42589],emoji:"🌉",
   name:{ru:"Мост на Аде",en:"Ada Bridge",sr:"Мост на Ади"},
   nl:"Most na Adi",
@@ -586,7 +586,7 @@ const POIS = [
  {id:"slavija",op:"vracar",ll:[44.8025,20.4667],emoji:"🔄",
   name:{ru:"Площадь Славия",en:"Slavija Square",sr:"Трг Славија"},
   nl:"Trg Slavija",
-  story:"Крупнейший круговой перекрёсток города и главный транспортный узел. Название — от стоявшего здесь отеля «Славия». Отдельный персонаж городского фольклора.",img:"img/slavija.png",wiki:"https://sr.wikipedia.org/wiki/%D0%A1%D0%BB%D0%B0%D0%B2%D0%B8%D1%98%D0%B0",gq:"Trg Slavija, Beograd"},
+  story:"Крупнейший круговой перекрёсток города и главный транспортный узел. Название — от стоявшего здесь отеля «Славия». Отдельный персонаж городского фольклора.",wiki:"https://sr.wikipedia.org/wiki/%D0%A1%D0%BB%D0%B0%D0%B2%D0%B8%D1%98%D0%B0",gq:"Trg Slavija, Beograd"},
  {id:"beli-dvor",op:"savski-venac",ll:[44.7657,20.45334],emoji:"🏛️",
   name:{ru:"Белый дворец",en:"White Palace",sr:"Бели двор"},
   nl:"Beli dvor",
@@ -626,7 +626,7 @@ const POIS = [
  {id:"djeram",op:"zvezdara",ll:[44.80036,20.48743],emoji:"🍏",
   name:{ru:"Рынок Джерам",en:"Đeram Market",sr:"Пијаца Ђерам"},
   nl:"Pijaca Đeram",
-  story:"Один из старых районных рынков. Название «ђерам» — колодезный журавль, водоподъёмное устройство, некогда стоявшее здесь. Топоним от давно исчезнувшего объекта.",img:"img/djeram.png",wiki:"https://sr.wikipedia.org/wiki/%D0%82%D0%B5%D1%80%D0%B0%D0%BC_(%D0%97%D0%B2%D0%B5%D0%B7%D0%B4%D0%B0%D1%80%D0%B0)",gq:"Đeram pijaca, Beograd"},
+  story:"Один из старых районных рынков. Название «ђерам» — колодезный журавль, водоподъёмное устройство, некогда стоявшее здесь. Топоним от давно исчезнувшего объекта.",img:"img/djeram.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%82%D0%B5%D1%80%D0%B0%D0%BC_(%D0%97%D0%B2%D0%B5%D0%B7%D0%B4%D0%B0%D1%80%D0%B0)",gq:"Đeram pijaca, Beograd"},
  {id:"cvetkova",op:"zvezdara",ll:[44.79333,20.50353],emoji:"🥬",
   name:{ru:"Цветкова пияца",en:"Cvetkova Market",sr:"Цветкова пијаца"},
   nl:"Cvetkova pijaca",
@@ -686,7 +686,7 @@ const POIS = [
  {id:"sava-centar",op:"novi-beograd",ll:[44.80935,20.43213],emoji:"🏢",
   name:{ru:"Сава центар",en:"Sava Centar",sr:"Сава центар"},
   nl:"Sava centar",
-  story:"Крупнейший конгресс-центр страны (1976–1979) по проекту Стояна Максимовича, возведённый к конференции ОБСЕ. Материальный след дипломатической роли Югославии; реставрирован в 2020-е.",img:"img/sava-centar.png",wiki:"https://sr.wikipedia.org/wiki/%D0%A1%D0%B0%D0%B2%D0%B0_%D1%86%D0%B5%D0%BD%D1%82%D0%B0%D1%80",gq:"Sava Centar, Beograd"},
+  story:"Крупнейший конгресс-центр страны (1976–1979) по проекту Стояна Максимовича, возведённый к конференции ОБСЕ. Материальный след дипломатической роли Югославии; реставрирован в 2020-е.",img:"img/sava-centar.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%A1%D0%B0%D0%B2%D0%B0_%D1%86%D0%B5%D0%BD%D1%82%D0%B0%D1%80",gq:"Sava Centar, Beograd"},
  {id:"studentski-grad",op:"novi-beograd",ll:[44.82397,20.39922],emoji:"🎓",
   name:{ru:"Студенческий город",en:"Students’ City",sr:"Студентски град"},
   nl:"Studentski grad",
@@ -698,7 +698,7 @@ const POIS = [
  {id:"magistratski-trg",op:"zemun",ll:[44.84477,20.41325],emoji:"🏛️",
   name:{ru:"Магистратская площадь",en:"Magistrate’s Square",sr:"Магистратски трг"},
   nl:"Magistratski trg",
-  story:"Центральная площадь старого Земуна, названная по зданию Магистрата — органа самоуправления свободной военной общины. Свидетельство того, что Земун имел собственное самоуправление.",img:"img/magistratski-trg.png",wiki:"https://sr.wikipedia.org/wiki/%D0%9C%D0%B0%D0%B3%D0%B8%D1%81%D1%82%D1%80%D0%B0%D1%82%D1%81%D0%BA%D0%B8_%D1%82%D1%80%D0%B3",gq:"Magistratski trg, Zemun"},
+  story:"Центральная площадь старого Земуна, названная по зданию Магистрата — органа самоуправления свободной военной общины. Свидетельство того, что Земун имел собственное самоуправление.",img:"img/magistratski-trg.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%9C%D0%B0%D0%B3%D0%B8%D1%81%D1%82%D1%80%D0%B0%D1%82%D1%81%D0%BA%D0%B8_%D1%82%D1%80%D0%B3",gq:"Magistratski trg, Zemun"},
  {id:"beogradanka",op:"savski-venac",ll:[44.8056,20.4612],emoji:"🏢",
   name:{ru:"Београджанка",en:"Beograđanka",sr:"Београђанка"},
   nl:"Beograđanka",
@@ -737,7 +737,7 @@ const POIS = [
   story:"Озеро и заболоченный заказник на севере Палилулы, у Ковилова. Место гнездования водоплавающих птиц и тихих прогулок вдали от города — часть дунавских влажных угодий.",img:"img/veliko-blato.jpg",gq:"Veliko blato, Beograd"},
 ];
 const poiById = Object.fromEntries(POIS.map(p=>[p.id,p]));
-function poiName(p){ return p.nl||p.name[lang]||p.name.ru; }
+function poiName(p){ return (p.name&&p.name[lang])||p.nl||(p.name&&p.name.ru)||''; }
 
 // Готовые маршруты
 const PRESETS = [

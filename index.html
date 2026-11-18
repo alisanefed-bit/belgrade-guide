@@ -16,8 +16,10 @@
 <style>
   @font-face{
     font-family:'Pro SRB';
-    src:url('fonts/ProSRB.woff2') format('woff2'), url('fonts/ProSRB.otf') format('opentype');
+    src:url('fonts/SRBPRO-v2300.woff2') format('woff2'), url('fonts/SRBPRO-v2300.otf') format('opentype');
     font-weight:normal;font-style:normal;font-display:swap;
+    /* заглавные (высота 702) ровно по центру строки — иконки рядом встают на один уровень */
+    ascent-override:85.1%;descent-override:14.9%;line-gap-override:0%;
   }
   :root{
     --font-title:'Pro SRB', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
@@ -29,49 +31,52 @@
     --dock:calc(var(--tabbar-h) + env(safe-area-inset-bottom,0px));
     --nav-ink:#14512b;                     /* тёмно-зелёный для иконок/подписей */
     --nav-ink-dim:rgba(20,81,43,.5);
-    --glass:rgba(255,255,255,.62);          /* матовое стекло */
-    --glass-brd:rgba(255,255,255,.75);
-    --glass-blur:blur(18px) saturate(1.25);
-    --rlg:22px;                             /* крупное скругление (по макету) */
+    --glass:linear-gradient(145deg,rgba(255,255,255,.20) 0%,rgba(255,255,255,.06) 45%,rgba(255,255,255,.02) 55%,rgba(255,255,255,.10) 100%); /* прозрачное стекло */
+    --glass-brd:rgba(255,255,255,.30);
+    --glass-blur:blur(4px) saturate(1.3);
+    --glass-sh:inset 0 1px 0 rgba(255,255,255,.55),inset 1px 0 0 rgba(255,255,255,.18),inset 0 -1px 0 rgba(255,255,255,.08),0 10px 28px rgba(0,0,0,.38);
+    --glass-ink:#f5f5f2; --glass-ink-dim:rgba(245,245,242,.5);
+    --rg:12px;                              /* скругление кнопок */
+    --rlg:22px;
   }
   *{box-sizing:border-box}
   html,body{margin:0;height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink)}
   body{overflow:hidden;overscroll-behavior:none;-webkit-text-size-adjust:100%}
-  #map{position:fixed;inset:0;z-index:0;background:#fff}
+  #map{position:fixed;inset:0;z-index:0;background:#1B1B1B}
 
   /* Заголовок (матовая пилюля) */
   .topbar{
     position:fixed;top:calc(14px + env(safe-area-inset-top,0px));left:14px;z-index:600;
     background:var(--glass);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
-    border:1px solid var(--glass-brd);border-radius:var(--rlg);padding:8px 16px;
-    box-shadow:0 6px 20px rgba(20,60,35,.14);
+    border:1px solid var(--glass-brd);border-radius:var(--rg);padding:9px 16px;
+    box-shadow:var(--glass-sh);
   }
-  .topbar h1{margin:0;font-size:22px;line-height:1;letter-spacing:.03em;color:var(--nav-ink);font-family:var(--font-title);text-transform:uppercase}
+  .topbar h1{margin:0;font-size:22px;line-height:1;letter-spacing:.03em;color:var(--glass-ink);font-family:var(--font-title);text-transform:uppercase}
   .topbar p{display:none}
 
   /* Переключатель языка — круглая иконка-глобус + выпадающее меню */
   .langwrap{position:fixed;top:calc(14px + env(safe-area-inset-top,0px));right:14px;z-index:601;
     display:flex;flex-direction:column;align-items:flex-end;gap:8px}
-  .langbtn{position:relative;width:52px;height:52px;border-radius:50%;border:1px solid var(--glass-brd);cursor:pointer;
+  .langbtn{position:relative;width:50px;height:50px;border-radius:var(--rg);border:1px solid var(--glass-brd);cursor:pointer;
     background:var(--glass);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
-    color:var(--nav-ink);box-shadow:0 6px 18px rgba(20,60,35,.18);
+    color:var(--glass-ink);box-shadow:var(--glass-sh);
     display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;transition:transform .12s}
   .langbtn:active{transform:scale(.93)}
   .langbtn svg{width:26px;height:26px;display:block}
-  .langcur{position:absolute;right:-3px;bottom:-3px;background:var(--nav-ink);color:#fff;
-    font-size:9.5px;font-weight:800;line-height:1;padding:3px 4px;border-radius:7px;border:1.5px solid #fff;letter-spacing:.02em}
+  .langcur{position:absolute;right:-5px;bottom:-5px;background:#f5f5f2;color:#1B1B1B;
+    font-size:9.5px;font-weight:800;line-height:1;padding:3px 4px;border-radius:4px;border:none;letter-spacing:.02em}
   .langsw{
     display:none;flex-direction:column;gap:2px;padding:5px;
     background:var(--glass);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
-    border:1px solid var(--glass-brd);border-radius:16px;box-shadow:0 10px 24px rgba(20,60,35,.2);
+    border:1px solid var(--glass-brd);border-radius:var(--rg);box-shadow:var(--glass-sh);
   }
   .langsw.show{display:flex}
   .langsw button{
     border:none;background:none;cursor:pointer;font-size:13px;font-weight:700;min-width:46px;
-    color:var(--nav-ink-dim);padding:9px 12px;border-radius:11px;transition:.15s;
+    color:var(--glass-ink-dim);padding:9px 12px;border-radius:7px;transition:.15s;
     -webkit-tap-highlight-color:transparent;
   }
-  .langsw button.on{background:var(--nav-ink);color:#fff}
+  .langsw button.on{background:rgba(255,255,255,.88);color:#1B1B1B}
 
   /* Плавающие контролы карты (геолокация + метки) — матовые круги */
   .mapctl{
@@ -82,16 +87,16 @@
   }
   .mapctl.faded{opacity:0;pointer-events:none;transform:translateY(10px)}
   .mapbtn{
-    width:52px;height:52px;border-radius:50%;border:1px solid var(--glass-brd);cursor:pointer;
+    width:50px;height:50px;border-radius:var(--rg);border:1px solid var(--glass-brd);cursor:pointer;
     background:var(--glass);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
-    color:var(--nav-ink);box-shadow:0 6px 18px rgba(20,60,35,.18);
+    color:var(--glass-ink);box-shadow:var(--glass-sh);
     display:flex;align-items:center;justify-content:center;line-height:1;
     -webkit-tap-highlight-color:transparent;transition:transform .12s, background .15s;
   }
   .mapbtn svg{width:24px;height:24px;display:block}
   .mapbtn:active{transform:scale(.93)}
-  #locBtn.active{background:var(--nav-ink);border-color:var(--nav-ink);color:#fff}
-  #pinsBtn.off{color:var(--nav-ink-dim)}
+  #locBtn.active{background:var(--nav-ink);border-color:var(--glass-ink);color:#fff}
+  #pinsBtn.off{color:var(--glass-ink-dim)}
   #pinsBtn .slash{display:none}
   #pinsBtn.off .slash{display:block}
 
@@ -99,35 +104,39 @@
   .tabbar{
     position:fixed;left:0;right:0;bottom:0;z-index:640;
     display:flex;background:var(--glass);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
-    border-top:1px solid var(--glass-brd);border-radius:22px 22px 0 0;
-    box-shadow:0 -6px 24px rgba(20,60,35,.14);overflow:hidden;
+    border-top:1px solid var(--glass-brd);border-radius:14px 14px 0 0;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 -10px 28px rgba(0,0,0,.35);overflow:hidden;
     padding-bottom:env(safe-area-inset-bottom,0px);
   }
   .tab{
     flex:1;border:none;background:none;cursor:pointer;
     display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
-    height:var(--tabbar-h);padding:8px 2px;color:var(--nav-ink-dim);
+    height:var(--tabbar-h);padding:8px 2px;color:var(--glass-ink-dim);
     -webkit-tap-highlight-color:transparent;transition:color .15s;
   }
   .tab svg{width:23px;height:23px;display:block}
   .tab .lbl{font-size:10px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;font-family:var(--font-title)}
   .tab:active{opacity:.7}
-  .tab.active{color:var(--nav-ink)}
+  .tab.active{color:var(--glass-ink)}
   .gone{display:none!important}
   /* контролы зума Leaflet — круглые матовые, над доком */
   .leaflet-bottom.leaflet-left{bottom:calc(var(--dock) + 14px);left:14px}
   .leaflet-bottom{bottom:calc(var(--dock) + 14px)}
   .leaflet-touch .leaflet-bar,.leaflet-bar{border:none;box-shadow:none;background:none}
   .leaflet-bar a,.leaflet-touch .leaflet-bar a{
-    width:46px;height:46px;line-height:46px;border:1px solid var(--glass-brd);border-radius:50%!important;
+    width:46px;height:46px;line-height:46px;border:1px solid var(--glass-brd);border-radius:var(--rg)!important;
     background:var(--glass);-webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
-    color:var(--nav-ink);font-size:22px;font-weight:400;box-shadow:0 6px 18px rgba(20,60,35,.18);
+    color:var(--glass-ink);font-size:22px;font-weight:400;box-shadow:var(--glass-sh);
   }
   .leaflet-touch .leaflet-bar a:first-child,.leaflet-touch .leaflet-bar a:last-child,
-  .leaflet-bar a:first-child,.leaflet-bar a:last-child{border-radius:50%!important}
+  .leaflet-bar a:first-child,.leaflet-bar a:last-child{border-radius:var(--rg)!important}
   .leaflet-bar a:first-child{margin-bottom:10px}
-  .leaflet-bar a:hover{background:rgba(255,255,255,.8);color:var(--nav-ink)}
+  .leaflet-bar a:hover{background:rgba(255,255,255,.16);color:var(--glass-ink)}
   .leaflet-bar a.leaflet-disabled{opacity:.5}
+
+  /* читаемость белых иконок на ярких районах */
+  .topbar h1,.langbtn svg,.mapbtn svg,.tab svg,.tab .lbl,.leaflet-bar a{text-shadow:0 1px 3px rgba(0,0,0,.45)}
+  .langbtn svg,.mapbtn svg,.tab svg{filter:drop-shadow(0 1px 2px rgba(0,0,0,.45))}
 
   /* Трей выбора мест для маршрута */
   .tray{
@@ -192,13 +201,14 @@
 
   /* Метки POI */
   .poi-pin{
-    width:26px;height:26px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);
+    position:relative;box-sizing:border-box;width:36px;height:36px;border-radius:3px;
     border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.35);
-    display:flex;align-items:center;justify-content:center;transition:box-shadow .15s;
+    background:#ccc center/cover no-repeat;transition:box-shadow .15s,transform .15s;
   }
-  .poi-pin span{transform:rotate(45deg);font-size:13px;line-height:1}
+  .poi-pin::after{content:"";position:absolute;left:50%;bottom:-8px;transform:translateX(-50%);
+    border:6px solid transparent;border-top-color:#fff;border-bottom:0}
   .poi-pin.sel{box-shadow:0 0 0 3px var(--accent),0 2px 8px rgba(0,0,0,.4)}
-  .poi-pin .fav-badge{position:absolute;right:-6px;top:-6px;width:15px;height:15px;border-radius:50%;border:1.5px solid #fff;display:none;align-items:center;justify-content:center;font-size:9px;line-height:1;color:#fff;transform:rotate(45deg)}
+  .poi-pin .fav-badge{position:absolute;right:-7px;top:-7px;width:15px;height:15px;border-radius:50%;border:1.5px solid #fff;display:none;align-items:center;justify-content:center;font-size:9px;line-height:1;color:#fff}
   .poi-pin.fav-want .fav-badge{display:flex;background:#e8a13a}
   .poi-pin.fav-want .fav-badge::before{content:"★"}
   .poi-pin.fav-visited .fav-badge{display:flex;background:#2e9e5b}
@@ -216,10 +226,10 @@
   .user-dot::after{content:"";position:absolute;left:50%;top:50%;width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;background:rgba(26,115,232,.45);animation:userpulse 2s ease-out infinite}
   @keyframes userpulse{0%{transform:scale(1);opacity:.6}100%{transform:scale(3);opacity:0}}
   .toast-ic{width:26px;height:26px;border-radius:50%;object-fit:cover;flex:none}
-  .op-badge{width:46px;height:46px;border-radius:50%;overflow:hidden;background:#fff;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.28)}
-  .op-badge img{width:100%;height:100%;object-fit:cover;display:block}
+  .op-badge{width:32px;height:32px;border-radius:50%;overflow:hidden;background:#fff;border:2px solid #fff;box-shadow:0 3px 10px rgba(0,0,0,.4);cursor:pointer}
+  .op-badge img{width:100% !important;height:100% !important;max-width:none;object-fit:cover;display:block}
   .op-logo{width:82px;height:82px;border-radius:50%;object-fit:cover;background:#fff;border:2px solid #eee;display:block;margin:0 auto 12px;box-shadow:0 2px 8px rgba(0,0,0,.1)}
-  .leaflet-container{background:#ffffff}
+  .leaflet-container{background:#1B1B1B}
   #loader{position:fixed;inset:0;z-index:2000;background:var(--paper);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;transition:opacity .45s ease}
   #loader.hidden{opacity:0;pointer-events:none}
   #loader img{width:min(40vw,150px);height:auto;display:block}
@@ -251,6 +261,136 @@
   /* высокие DPI / чтобы иконки и текст были чёткие */
   .tab .lbl{white-space:nowrap}
   .mapbtn svg,.tab svg{shape-rendering:geometricPrecision}
+  /* ═══════════ СТИЛЬ ПО РЕФЕРЕНСУ: тёмные пилюли + лайм ═══════════ */
+  :root{
+    --accent:#C6F432; --on-accent:#141414;
+    --dk:#1B1B1B; --dk2:#262626; --dk3:#303030; --line:rgba(255,255,255,.08);
+    --txt:#F3F3F1; --txt2:#BDBDBA; --txt3:#8A8A87;
+    --tabbar-h:62px; --tabbar-gap:14px;
+    --dock:calc(var(--tabbar-h) + var(--tabbar-gap) + env(safe-area-inset-bottom,0px));
+  }
+  .ic{width:18px;height:18px;flex:none;display:inline-block;vertical-align:-3px}
+
+  /* заголовок */
+  .topbar{background:var(--dk);border:1px solid var(--line);border-radius:999px;padding:10px 18px;
+    backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+  .topbar h1{color:var(--txt);text-shadow:none;font-size:21px}
+
+  /* белые круглые кнопки на карте */
+  .langbtn,.mapbtn,.leaflet-bar a,.leaflet-touch .leaflet-bar a{
+    width:48px;height:48px;border-radius:50%!important;background:#fff!important;border:none!important;
+    color:var(--dk)!important;box-shadow:0 6px 18px rgba(0,0,0,.35)!important;
+    backdrop-filter:none!important;-webkit-backdrop-filter:none!important;text-shadow:none!important}
+  .leaflet-bar a,.leaflet-touch .leaflet-bar a{line-height:48px!important;font-size:24px!important}
+  .leaflet-touch .leaflet-bar a:first-child,.leaflet-touch .leaflet-bar a:last-child,.leaflet-bar a:first-child,.leaflet-bar a:last-child{border-radius:50%!important}
+  .leaflet-bar a:hover{background:#f0f0ee!important}
+  .langbtn svg,.mapbtn svg{filter:none;width:22px;height:22px}
+  .langcur{background:var(--accent);color:var(--on-accent);border:2px solid var(--dk);border-radius:999px;
+    right:-6px;bottom:-6px;padding:3px 6px;font-family:var(--font-title);font-size:10px;font-weight:400}
+  .langsw{background:var(--dk);border:1px solid var(--line);border-radius:24px;padding:5px;
+    backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:0 10px 26px rgba(0,0,0,.4)}
+  .langsw button{color:var(--txt3);border-radius:999px;font-family:var(--font-title);font-weight:400;font-size:14px}
+  .langsw button.on{background:var(--accent);color:var(--on-accent)}
+  #locBtn.active{background:var(--accent)!important;color:var(--on-accent)!important}
+  #pinsBtn.off{color:#a3a3a0!important}
+
+  /* нижняя панель — плавающая тёмная пилюля, активная вкладка: лаймовый круг + подпись */
+  .tabbar{left:14px;right:14px;bottom:calc(var(--tabbar-gap) + env(safe-area-inset-bottom,0px));
+    height:var(--tabbar-h);padding:7px;gap:4px;align-items:center;
+    background:var(--dk);border:1px solid var(--line);border-radius:999px;
+    backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:0 12px 30px rgba(0,0,0,.45);overflow:visible}
+  .tab{flex:1 1 0;min-width:0;flex-direction:row;gap:9px;height:48px;padding:0;border-radius:999px;color:#9b9b98;
+    transition:flex-grow .25s ease,background .2s,color .2s}
+  .tab svg{width:48px;height:48px;padding:13px;border-radius:50%;box-sizing:border-box;filter:none;flex:none;transition:background .2s,color .2s}
+  .tab .lbl{display:none;text-shadow:none;font-size:13px;font-weight:400;letter-spacing:.03em;color:var(--txt);padding-right:14px}
+  .tab.active{flex-grow:2.1;background:var(--dk3);justify-content:flex-start;color:var(--on-accent)}
+  .tab.active svg{background:var(--accent);color:var(--on-accent)}
+  .tab.active .lbl{display:block;overflow:hidden;text-overflow:ellipsis}
+
+  /* нижняя карточка — тёмная */
+  .sheet{left:8px;right:8px;background:linear-gradient(180deg,#2A2A2A 0,var(--dk) 160px);
+    border:1px solid var(--line);border-radius:28px;color:var(--txt);box-shadow:0 -14px 44px rgba(0,0,0,.45)}
+  .sheet-grab{background:#4a4a48}
+  .sheet-head h2{color:var(--txt)}
+  .sheet-head .sub{color:var(--txt3)}
+  .sheet-close{background:var(--dk3);color:var(--txt);width:38px;height:38px;font-size:20px}
+  .sheet-close:active{background:#3a3a3a}
+  .sheet-body p{color:var(--txt2)}
+  .head{color:var(--txt3)}
+  .note,.tag,.ru-note,.photo-credit{color:var(--txt3)}
+  .photo-credit:hover{color:var(--txt)}
+  .poi-photo{border-radius:20px;background:var(--dk3);filter:grayscale(1) contrast(1.05)}
+  .op-logo{width:110px;height:110px;border-radius:0;background:none;border:none;box-shadow:none;object-fit:contain;
+    filter:drop-shadow(0 8px 16px rgba(0,0,0,.5))}
+
+  .list li{border-bottom:none;background:var(--dk2);border-radius:18px;margin-bottom:8px;padding:8px 14px 8px 8px;gap:12px}
+  .list li:active{background:var(--dk3)}
+  .list .nm{color:var(--txt)}
+  .list .nm small{color:var(--txt3);display:flex;align-items:center;gap:6px}
+  .list .nm small .swatch{width:8px;height:8px;border-radius:50%}
+  .list .cnt{color:var(--txt2);background:var(--dk3);border-radius:999px;padding:4px 10px;font-size:12px}
+  .list .dist{color:var(--accent)}
+  .list .num{background:var(--accent);color:var(--on-accent)}
+  .thumb{width:46px;height:46px;border-radius:13px;object-fit:cover;flex:none;background:var(--dk3);display:block}
+  .thumb-empty{background:var(--dk3) radial-gradient(circle,var(--accent) 0 3px,transparent 4px)}
+  .list li[data-op]{padding:14px}
+  .swatch{border-radius:50%}
+
+  /* кнопки */
+  .btn{background:var(--accent);color:var(--on-accent);border-radius:999px;padding:15px 22px;justify-content:center;
+    font-family:var(--font-title);font-weight:400;font-size:15px;letter-spacing:.03em}
+  .btn.ghost{background:var(--dk3);color:var(--txt)}
+  .row .btn{flex:1}
+  .favbtn{background:var(--dk2)!important;border:1px solid var(--line)!important;color:var(--txt2)!important;
+    border-radius:999px!important;font-family:var(--font-title);font-weight:400;letter-spacing:.03em}
+  .favbtn.on{background:var(--accent)!important;border-color:var(--accent)!important;color:var(--on-accent)!important}
+
+  /* трей выбора мест */
+  .tray{background:var(--dk);color:var(--txt);border:1px solid var(--line);border-radius:999px;
+    box-shadow:0 14px 34px rgba(0,0,0,.45);padding:8px 8px 8px 20px}
+  .tray-info{color:var(--txt)}
+  .tray-btn{border-radius:999px;background:var(--accent);color:var(--on-accent);font-family:var(--font-title);font-weight:400;letter-spacing:.03em;padding:12px 18px}
+  .tray-btn.ghost{background:var(--dk3);color:var(--txt)}
+
+  /* метки */
+  .poi-pin.sel{box-shadow:0 0 0 3px var(--accent),0 2px 8px rgba(0,0,0,.4)}
+  .poi-pin.noimg{background:var(--dk3) radial-gradient(circle,var(--accent) 0 4px,transparent 5px)}
+  .poi-pin .fav-badge{border:2px solid var(--dk)}
+  .poi-pin.fav-want .fav-badge{background:var(--accent)}
+  .poi-pin.fav-want .fav-badge::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--on-accent)}
+  .poi-pin.fav-visited .fav-badge{background:#fff}
+  .poi-pin.fav-visited .fav-badge::before{content:"";width:3px;height:6px;margin-top:-2px;border:solid var(--on-accent);border-width:0 1.8px 1.8px 0;transform:rotate(45deg)}
+  .stopnum{background:var(--accent);color:var(--on-accent);border:2px solid var(--dk)}
+
+  .toast{background:var(--dk);color:var(--txt);border:1px solid var(--line);border-radius:999px;padding:10px 18px}
+
+  /* правки: без логотипа сверху, кнопки по центру */
+  .topbar{display:none!important}
+  .btn,.favbtn,.tray-btn{align-items:center;justify-content:center;text-align:center;line-height:1}
+  .favbtn{white-space:nowrap;font-size:14px;padding:14px 12px}
+  .ic{vertical-align:middle;width:19px;height:19px}
+
+  /* ── сетка отступов: 10 — между кнопками/карточками одной группы, 16 — между блоками ── */
+  :root{--gap:10px;--block:16px}
+  .sheet-body p{margin:0 0 var(--block)}
+  .actions{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);margin:0 0 var(--block)}
+  .actions .favbtn,.actions .btn{margin:0;width:100%;min-width:0}
+  .actions .wide{grid-column:1 / -1}
+  .tag{margin:0 0 var(--block)}
+  .photo-credit{margin-top:0;display:flex;align-items:center;gap:4px;line-height:1;width:max-content}
+  .poi-photo{margin:0 0 var(--block);filter:none}
+  .op-logo{margin:4px auto var(--block)}
+  .list li{margin-bottom:var(--gap)}
+  .list li:last-child{margin-bottom:0}
+  .list{margin-bottom:var(--block)}
+  .btn.block{margin-top:0}
+  .head{margin:var(--block) 0 var(--gap)}
+  .head:first-child{margin-top:0}
+  .row{gap:var(--gap);margin:0 0 var(--block)}
+  .tray{gap:var(--gap)}
+  .mapctl{gap:12px}
+  .leaflet-bar a:first-child{margin-bottom:12px!important}
+
 </style>
 </head>
 <body>
@@ -270,10 +410,7 @@
 
   <div class="langwrap" id="langwrap">
     <button class="langbtn" id="langBtn" aria-label="язык / language">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="9"/><path d="M3 12h18"/>
-        <path d="M12 3c2.6 2.6 2.6 15.4 0 18M12 3c-2.6 2.6-2.6 15.4 0 18"/>
-      </svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><ellipse cx="12" cy="12" rx="3.6" ry="8.5"/></svg>
       <span class="langcur" id="langCur">RU</span>
     </button>
     <div class="langsw" id="langsw">
@@ -285,40 +422,22 @@
 
   <div class="mapctl" id="mapctl">
     <button class="mapbtn" id="pinsBtn" aria-label="">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 21s6-5.3 6-10a6 6 0 1 0-12 0c0 4.7 6 10 6 10z"/>
-        <circle cx="12" cy="11" r="2.2"/>
-        <line class="slash" x1="4" y1="4" x2="20" y2="20"/>
-      </svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c-4.2-4.6-6.3-7.9-6.3-10.7a6.3 6.3 0 0 1 12.6 0c0 2.8-2.1 6.1-6.3 10.7z"/><circle cx="12" cy="10.3" r="1.6" fill="currentColor" stroke="none"/><line class="slash" x1="4" y1="4" x2="20" y2="20"/></svg>
     </button>
     <button class="mapbtn" id="locBtn" aria-label="">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="6.5"/>
-        <circle cx="12" cy="12" r="2.3" fill="currentColor" stroke="none"/>
-        <line x1="12" y1="1.5" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22.5"/>
-        <line x1="1.5" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22.5" y2="12"/>
-      </svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 11.2 19.5 4.5l-6.7 15-1.8-6.5z"/></svg>
     </button>
   </div>
 
   <nav class="tabbar" id="tabbar">
     <button class="tab" id="districtsBtn">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M9 4 3 6.5v13L9 17l6 2.5 6-2.5v-13L15 6.5 9 4z"/><path d="M9 4v13M15 6.5v13"/>
-      </svg><span class="lbl"></span></button>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="6.5" height="6.5" rx="1.6"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.6"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.6"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.6"/></svg><span class="lbl"></span></button>
     <button class="tab" id="nearbyBtn">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 21s6-5.3 6-10a6 6 0 1 0-12 0c0 4.7 6 10 6 10z"/>
-        <path d="M12 13.4c-1.9-1.4-2.9-2.5-2.9-3.7 0-.9.7-1.5 1.5-1.5.6 0 1.1.3 1.4.8.3-.5.8-.8 1.4-.8.8 0 1.5.6 1.5 1.5 0 1.2-1 2.3-2.9 3.7z" fill="currentColor" stroke="none"/>
-      </svg><span class="lbl"></span></button>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c-4.2-4.6-6.3-7.9-6.3-10.7a6.3 6.3 0 0 1 12.6 0c0 2.8-2.1 6.1-6.3 10.7z"/><circle cx="12" cy="10.3" r="1.6" fill="currentColor" stroke="none"/></svg><span class="lbl"></span></button>
     <button class="tab" id="routesBtn">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M8.5 3 6.5 21"/><path d="M15.5 3l2 18"/><path d="M12 4.5v2.2M12 10.9v2.2M12 17.3v2.2"/>
-      </svg><span class="lbl"></span></button>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M8 18h7.5a3 3 0 0 0 0-6h-7a3 3 0 0 1 0-6H16"/></svg><span class="lbl"></span></button>
     <button class="tab" id="savedBtn">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 3.5l2.6 5.3 5.9.9-4.25 4.15 1 5.85L12 17.1 6.75 19.7l1-5.85L3.5 9.7l5.9-.9L12 3.5z"/>
-      </svg><span class="lbl"></span></button>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10v16l-5-3.8L7 20z"/></svg><span class="lbl"></span></button>
   </nav>
 
   <div class="tray" id="tray">
@@ -367,7 +486,7 @@ const STR = {
    needHttps:"Нужен https или localhost.",min:"мин",
    openMaps:"Открыть в Google Maps",photoSrc:"Фото: Википедия",
    favWant:"Хочу посетить",favVisited:"Посещено",saved:"Избранное",
-   savedWant:"Хочу посетить",savedVisited:"Уже посещено",savedEmpty:"Пока пусто. Открой место и отметь его кнопками «Хочу посетить» или «Посещено»."},
+   savedWant:"Хочу посетить",savedVisited:"Уже посещено",savedEmpty:"Пока пусто. Откройте место и отметьте его кнопками «Хочу посетить» или «Посещено»."},
  en:{appTitle:"Belgrade",appSub:"Districts, sights & walking routes",
    locate:"I'm here",nearby:"Nearby",routes:"Routes",districts:"Areas",tabNear:"Nearby",
    districtsTitle:"Belgrade districts",districtsSub:"city municipalities · tap any",
@@ -403,7 +522,7 @@ const STR = {
    needHttps:"Потребан је https или localhost.",min:"мин",
    openMaps:"Отвори у Google картама",photoSrc:"Фото: Википедија",
    favWant:"Желим да посетим",favVisited:"Посећено",saved:"Сачувано",
-   savedWant:"Желим да посетим",savedVisited:"Већ посећено",savedEmpty:"Још празно. Отвори место и означи га дугметом „Желим да посетим“ или „Посећено“."},
+   savedWant:"Желим да посетим",savedVisited:"Већ посећено",savedEmpty:"Још празно. Отворите место и означите га дугметом „Желим да посетим“ или „Посећено“."},
 };
 function t(key,...a){ let s=(STR[lang]&&STR[lang][key])||STR.ru[key]||key;
   a.forEach((v,i)=>s=s.replace('{'+i+'}',v)); return s; }
@@ -454,352 +573,356 @@ const ABOUT = {
 
 // Достопримечательности: имя на 3 языках, история пока русская
 const POIS = [
- {id:"kalemegdan",op:"stari-grad",ll:[44.8225,20.4505],emoji:"🏰",
+ {id:"kalemegdan",op:"stari-grad",ll:[44.8225,20.4505],
   name:{ru:"Калемегдан",en:"Kalemegdan",sr:"Калемегдан"},
   nl:"Kalemegdan",
   story:"Белградская крепость на стрелке Савы и Дуная. За две тысячи лет её брали кельты, римляне, византийцы, сербы, венгры, турки и австрийцы — оттого стены соединяют римскую кладку, средневековые ворота и османские башни. Сегодня это самый большой парк города с музеем и знаменитыми закатами над слиянием рек.",img:"img/kalemegdan.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%91%D0%B5%D0%BE%D0%B3%D1%80%D0%B0%D0%B4%D1%81%D0%BA%D0%B0_%D1%82%D0%B2%D1%80%D1%92%D0%B0%D0%B2%D0%B0",gq:"Beogradska tvrđava, Beograd"},
- {id:"knez",op:"stari-grad",ll:[44.8168,20.4573],emoji:"🚶",
+ {id:"knez",op:"stari-grad",ll:[44.8168,20.4573],
   name:{ru:"Кнез-Михайлова",en:"Knez Mihailova",sr:"Кнез Михаилова"},
   nl:"Knez Mihailova",
   story:"Главная пешеходная улица, проложенная по линии римского Белграда. Особняки эпохи модерна, книжные, кафе и уличные музыканты — от площади Республики к воротам Калемегдана.",img:"img/knez.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%A3%D0%BB%D0%B8%D1%86%D0%B0_%D0%BA%D0%BD%D0%B5%D0%B7%D0%B0_%D0%9C%D0%B8%D1%85%D0%B0%D0%B8%D0%BB%D0%B0_(%D0%91%D0%B5%D0%BE%D0%B3%D1%80%D0%B0%D0%B4)",gq:"Knez Mihailova, Beograd"},
- {id:"trg",op:"stari-grad",ll:[44.8165,20.4601],emoji:"🐎",
+ {id:"trg",op:"stari-grad",ll:[44.8165,20.4601],
   name:{ru:"Площадь Республики",en:"Republic Square",sr:"Трг републике"},
   nl:"Trg republike",
   story:"Сердце пешеходного центра с конным памятником князю Михаилу, Народным театром и Народным музеем Сербии. Классическое место встреч: «код коња» — «у коня».",img:"img/trg.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%A2%D1%80%D0%B3_%D1%80%D0%B5%D0%BF%D1%83%D0%B1%D0%BB%D0%B8%D0%BA%D0%B5_(%D0%91%D0%B5%D0%BE%D0%B3%D1%80%D0%B0%D0%B4)",gq:"Trg republike, Beograd"},
- {id:"skadarlija",op:"stari-grad",ll:[44.8188,20.4629],emoji:"🎻",
+ {id:"skadarlija",op:"stari-grad",ll:[44.8188,20.4629],
   name:{ru:"Скадарлия",en:"Skadarlija",sr:"Скадарлија"},
   nl:"Skadarlija",
   story:"Мощёная богемная улочка — «белградский Монмартр». С конца XIX века здесь собирались поэты и художники; и сегодня в старых кафанах под липами играют оркестры.",img:"img/skadarlija.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%A1%D0%BA%D0%B0%D0%B4%D0%B0%D1%80%D0%BB%D0%B8%D1%98%D0%B0",gq:"Skadarlija, Beograd"},
- {id:"sava-temple",op:"vracar",ll:[44.7983,20.469],emoji:"⛪",
+ {id:"sava-temple",op:"vracar",ll:[44.7983,20.469],
   name:{ru:"Храм Святого Саввы",en:"Church of Saint Sava",sr:"Храм Светог Саве"},
   nl:"Hram Svetog Save",
   story:"Один из крупнейших православных храмов мира — на месте, где османы в 1595 году сожгли мощи святого Саввы, основателя сербской церкви. Строился больше века; золотая мозаика купола видна почти отовсюду.",img:"img/sava-temple.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%A5%D1%80%D0%B0%D0%BC_%D0%A1%D0%B2%D0%B5%D1%82%D0%BE%D0%B3_%D0%A1%D0%B0%D0%B2%D0%B5_%D1%83_%D0%91%D0%B5%D0%BE%D0%B3%D1%80%D0%B0%D0%B4%D1%83",gq:"Hram Svetog Save, Beograd"},
- {id:"tesla",op:"vracar",ll:[44.8047,20.472],emoji:"⚡",
+ {id:"tesla",op:"vracar",ll:[44.8047,20.472],
   name:{ru:"Музей Николы Теслы",en:"Nikola Tesla Museum",sr:"Музеј Николе Тесле"},
   nl:"Muzej Nikole Tesle",
   story:"Личный архив изобретателя и урна с его прахом. В работающих моделях видно, как переменный ток и катушка Теслы превращают электричество в молнии.",img:"img/tesla.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%9C%D1%83%D0%B7%D0%B5%D1%98_%D0%9D%D0%B8%D0%BA%D0%BE%D0%BB%D0%B5_%D0%A2%D0%B5%D1%81%D0%BB%D0%B5",gq:"Muzej Nikole Tesle, Beograd"},
- {id:"botanika",op:"stari-grad",ll:[44.81588,20.47331],emoji:"🌿",
+ {id:"botanika",op:"stari-grad",ll:[44.81588,20.47331],
   name:{ru:"Ботанический сад «Евремовац»",en:"Jevremovac Botanical Garden",sr:"Ботаничка башта „Јевремовац“"},
   nl:"Botanička bašta Jevremovac",
   story:"Основан в 1874 году по инициативе ботаника Йосифа Панчича. В 1889-м король Милан Обренович подарил ему поместье и назвал «Евремовац» в честь деда — Еврема Обреновича. Тихий зелёный оазис в центре со старинной оранжереей и японским уголком.",img:"img/botanika.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%91%D0%BE%D1%82%D0%B0%D0%BD%D0%B8%D1%87%D0%BA%D0%B0_%D0%B1%D0%B0%D1%88%D1%82%D0%B0_%D0%88%D0%B5%D0%B2%D1%80%D0%B5%D0%BC%D0%BE%D0%B2%D0%B0%D1%86",gq:"Botanička bašta Jevremovac, Beograd"},
- {id:"flowers",op:"savski-venac",ll:[44.7876,20.4515],emoji:"🌺",
+ {id:"flowers",op:"savski-venac",ll:[44.7876,20.4515],
   name:{ru:"Дом цветов",en:"House of Flowers",sr:"Кућа цвећа"},
   nl:"Kuća cveća",
   story:"Мавзолей Иосипа Броза Тито в парке на Дедине. Скромное застеклённое здание среди зелени стало местом паломничества миллионов — памятник эпохе Югославии.",img:"img/flowers.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%9A%D1%83%D1%9B%D0%B0_%D1%86%D0%B2%D0%B5%D1%9B%D0%B0",gq:"Kuća cveća, Beograd"},
- {id:"usce",op:"novi-beograd",ll:[44.81959,20.4424],emoji:"🖼️",
-  name:{ru:"Ушће и MSU",en:"Ušće & Museum of Contemp. Art",sr:"Ушће и МСУ"},
+ {id:"usce",op:"novi-beograd",ll:[44.81959,20.4424],
+  name:{ru:"Ушће и МСУ",en:"Ušće & Museum of Contemp. Art",sr:"Ушће и МСУ"},
   nl:"Ušće i MSU",
   story:"Ушће — сам мыс слияния Савы и Дуная, зелёный парк с башней и фонтаном. Рядом — Музей современного искусства, стеклянное здание 1965 года с сильной коллекцией.",img:"img/usce.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%9C%D1%83%D0%B7%D0%B5%D1%98_%D1%81%D0%B0%D0%B2%D1%80%D0%B5%D0%BC%D0%B5%D0%BD%D0%B5_%D1%83%D0%BC%D0%B5%D1%82%D0%BD%D0%BE%D1%81%D1%82%D0%B8_%D1%83_%D0%91%D0%B5%D0%BE%D0%B3%D1%80%D0%B0%D0%B4%D1%83",gq:"Muzej savremene umetnosti, Beograd"},
- {id:"ada",op:"cukarica",ll:[44.78444,20.38104],emoji:"🏖️",
+ {id:"ada",op:"cukarica",ll:[44.78444,20.38104],
   name:{ru:"Ада-Циганлия",en:"Ada Ciganlija",sr:"Ада Циганлија"},
   nl:"Ada Ciganlija",
   story:"Речной остров, ставший полуостровом: Саву перегородили, и образовалось чистое озеро с пляжами. Летом «Белградское море» собирает тысячи горожан.",img:"img/ada.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%90%D0%B4%D0%B0_%D0%A6%D0%B8%D0%B3%D0%B0%D0%BD%D0%BB%D0%B8%D1%98%D0%B0",gq:"Ada Ciganlija, Beograd"},
- {id:"gardos",op:"zemun",ll:[44.84832,20.40973],emoji:"🗼",
+ {id:"gardos",op:"zemun",ll:[44.84832,20.40973],
   name:{ru:"Башня Гардош",en:"Gardoš Tower",sr:"Кула Гардош"},
   nl:"Kula Gardoš",
   story:"Башня Тысячелетия на холме Гардош (1896) — к тысячелетию прихода венгров. С вершины над черепичными крышами старого Земуна открывается вид на Дунай.",img:"img/gardos.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%9A%D1%83%D0%BB%D0%B0_%D0%93%D0%B0%D1%80%D0%B4%D0%BE%D1%88",gq:"Kula Gardoš, Zemun"},
- {id:"avala",op:"vozdovac",ll:[44.6899,20.5147],emoji:"📡",
+ {id:"avala",op:"vozdovac",ll:[44.6899,20.5147],
   name:{ru:"Авала",en:"Avala",sr:"Авала"},
   nl:"Avala",
   story:"Гора на юге с телебашней и Памятником Неизвестному герою работы Мештровича. Башню разрушили в 1999-м и заново отстроили в 2010-м на народные пожертвования.",img:"img/avala.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%90%D0%B2%D0%B0%D0%BB%D1%81%D0%BA%D0%B8_%D1%82%D0%BE%D1%80%D0%B0%D1%9A",gq:"Avalski toranj, Beograd"},
- {id:"saborna-crkva",op:"stari-grad",ll:[44.81808,20.4522],emoji:"⛪",
+ {id:"saborna-crkva",op:"stari-grad",ll:[44.81808,20.4522],
   name:{ru:"Соборная церковь",en:"Cathedral Church",sr:"Саборна црква"},
   nl:"Saborna crkva",
   story:"Кафедральный собор Святого Михаила Архангела (1840) в стиле классицизма. Здесь покоятся правители из династии Обреновичей и просветители Вук Караджич и Досифей Обрадович; напротив — старейшая кафана «Знак вопроса».",img:"img/saborna-crkva.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%A1%D0%B0%D0%B1%D0%BE%D1%80%D0%BD%D0%B0_%D1%86%D1%80%D0%BA%D0%B2%D0%B0_%D1%83_%D0%91%D0%B5%D0%BE%D0%B3%D1%80%D0%B0%D0%B4%D1%83",gq:"Saborna crkva, Beograd"},
- {id:"konak-ljubice",op:"stari-grad",ll:[44.8171,20.45224],emoji:"🏛️",
+ {id:"konak-ljubice",op:"stari-grad",ll:[44.8171,20.45224],
   name:{ru:"Конак княгини Любицы",en:"Residence of Princess Ljubica",sr:"Конак кнегиње Љубице"},
   nl:"Konak kneginje Ljubice",
   story:"Дворец в балканском стиле, построенный князем Милошем в 1830-х для жены Любицы. Один из немногих сохранившихся памятников сербско-османской архитектуры; сейчас — музей городского быта XIX века.",img:"img/konak-ljubice.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%9A%D0%BE%D0%BD%D0%B0%D0%BA_%D0%BA%D0%BD%D0%B5%D0%B3%D0%B8%D1%9A%D0%B5_%D0%89%D1%83%D0%B1%D0%B8%D1%86%D0%B5",gq:"Konak kneginje Ljubice, Beograd"},
- {id:"bajrakli",op:"stari-grad",ll:[44.82206,20.45735],emoji:"🕌",
+ {id:"bajrakli",op:"stari-grad",ll:[44.82206,20.45735],
   name:{ru:"Байракли-мечеть",en:"Bajrakli Mosque",sr:"Бајракли џамија"},
   nl:"Bajrakli džamija",
   story:"Единственная уцелевшая из почти 270 белградских мечетей османской эпохи (около 1575 года). Название — от флага (bajrak), по которому она подавала знак к молитве всем остальным.",img:"img/bajrakli.jpg",wiki:"https://en.wikipedia.org/wiki/Bajrakli_Mosque,_Belgrade",gq:"Bajrakli džamija, Beograd"},
- {id:"skupstina",op:"stari-grad",ll:[44.81173,20.46593],emoji:"🏛️",
+ {id:"skupstina",op:"stari-grad",ll:[44.81173,20.46593],
   name:{ru:"Дом Народной скупщины",en:"House of the National Assembly",sr:"Дом Народне скупштине"},
   nl:"Dom Narodne skupštine",
-  story:"Здание парламента, строившееся с 1907 по 1936 год, с знаменитой скульптурой «Играющиеся кони» у входа. Свидетель ключевых событий XX века, включая перелом 5 октября 2000 года.",img:"img/skupstina.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%94%D0%BE%D0%BC_%D0%9D%D0%B0%D1%80%D0%BE%D0%B4%D0%BD%D0%B5_%D1%81%D0%BA%D1%83%D0%BF%D1%88%D1%82%D0%B8%D0%BD%D0%B5_%D0%A0%D0%B5%D0%BF%D1%83%D0%B1%D0%BB%D0%B8%D0%BA%D0%B5_%D0%A1%D1%80%D0%B1%D0%B8%D1%98%D0%B5",gq:"Dom Narodne skupštine, Beograd"},
- {id:"hotel-moskva",op:"stari-grad",ll:[44.81288,20.46042],emoji:"🏨",
+  story:"Здание парламента, строившееся с 1907 по 1936 год, со знаменитой скульптурой «Играющие кони» у входа. Свидетель ключевых событий XX века, включая перелом 5 октября 2000 года.",img:"img/skupstina.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%94%D0%BE%D0%BC_%D0%9D%D0%B0%D1%80%D0%BE%D0%B4%D0%BD%D0%B5_%D1%81%D0%BA%D1%83%D0%BF%D1%88%D1%82%D0%B8%D0%BD%D0%B5_%D0%A0%D0%B5%D0%BF%D1%83%D0%B1%D0%BB%D0%B8%D0%BA%D0%B5_%D0%A1%D1%80%D0%B1%D0%B8%D1%98%D0%B5",gq:"Dom Narodne skupštine, Beograd"},
+ {id:"hotel-moskva",op:"stari-grad",ll:[44.81288,20.46042],
   name:{ru:"Отель «Москва»",en:"Hotel Moskva",sr:"Хотел Москва"},
   nl:"Hotel Moskva",
   story:"Открыт в 1908 году в стиле сербского модерна и облицован зелёной керамической плиткой. Легендарное место встреч писателей и артистов и один из символов Белграда.",img:"img/hotel-moskva.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%A5%D0%BE%D1%82%D0%B5%D0%BB_%D0%9C%D0%BE%D1%81%D0%BA%D0%B2%D0%B0",gq:"Hotel Moskva, Beograd"},
- {id:"sv-marko",op:"palilula",ll:[44.81045,20.46893],emoji:"⛪",
+ {id:"sv-marko",op:"palilula",ll:[44.81045,20.46893],
   name:{ru:"Церковь Святого Марка",en:"Church of St Mark",sr:"Црква Светог Марка"},
   nl:"Crkva Svetog Marka",
   story:"Величественный храм в сербско-византийском стиле (1940) на краю Ташмайдана, повторяющий очертания монастыря Грачаница. Здесь покоится сербский царь Стефан Душан; рядом — маленькая русская церковь.",img:"img/sv-marko.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%A6%D1%80%D0%BA%D0%B2%D0%B0_%D0%A1%D0%B2%D0%B5%D1%82%D0%BE%D0%B3_%D0%9C%D0%B0%D1%80%D0%BA%D0%B0_%D1%83_%D0%91%D0%B5%D0%BE%D0%B3%D1%80%D0%B0%D0%B4%D1%83",gq:"Crkva Svetog Marka, Beograd"},
- {id:"nikolajevska",op:"zemun",ll:[44.84775,20.41185],emoji:"⛪",
+ {id:"nikolajevska",op:"zemun",ll:[44.84775,20.41185],
   name:{ru:"Николаевская церковь",en:"St Nicholas Church (Zemun)",sr:"Николајевска црква"},
   nl:"Nikolajevska crkva",
   story:"Старейшая сохранившаяся церковь Белграда (около 1731 года) в барочном Земуне. Хранит богато украшенный резной иконостас XVIII века и помнит времена, когда Земун был пограничным городом Австрийской империи.",img:"img/nikolajevska.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%9D%D0%B8%D0%BA%D0%BE%D0%BB%D0%B0%D1%98%D0%B5%D0%B2%D1%81%D0%BA%D0%B0_%D1%86%D1%80%D0%BA%D0%B2%D0%B0_%D1%83_%D0%97%D0%B5%D0%BC%D1%83%D0%BD%D1%83",gq:"Nikolajevska crkva, Zemun"},
- {id:"genex",op:"novi-beograd",ll:[44.82031,20.40497],emoji:"🏢",
+ {id:"genex",op:"novi-beograd",ll:[44.82031,20.40497],
   name:{ru:"Генекс — Западные ворота",en:"Genex Tower",sr:"Генекс — Западна капија"},
   nl:"Zapadna kapija",
   story:"«Западные ворота Белграда» (конец 1970-х) — знаменитый образец брутализма: две башни, соединённые мостом и увенчанные некогда вращавшимся рестораном. Символ социалистического модернизма.",img:"img/genex.jpg",wiki:"https://en.wikipedia.org/wiki/Western_City_Gate",gq:"Genex kula, Beograd"},
- {id:"topcider",op:"savski-venac",ll:[44.78064,20.44212],emoji:"🌳",
+ {id:"topcider",op:"savski-venac",ll:[44.78064,20.44212],
   name:{ru:"Конак князя Милоша (Топчидер)",en:"Prince Miloš's Residence (Topčider)",sr:"Конак кнеза Милоша (Топчидер)"},
   nl:"Konak kneza Miloša",
   story:"Резиденция князя Милоша Обреновича (1831) в парке Топчидер, вокруг которого рос современный Белград. Рядом — вековые платаны и Музей Первого сербского восстания.",img:"img/topcider.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%A2%D0%BE%D0%BF%D1%87%D0%B8%D0%B4%D0%B5%D1%80",gq:"Konak kneza Miloša, Beograd"},
- {id:"opservatorija",op:"zvezdara",ll:[44.80288,20.51254],emoji:"🔭",
+ {id:"opservatorija",op:"zvezdara",ll:[44.80288,20.51254],
   name:{ru:"Астрономическая обсерватория",en:"Astronomical Observatory",sr:"Астрономска опсерваторија"},
   nl:"Astronomska opservatorija",
   story:"Обсерватория на холме Звездара (1932), давшая имя всему району (zvezda — «звезда»). Её купола и старинные телескопы среди леса до сих пор служат науке.",img:"img/opservatorija.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%90%D1%81%D1%82%D1%80%D0%BE%D0%BD%D0%BE%D0%BC%D1%81%D0%BA%D0%B0_%D0%BE%D0%BF%D1%81%D0%B5%D1%80%D0%B2%D0%B0%D1%82%D0%BE%D1%80%D0%B8%D1%98%D0%B0_%D1%83_%D0%91%D0%B5%D0%BE%D0%B3%D1%80%D0%B0%D0%B4%D1%83",gq:"Astronomska opservatorija, Beograd"},
- {id:"rakovica-manastir",op:"rakovica",ll:[44.73062,20.44711],emoji:"⛪",
+ {id:"rakovica-manastir",op:"rakovica",ll:[44.73062,20.44711],
   name:{ru:"Монастырь Раковица",en:"Rakovica Monastery",sr:"Манастир Раковица"},
   nl:"Manastir Rakovica",
   story:"Средневековый монастырь, по преданию связанный с деспотом Стефаном Лазаревичем. Место упокоения патриарха Павла — почитаемого предстоятеля Сербской церкви; тихий оазис на юге города.",img:"img/rakovica-manastir.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%9C%D0%B0%D0%BD%D0%B0%D1%81%D1%82%D0%B8%D1%80_%D0%A0%D0%B0%D0%BA%D0%BE%D0%B2%D0%B8%D1%86%D0%B0",gq:"Manastir Rakovica, Beograd"},
- {id:"waterfront",op:"savski-venac",ll:[44.80545,20.44671],emoji:"🌆",
+ {id:"waterfront",op:"savski-venac",ll:[44.80545,20.44671],
   name:{ru:"Белград на воде",en:"Belgrade Waterfront",sr:"Београд на води"},
   nl:"Beograd na vodi",
   story:"Современный жилой и деловой квартал на правом берегу Савы, построенный в 2010-х годах на месте бывшей грузовой станции. Его доминанта — башня «Кула Београд», самое высокое здание страны со смотровой площадкой; вдоль реки проложена новая набережная с кафе и парком.",img:"img/waterfront.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%9A%D1%83%D0%BB%D0%B0_%D0%91%D0%B5%D0%BE%D0%B3%D1%80%D0%B0%D0%B4",gq:"Kula Beograd, Beograd"},
- {id:"dorcol",op:"stari-grad",ll:[44.82263,20.46148],emoji:"🏘️",
+ {id:"dorcol",op:"stari-grad",ll:[44.82263,20.46148],
   name:{ru:"Дорчол",en:"Dorćol",sr:"Дорћол"},
   nl:"Dorćol",
   story:"Один из старейших кварталов города, спускающийся от Калемегдана к Дунаю. Название пришло из турецкого «dört yol» — «четыре дороги». Веками здесь соседствовали разные общины и ремёсла; сегодня Дорчол — уютный район с тихими улицами, кофейнями и мастерскими.",img:"img/dorcol.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%94%D0%BE%D1%80%D1%9B%D0%BE%D0%BB",gq:"Dorćol, Beograd"},
- {id:"kosancicev-venac",op:"stari-grad",ll:[44.81692,20.45293],emoji:"🌅",
+ {id:"kosancicev-venac",op:"stari-grad",ll:[44.81692,20.45293],
   name:{ru:"Косанчичев венац",en:"Kosančićev Venac",sr:"Косанчићев венац"},
   nl:"Kosančićev venac",
   story:"Живописный старый квартал на откосе над Савой, с брусчаткой и домами XIX века. Здесь стояло здание Народной библиотеки, утраченное в 1941 году. Сегодня это одно из самых атмосферных мест старого Белграда с видом на реку и закаты.",img:"img/kosancicev-venac.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%9A%D0%BE%D1%81%D0%B0%D0%BD%D1%87%D0%B8%D1%9B%D0%B5%D0%B2_%D0%B2%D0%B5%D0%BD%D0%B0%D1%86",gq:"Kosančićev venac, Beograd"},
- {id:"stari-dvor",op:"stari-grad",ll:[44.81085,20.4626],emoji:"🏛️",
+ {id:"stari-dvor",op:"stari-grad",ll:[44.81085,20.4626],
   name:{ru:"Старый дворец",en:"Old Palace",sr:"Стари двор"},
   nl:"Stari dvor",
   story:"Старый дворец (1884) — бывшая королевская резиденция в стиле академизма, окружённая парком с фонтанами. Сегодня в нём заседает городская Скупщина Белграда; напротив стоит Новый дворец.",img:"img/stari-dvor.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%A1%D1%82%D0%B0%D1%80%D0%B8_%D0%B4%D0%B2%D0%BE%D1%80",gq:"Stari dvor, Beograd"},
- {id:"beton-hala",op:"stari-grad",ll:[44.81986,20.44843],emoji:"🍽️",
+ {id:"beton-hala",op:"stari-grad",ll:[44.81986,20.44843],
   name:{ru:"Бетон-хала",en:"Beton Hala",sr:"Бетон хала"},
   nl:"Beton hala",
   story:"Бывшие портовые склады у Савы, ставшие оживлённой набережной с ресторанами и видом на Бранков мост и Нови-Београд. Популярное место вечерних прогулок у самой воды.",img:"img/beton-hala.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%91%D0%B5%D1%82%D0%BE%D0%BD_%D1%85%D0%B0%D0%BB%D0%B0",gq:"Beton hala, Beograd"},
- {id:"zemunski-kej",op:"zemun",ll:[44.8455,20.41544],emoji:"⚓",
+ {id:"zemunski-kej",op:"zemun",ll:[44.8455,20.41544],
   name:{ru:"Земунская набережная",en:"Zemun Quay",sr:"Земунски кеј"},
   nl:"Zemunski kej",
   story:"Дунайская набережная старого Земуна — длинная зелёная променада вдоль реки с видом на воду, лодки и традиционные рыбные рестораны. Любимое место прогулок горожан.",img:"img/zemunski-kej.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%97%D0%B5%D0%BC%D1%83%D0%BD%D1%81%D0%BA%D0%B8_%D0%BA%D0%B5%D1%98",gq:"Zemunski kej, Zemun"},
- {id:"most-na-adi",op:"novi-beograd",ll:[44.797,20.42589],emoji:"🌉",
+ {id:"most-na-adi",op:"novi-beograd",ll:[44.797,20.42589],
   name:{ru:"Мост на Аде",en:"Ada Bridge",sr:"Мост на Ади"},
   nl:"Most na Adi",
   story:"Вантовый мост через Саву (2012) с одним высоким пилоном, от которого веером расходятся тросы — заметный современный силуэт города. Проходит рядом с островом Ада-Циганлия.",img:"img/most-na-adi.jpg",wiki:"https://sr.wikipedia.org/wiki/Most_na_Adi",gq:"Most na Adi, Beograd"},
- {id:"nebojsa",op:"stari-grad",ll:[44.82734,20.44789],emoji:"🗼",
+ {id:"nebojsa",op:"stari-grad",ll:[44.82734,20.44789],
   name:{ru:"Башня Небойша",en:"Nebojša Tower",sr:"Кула Небојша"},
   nl:"Kula Nebojša",
   story:"Речная дозорная башня XV века, охранявшая порт крепости; при османах служила тюрьмой. Сегодня — музей и один из немногих уцелевших объектов средневекового Белграда времён деспота Стефана Лазаревича.",img:"img/nebojsa.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%9A%D1%83%D0%BB%D0%B0_%D0%9D%D0%B5%D0%B1%D0%BE%D1%98%D1%88%D0%B0",gq:"Kula Nebojša, Beograd"},
- {id:"kafana-znak",op:"stari-grad",ll:[44.81767,20.45256],emoji:"☕",
+ {id:"kafana-znak",op:"stari-grad",ll:[44.81767,20.45256],
   name:{ru:"Кафана «Знак вопроса»",en:"The “?” Tavern",sr:"Кафана „?“"},
   nl:"Kafana Znak pitanja",
   story:"Старейшая действующая кафана Белграда напротив Соборной церкви. Загадочное имя возникло из-за спора с церковью о вывеске: временный знак вопроса так и стал постоянным названием.",img:"img/kafana-znak.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%9A%D0%B0%D1%84%D0%B0%D0%BD%D0%B0_%3F",gq:"Znak pitanja kafana, Beograd"},
- {id:"vuk-dositej",op:"stari-grad",ll:[44.82103,20.45877],emoji:"📜",
+ {id:"vuk-dositej",op:"stari-grad",ll:[44.82103,20.45877],
   name:{ru:"Музей Вука и Доситея",en:"Museum of Vuk and Dositej",sr:"Музеј Вука и Доситеја"},
   nl:"Muzej Vuka i Dositeja",
   story:"В одном из старейших сохранившихся зданий османской архитектуры города. Посвящён Вуку Караджичу — реформатору языка и создателю современной сербской кириллицы — и просветителю Доситею Обрадовичу.",img:"img/vuk-dositej.png",wiki:"https://sr.wikipedia.org/wiki/%D0%9C%D1%83%D0%B7%D0%B5%D1%98_%D0%92%D1%83%D0%BA%D0%B0_%D0%B8_%D0%94%D0%BE%D1%81%D0%B8%D1%82%D0%B5%D1%98%D0%B0",gq:"Muzej Vuka i Dositeja, Beograd"},
- {id:"nb-srbije",op:"vracar",ll:[44.79755,20.46717],emoji:"📚",
+ {id:"nb-srbije",op:"vracar",ll:[44.79755,20.46717],
   name:{ru:"Народная библиотека Сербии",en:"National Library of Serbia",sr:"Народна библиотека Србије"},
   nl:"Narodna biblioteka Srbije",
   story:"Здание 1973 года у Храма Св. Саввы — новая национальная библиотека взамен уничтоженной в 1941-м на Косанчичевом венце. Институт восстановили, но на другом месте; прежнее осталось пустым.",img:"img/nb-srbije.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%9D%D0%B0%D1%80%D0%BE%D0%B4%D0%BD%D0%B0_%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA%D0%B0_%D0%A1%D1%80%D0%B1%D0%B8%D1%98%D0%B5",gq:"Narodna biblioteka Srbije, Beograd"},
- {id:"kalenic",op:"vracar",ll:[44.8014,20.47603],emoji:"🍅",
+ {id:"kalenic",op:"vracar",ll:[44.8014,20.47603],
   name:{ru:"Рынок Каленич",en:"Kalenić Market",sr:"Пијаца Каленић"},
   nl:"Pijaca Kalenić",
   story:"Крупнейший действующий зелёный рынок Белграда: открытая часть с овощами и фруктами и закрытый павильон с сыром, яйцами и мясом. Живой, нетуристический слой города.",img:"img/kalenic.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%9F%D0%B8%D1%98%D0%B0%D1%86%D0%B0_%D0%9A%D0%B0%D0%BB%D0%B5%D0%BD%D0%B8%D1%9B",gq:"Kalenićeva pijaca, Beograd"},
- {id:"vuk-monument",op:"palilula",ll:[44.80487,20.47766],emoji:"🗿",
+ {id:"vuk-monument",op:"palilula",ll:[44.80487,20.47766],
   name:{ru:"Памятник Вуку Караджичу",en:"Vuk Karadžić Monument",sr:"Споменик Вуку Караџићу"},
   nl:"Spomenik Vuku Karadžiću",
   story:"Памятник 1937 года реформатору сербского языка. Место дало разговорное имя всему кварталу и станции — «Вуков споменик»: так называют район, а не саму скульптуру.",img:"img/vuk-monument.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%A1%D0%BF%D0%BE%D0%BC%D0%B5%D0%BD%D0%B8%D0%BA_%D0%92%D1%83%D0%BA%D1%83_%D0%9A%D0%B0%D1%80%D0%B0%D1%9F%D0%B8%D1%9B%D1%83_(%D0%91%D0%B5%D0%BE%D0%B3%D1%80%D0%B0%D0%B4)",gq:"Spomenik Vuku Karadžiću, Beograd"},
- {id:"cubura",op:"vracar",ll:[44.7981,20.47564],emoji:"🏘️",
+ {id:"cubura",op:"vracar",ll:[44.7981,20.47564],
   name:{ru:"Чубура",en:"Čubura",sr:"Чубура"},
   nl:"Čubura",
   story:"Историческое ядро Врачара: низкая плотная застройка, дворы и кафаны — классический образ «старого белградского двора» у подножия Храма Св. Саввы.",img:"img/cubura.jpg",wiki:"https://en.wikipedia.org/wiki/%C4%8Cubura",gq:"Čubura, Beograd"},
- {id:"slavija",op:"vracar",ll:[44.8025,20.4667],emoji:"🔄",
+ {id:"slavija",op:"vracar",ll:[44.8025,20.4667],
   name:{ru:"Площадь Славия",en:"Slavija Square",sr:"Трг Славија"},
   nl:"Trg Slavija",
-  story:"Крупнейший круговой перекрёсток города и главный транспортный узел. Название — от стоявшего здесь отеля «Славия». Отдельный персонаж городского фольклора.",wiki:"https://sr.wikipedia.org/wiki/%D0%A1%D0%BB%D0%B0%D0%B2%D0%B8%D1%98%D0%B0",gq:"Trg Slavija, Beograd"},
- {id:"beli-dvor",op:"savski-venac",ll:[44.7657,20.45334],emoji:"🏛️",
+  story:"Крупнейший круговой перекрёсток города и главный транспортный узел. Название — от стоявшего здесь отеля «Славия». Отдельный персонаж городского фольклора.",img:"img/slavija.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%A1%D0%BB%D0%B0%D0%B2%D0%B8%D1%98%D0%B0",gq:"Trg Slavija, Beograd"},
+ {id:"beli-dvor",op:"savski-venac",ll:[44.7657,20.45334],
   name:{ru:"Белый дворец",en:"White Palace",sr:"Бели двор"},
   nl:"Beli dvor",
   story:"Часть королевского комплекса на Дединье (1934–1937), резиденция династии Карагеоргиевичей. Дединье — самый закрытый район города. Посещение только с экскурсией.",img:"img/beli-dvor.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%91%D0%B5%D0%BB%D0%B8_%D0%B4%D0%B2%D0%BE%D1%80",gq:"Beli dvor, Dedinje, Beograd"},
- {id:"african-art",op:"savski-venac",ll:[44.78911,20.43504],emoji:"🎭",
+ {id:"african-art",op:"savski-venac",ll:[44.78911,20.43504],
   name:{ru:"Музей африканского искусства",en:"Museum of African Art",sr:"Музеј афричке уметности"},
   nl:"Muzej afričke umetnosti",
   story:"Единственный музей такого профиля в регионе (1977), на коллекции супругов Марьянович. Материальный след политики Движения неприсоединения: Югославия строила связи со странами Африки.",img:"img/african-art.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%9C%D1%83%D0%B7%D0%B5%D1%98_%D0%B0%D1%84%D1%80%D0%B8%D1%87%D0%BA%D0%B5_%D1%83%D0%BC%D0%B5%D1%82%D0%BD%D0%BE%D1%81%D1%82%D0%B8_(%D0%91%D0%B5%D0%BE%D0%B3%D1%80%D0%B0%D0%B4)",gq:"Muzej afričke umetnosti, Beograd"},
- {id:"old-station",op:"savski-venac",ll:[44.8086,20.4557],emoji:"🚂",
+ {id:"old-station",op:"savski-venac",ll:[44.8086,20.4557],
   name:{ru:"Старый железнодорожный вокзал",en:"Old Railway Station",sr:"Стара железничка станица"},
   nl:"Stara železnička stanica",
   story:"Главный вокзал Белграда более 130 лет (1884), закрыт в 2018-м. Через него проходил Восточный экспресс. Сегодня — историческое здание преобразованной Савской площади с памятником Стефану Немане.",img:"img/old-station.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%96%D0%B5%D0%BB%D0%B5%D0%B7%D0%BD%D0%B8%D1%87%D0%BA%D0%B0_%D1%81%D1%82%D0%B0%D0%BD%D0%B8%D1%86%D0%B0_%D0%9D%D0%BE%D0%B2%D0%B8_%D0%A1%D0%B0%D0%B4",gq:"Stara železnička stanica, Beograd"},
- {id:"senjak",op:"savski-venac",ll:[44.79133,20.43587],emoji:"🌳",
+ {id:"senjak",op:"savski-venac",ll:[44.79133,20.43587],
   name:{ru:"Сеняк",en:"Senjak",sr:"Сењак"},
   nl:"Senjak",
   story:"Элитный район вилл на возвышенности. Название — от «сено»: здесь складывали сено, которое приказали вынести за пределы города из-за пожарной опасности.",img:"img/senjak.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%A1%D0%B5%D1%9A%D0%B0%D0%BA",gq:"Senjak, Beograd"},
- {id:"tasmajdan",op:"palilula",ll:[44.80922,20.4706],emoji:"⛲",
+ {id:"tasmajdan",op:"palilula",ll:[44.80922,20.4706],
   name:{ru:"Ташмайдан",en:"Tašmajdan",sr:"Ташмајдан"},
   nl:"Tašmajdan",
   story:"Название от турецкого «taş meydan» — «каменное поле», каменоломня. Отсюда веками добывали камень, которым строили и мостили Белград; под парком сохранились подземные выработки.",img:"img/tasmajdan.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%A2%D0%B0%D1%88%D0%BC%D0%B0%D1%98%D0%B4%D0%B0%D0%BD",gq:"Tašmajdan park, Beograd"},
- {id:"russian-church",op:"palilula",ll:[44.81058,20.4687],emoji:"⛪",
+ {id:"russian-church",op:"palilula",ll:[44.81058,20.4687],
   name:{ru:"Русская церковь Св. Троицы",en:"Russian Church",sr:"Руска црква"},
   nl:"Ruska crkva",
   story:"Храм 1924 года для русских эмигрантов первой волны, прибывших после революции. Здесь погребён генерал Пётр Врангель. Материальный след русской эмиграции в Белграде.",img:"img/russian-church.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%A0%D1%83%D1%81%D0%BA%D0%B0_%D0%BF%D1%80%D0%B0%D0%B2%D0%BE%D1%81%D0%BB%D0%B0%D0%B2%D0%BD%D0%B0_%D1%86%D1%80%D0%BA%D0%B2%D0%B0",gq:"Ruska crkva Svete Trojice, Beograd"},
- {id:"karaburma",op:"palilula",ll:[44.81307,20.51256],emoji:"🏢",
+ {id:"karaburma",op:"palilula",ll:[44.81307,20.51256],
   name:{ru:"Карабурма",en:"Karaburma",sr:"Карабурма"},
   nl:"Karaburma",
   story:"Район с османским названием, ставший в социалистический период рабочим и промышленным. Плотная жилая застройка второй половины XX века — «неглянцевый» Белград.",img:"img/karaburma.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%9A%D0%B0%D1%80%D0%B0%D0%B1%D1%83%D1%80%D0%BC%D0%B0",gq:"Karaburma, Beograd"},
- {id:"ada-huja",op:"palilula",ll:[44.82305,20.52616],emoji:"🏭",
+ {id:"ada-huja",op:"palilula",ll:[44.82305,20.52616],
   name:{ru:"Ада Хуя",en:"Ada Huja",sr:"Ада Хуја"},
   nl:"Ada Huja",
   story:"Бывший дунайский остров, соединённый с берегом и ставший промзоной; самая низкая точка Белграда (~70 м). Ещё один остров, переставший быть островом, — след того, как город переписывал русла своих рек.",img:"img/ada-huja.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%90%D0%B4%D0%B0_%D0%A5%D1%83%D1%98%D0%B0",gq:"Ada Huja, Beograd"},
- {id:"zvezdarska-suma",op:"zvezdara",ll:[44.80383,20.50555],emoji:"🌲",
+ {id:"zvezdarska-suma",op:"zvezdara",ll:[44.80383,20.50555],
   name:{ru:"Звездарский лес",en:"Zvezdara Forest",sr:"Звездарска шума"},
   nl:"Zvezdarska šuma",
   story:"Лесной массив вокруг обсерватории, охраняемый природный объект и главная зелёная зона востока города — место, где город физически отступает.",img:"img/zvezdarska-suma.jpg",wiki:"https://en.wikipedia.org/wiki/Zvezdara_Forest",gq:"Zvezdarska šuma, Beograd"},
- {id:"djeram",op:"zvezdara",ll:[44.80036,20.48743],emoji:"🍏",
+ {id:"djeram",op:"zvezdara",ll:[44.80036,20.48743],
   name:{ru:"Рынок Джерам",en:"Đeram Market",sr:"Пијаца Ђерам"},
   nl:"Pijaca Đeram",
   story:"Один из старых районных рынков. Название «ђерам» — колодезный журавль, водоподъёмное устройство, некогда стоявшее здесь. Топоним от давно исчезнувшего объекта.",img:"img/djeram.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%82%D0%B5%D1%80%D0%B0%D0%BC_(%D0%97%D0%B2%D0%B5%D0%B7%D0%B4%D0%B0%D1%80%D0%B0)",gq:"Đeram pijaca, Beograd"},
- {id:"cvetkova",op:"zvezdara",ll:[44.79333,20.50353],emoji:"🥬",
+ {id:"cvetkova",op:"zvezdara",ll:[44.79333,20.50353],
   name:{ru:"Цветкова пияца",en:"Cvetkova Market",sr:"Цветкова пијаца"},
   nl:"Cvetkova pijaca",
   story:"Крупный районный рынок, давший имя окружающему кварталу — ещё один пример того, как рынок становится единицей городской навигации.",img:"img/cvetkova.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%A6%D0%B2%D0%B5%D1%82%D0%BA%D0%BE%D0%B2%D0%B0_%D0%BC%D0%B5%D1%85%D0%B0%D0%BD%D0%B0",gq:"Cvetkova pijaca, Beograd"},
- {id:"mirijevo",op:"zvezdara",ll:[44.79449,20.52798],emoji:"🏡",
+ {id:"mirijevo",op:"zvezdara",ll:[44.79449,20.52798],
   name:{ru:"Мириево",en:"Mirijevo",sr:"Миријево"},
   nl:"Mirijevo",
   story:"Бывшее село на востоке города, застроенное во второй половине XX века. Отсюда родом Теодор Янкович-Мириевский, реформатор школьного образования в Габсбургской и Российской империях.",img:"img/mirijevo.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%9C%D0%B8%D1%80%D0%B8%D1%98%D0%B5%D0%B2%D0%BE",gq:"Mirijevo, Beograd"},
- {id:"neznani-junak",op:"vozdovac",ll:[44.68968,20.51458],emoji:"🗿",
+ {id:"neznani-junak",op:"vozdovac",ll:[44.68968,20.51458],
   name:{ru:"Памятник Неизвестному герою",en:"Monument to the Unknown Hero",sr:"Споменик Незнаном јунаку"},
   nl:"Spomenik Neznanom junaku",
   story:"Мавзолей на вершине Авалы (1934–1938) работы Ивана Мештровича, из чёрного лабрадорита, с кариатидами — женщинами народов Югославии. Построен на месте средневекового города Жрнов.",img:"img/neznani-junak.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%A1%D0%BF%D0%BE%D0%BC%D0%B5%D0%BD%D0%B8%D0%BA_%D0%9D%D0%B5%D0%B7%D0%BD%D0%B0%D0%BD%D0%BE%D0%BC_%D1%98%D1%83%D0%BD%D0%B0%D0%BA%D1%83",gq:"Spomenik Neznanom junaku, Avala"},
- {id:"banjica",op:"vozdovac",ll:[44.77073,20.46796],emoji:"🕯️",
+ {id:"banjica",op:"vozdovac",ll:[44.77073,20.46796],
   name:{ru:"Музей лагеря Баница",en:"Banjica Camp Museum",sr:"Музеј логора Бањица"},
   nl:"Muzej logora Banjica",
   story:"Музей в здании бывшего концентрационного лагеря периода немецкой оккупации 1941–1944 годов. Экспозиция построена на документах и личных вещах узников. Место памяти.",img:"img/banjica.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%9B%D0%BE%D0%B3%D0%BE%D1%80_%D0%91%D0%B0%D1%9A%D0%B8%D1%86%D0%B0",gq:"Muzej Banjičkog logora, Beograd"},
- {id:"jajinci",op:"vozdovac",ll:[44.73051,20.48906],emoji:"🕯️",
+ {id:"jajinci",op:"vozdovac",ll:[44.73051,20.48906],
   name:{ru:"Мемориальный парк Яйинци",en:"Jajinci Memorial Park",sr:"Спомен-парк Јајинци"},
   nl:"Spomen park Jajinci",
   story:"Мемориальный парк на месте массовых расстрелов периода оккупации 1941–1944 годов. Сегодня — монумент и место памяти.",img:"img/jajinci.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%A1%D0%BF%D0%BE%D0%BC%D0%B5%D0%BD-%D0%BF%D0%B0%D1%80%D0%BA_%D0%88%D0%B0%D1%98%D0%B8%D0%BD%D1%86%D0%B8",gq:"Spomen park Jajinci, Beograd"},
- {id:"kosutnjak",op:"cukarica",ll:[44.76675,20.43267],emoji:"🦌",
+ {id:"kosutnjak",op:"cukarica",ll:[44.76675,20.43267],
   name:{ru:"Кошутняк",en:"Košutnjak",sr:"Кошутњак"},
   nl:"Košutnjak",
   story:"Лесной массив, бывшие охотничьи угодья Обреновичей (от «кошута» — лань). Здесь 10 июня 1868 года был убит князь Михаил Обренович; его именем затем назвали главную улицу города.",img:"img/kosutnjak.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%9A%D0%BE%D1%88%D1%83%D1%82%D1%9A%D0%B0%D0%BA",gq:"Košutnjak, Beograd"},
- {id:"cerak",op:"cukarica",ll:[44.74478,20.41737],emoji:"🏢",
+ {id:"cerak",op:"cukarica",ll:[44.74478,20.41737],
   name:{ru:"Церак Винограды",en:"Cerak Vinogradi",sr:"Церак Виногради"},
   nl:"Cerak Vinogradi",
   story:"Жилой комплекс (1978–1985) архитекторов Дарко и Милены Марушич — один из лучших образцов позднего югославского жилого модернизма: застройка вписана в рельеф, с продуманными пешеходными связями и озеленением.",img:"img/cerak.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%A6%D0%B5%D1%80%D0%B0%D0%BA_%D0%B2%D0%B8%D0%BD%D0%BE%D0%B3%D1%80%D0%B0%D0%B4%D0%B8",gq:"Cerak Vinogradi, Beograd"},
- {id:"filmski-grad",op:"cukarica",ll:[44.751,20.4322],emoji:"🎬",
+ {id:"filmski-grad",op:"cukarica",ll:[44.751,20.4322],
   name:{ru:"Филмски град",en:"Film City",sr:"Филмски град"},
   nl:"Filmski grad",
   story:"Киностудийный комплекс в Кошутняке — центр югославского кинопроизводства и материальная база «чёрной волны» и всего югославского кино.",wiki:"https://sr.wikipedia.org/wiki/%D0%A4%D0%B8%D0%BB%D0%BC%D1%81%D0%BA%D0%B8_%D0%B3%D1%80%D0%B0%D0%B4_(%D0%91%D0%B5%D0%BE%D0%B3%D1%80%D0%B0%D0%B4)",gq:"Filmski grad, Košutnjak, Beograd"},
- {id:"banovo-brdo",op:"cukarica",ll:[44.7791,20.41306],emoji:"🏙️",
+ {id:"banovo-brdo",op:"cukarica",ll:[44.7791,20.41306],
   name:{ru:"Баново брдо",en:"Banovo Brdo",sr:"Баново брдо"},
   nl:"Banovo brdo",
   story:"Главный жилой и торговый центр Чукарицы на возвышенности над Савой — самодостаточный «город в городе» со своим центром, рынком и торговой улицей.",img:"img/banovo-brdo.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%91%D0%B0%D0%BD%D0%BE%D0%B2%D0%BE_%D0%B1%D1%80%D0%B4%D0%BE",gq:"Banovo brdo, Beograd"},
- {id:"vidikovac",op:"rakovica",ll:[44.741,20.4233],emoji:"🏢",
+ {id:"vidikovac",op:"rakovica",ll:[44.741,20.4233],
   name:{ru:"Видиковац",en:"Vidikovac",sr:"Видиковац"},
   nl:"Vidikovac",
-  story:"Жилой район на возвышенности; название означает «смотровая площадка». Образец массовой жилой застройки позднего социалистического периода.",gq:"Vidikovac, Rakovica, Beograd"},
- {id:"miljakovac-les",op:"rakovica",ll:[44.74061,20.45001],emoji:"🌲",
+  story:"Жилой район на возвышенности; название означает «смотровая площадка». Образец массовой жилой застройки позднего социалистического периода.",img:"img/vidikovac.jpg",gq:"Vidikovac, Rakovica, Beograd"},
+ {id:"miljakovac-les",op:"rakovica",ll:[44.74061,20.45001],
   name:{ru:"Миляковацкий лес",en:"Miljakovac Forest",sr:"Миљаковачка шума"},
   nl:"Miljakovačka šuma",
   story:"Лесной массив на юге города, зона рекреации — часть системы городских лесов, отличающей Белград от многих европейских столиц.",img:"img/miljakovac-les.jpg",gq:"Miljakovac, Beograd"},
- {id:"palata-srbije",op:"novi-beograd",ll:[44.82189,20.41343],emoji:"🏛️",
+ {id:"palata-srbije",op:"novi-beograd",ll:[44.82189,20.41343],
   name:{ru:"Дворец Сербия (СИВ)",en:"Palace of Serbia",sr:"Палата Србија"},
   nl:"Palata Srbija",
   story:"Главное административное здание социалистической Югославии (1947–1961), где размещалось союзное правительство. Интерьеры оформлены произведениями художников всех югославских республик — воплощение идеи федерации.",img:"img/palata-srbije.jpg",gq:"Palata Srbije, Beograd"},
- {id:"usce-park",op:"novi-beograd",ll:[44.82174,20.4328],emoji:"🌳",
+ {id:"usce-park",op:"novi-beograd",ll:[44.82174,20.4328],
   name:{ru:"Парк Ушће",en:"Ušće Park",sr:"Парк Ушће"},
   nl:"Park Ušće",
   story:"Парк у самого слияния Савы и Дуная с Памятником вечного огня и главной концертной площадкой города. Географическая точка, ради которой Белград и возник.",img:"img/usce-park.jpg",gq:"Park Ušće, Beograd"},
- {id:"staro-sajmiste",op:"novi-beograd",ll:[44.81294,20.44323],emoji:"🕯️",
+ {id:"staro-sajmiste",op:"novi-beograd",ll:[44.81294,20.44323],
   name:{ru:"Старо Саймиште",en:"Staro Sajmište",sr:"Старо сајмиште"},
   nl:"Staro sajmište",
   story:"Построен в 1937–1938 годах как выставочный комплекс Королевства Югославии. После оккупации в 1941 году территория была превращена в концентрационный лагерь. Сегодня — охраняемый исторический памятник и место памяти.",img:"img/staro-sajmiste.jpg",gq:"Staro sajmište, Beograd"},
- {id:"sava-centar",op:"novi-beograd",ll:[44.80935,20.43213],emoji:"🏢",
+ {id:"sava-centar",op:"novi-beograd",ll:[44.80935,20.43213],
   name:{ru:"Сава центар",en:"Sava Centar",sr:"Сава центар"},
   nl:"Sava centar",
-  story:"Крупнейший конгресс-центр страны (1976–1979) по проекту Стояна Максимовича, возведённый к конференции ОБСЕ. Материальный след дипломатической роли Югославии; реставрирован в 2020-е.",img:"img/sava-centar.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%A1%D0%B0%D0%B2%D0%B0_%D1%86%D0%B5%D0%BD%D1%82%D0%B0%D1%80",gq:"Sava Centar, Beograd"},
- {id:"studentski-grad",op:"novi-beograd",ll:[44.82397,20.39922],emoji:"🎓",
+  story:"Крупнейший конгресс-центр страны (1976–1979) по проекту Стояна Максимовича, возведённый к конференции СБСЕ. Материальный след дипломатической роли Югославии; реставрирован в 2020-е.",img:"img/sava-centar.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%A1%D0%B0%D0%B2%D0%B0_%D1%86%D0%B5%D0%BD%D1%82%D0%B0%D1%80",gq:"Sava Centar, Beograd"},
+ {id:"studentski-grad",op:"novi-beograd",ll:[44.82397,20.39922],
   name:{ru:"Студенческий город",en:"Students’ City",sr:"Студентски град"},
   nl:"Studentski grad",
   story:"Крупнейший студенческий кампус Сербии и один из первых объектов Нови-Београда (с 1948). Изначально здесь жили молодёжные бригады, строившие район на засыпанном болоте.",img:"img/studentski-grad.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%A3%D0%BD%D0%B8%D0%B2%D0%B5%D1%80%D0%B7%D0%B8%D1%82%D0%B5%D1%82_%D0%98%D0%A2%D0%9C%D0%9E",gq:"Studentski grad, Beograd"},
- {id:"zemun-muzej",op:"zemun",ll:[44.84316,20.41219],emoji:"🏛️",
+ {id:"zemun-muzej",op:"zemun",ll:[44.84316,20.41219],
   name:{ru:"Краеведческий музей Земуна",en:"Zemun Museum",sr:"Завичајни музеј Земуна"},
   nl:"Zavičajni muzej Zemuna",
   story:"В купеческом доме XIX века (дом семьи Спирта); собрание по археологии, истории и культуре Земуна. У района есть собственный краеведческий музей — редкость для общин Белграда.",img:"img/zemun-muzej.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%97%D0%B0%D0%B2%D0%B8%D1%87%D0%B0%D1%98%D0%BD%D0%B8_%D0%BC%D1%83%D0%B7%D0%B5%D1%98_%D0%97%D0%B5%D0%BC%D1%83%D0%BD%D0%B0",gq:"Zavičajni muzej Zemuna, Zemun"},
- {id:"magistratski-trg",op:"zemun",ll:[44.84477,20.41325],emoji:"🏛️",
+ {id:"magistratski-trg",op:"zemun",ll:[44.84477,20.41325],
   name:{ru:"Магистратская площадь",en:"Magistrate’s Square",sr:"Магистратски трг"},
   nl:"Magistratski trg",
   story:"Центральная площадь старого Земуна, названная по зданию Магистрата — органа самоуправления свободной военной общины. Свидетельство того, что Земун имел собственное самоуправление.",img:"img/magistratski-trg.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%9C%D0%B0%D0%B3%D0%B8%D1%81%D1%82%D1%80%D0%B0%D1%82%D1%81%D0%BA%D0%B8_%D1%82%D1%80%D0%B3",gq:"Magistratski trg, Zemun"},
- {id:"beogradanka",op:"savski-venac",ll:[44.8056,20.4612],emoji:"🏢",
+ {id:"beogradanka",op:"savski-venac",ll:[44.8056,20.4612],
   name:{ru:"Београджанка",en:"Beograđanka",sr:"Београђанка"},
   nl:"Beograđanka",
   story:"27-этажная башня 1974 года — одна из первых высоток центра и заметный ориентир городского силуэта. Внизу торговый центр, наверху когда-то работало кафе с панорамой на весь Белград.",img:"img/beogradanka.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%91%D0%B5%D0%BE%D0%B3%D1%80%D0%B0%D1%92%D0%B0%D0%BD%D0%BA%D0%B0",gq:"Beograđanka, Beograd"},
- {id:"muzej-jugoslavije",op:"savski-venac",ll:[44.788,20.4516],emoji:"🏛️",
+ {id:"muzej-jugoslavije",op:"savski-venac",ll:[44.788,20.4516],
   name:{ru:"Музей Югославии",en:"Museum of Yugoslavia",sr:"Музеј Југославије"},
   nl:"Muzej Jugoslavije",
   story:"Музейный комплекс об истории Югославии; на его территории — «Дом цветов» с мавзолеем Иосипа Броза Тито. Модернистское здание 1962 года с большой коллекцией и мозаикой на фасаде.",img:"img/muzej-jugoslavije.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%9C%D1%83%D0%B7%D0%B5%D1%98_%D0%88%D1%83%D0%B3%D0%BE%D1%81%D0%BB%D0%B0%D0%B2%D0%B8%D1%98%D0%B5",gq:"Muzej Jugoslavije, Beograd"},
- {id:"zoo",op:"stari-grad",ll:[44.8264,20.4535],emoji:"🦁",
+ {id:"zoo",op:"stari-grad",ll:[44.8264,20.4535],
   name:{ru:"Белградский зоопарк",en:"Belgrade Zoo",sr:"Београдски зоолошки врт"},
   nl:"Beogradski zoološki vrt",
   story:"Зоопарк «Сад доброй надежды» на Калемегдане, основан в 1936 году — один из старейших в регионе. Известен животными-долгожителями и видом на крепость.",img:"img/zoo.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%91%D0%B5%D0%BE%D0%B3%D1%80%D0%B0%D0%B4%D1%81%D0%BA%D0%B8_%D0%B7%D0%BE%D0%BE%D0%BB%D0%BE%D1%88%D0%BA%D0%B8_%D0%B2%D1%80%D1%82",gq:"Beo Zoo Vrt, Beograd"},
- {id:"narodni-muzej",op:"stari-grad",ll:[44.8168,20.46],emoji:"🖼️",
+ {id:"narodni-muzej",op:"stari-grad",ll:[44.8168,20.46],
   name:{ru:"Народный музей Сербии",en:"National Museum of Serbia",sr:"Народни музеј"},
   nl:"Narodni muzej",
   story:"Главный музей страны (1844) на площади Республики: от археологии и средневековых фресок до европейской живописи, включая импрессионистов. После долгой реставрации вновь открыт в 2018 году.",img:"img/narodni-muzej.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%9D%D0%B0%D1%80%D0%BE%D0%B4%D0%BD%D0%B8_%D0%BC%D1%83%D0%B7%D0%B5%D1%98_%D1%83_%D0%91%D0%B5%D0%BE%D0%B3%D1%80%D0%B0%D0%B4%D1%83",gq:"Narodni muzej, Trg republike, Beograd"},
- {id:"ruzica",op:"stari-grad",ll:[44.8236,20.454],emoji:"⛪",
+ {id:"ruzica",op:"stari-grad",ll:[44.8236,20.454],
   name:{ru:"Церковь Ружица",en:"Ružica Church",sr:"Црква Ружица"},
   nl:"Crkva Ružica",
   story:"Одна из старейших церквей города, укрытая в стенах Калемегдана и увитая плющом. Внутри — люстры, сделанные сербскими солдатами из стреляных гильз и деталей оружия времён Первой мировой.",img:"img/ruzica.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%A6%D1%80%D0%BA%D0%B2%D0%B0_%D0%A0%D1%83%D0%B6%D0%B8%D1%86%D0%B0",gq:"Crkva Ružica, Kalemegdan, Beograd"},
- {id:"cetinjska",op:"stari-grad",ll:[44.8175,20.4648],emoji:"🎶",
+ {id:"cetinjska",op:"stari-grad",ll:[44.8175,20.4648],
   name:{ru:"Цетинска (пивоварня БИП)",en:"Cetinjska",sr:"Цетињска"},
   nl:"Cetinjska",
   story:"Дворы бывшей пивоварни Байлони, ставшие центром альтернативной ночной жизни: бары, клубы и концертные площадки в старых индустриальных корпусах. Любимое место молодёжи и экспатов.",img:"img/cetinjska.jpg",gq:"Cetinjska 15, Beograd"},
- {id:"ratno-ostrvo",op:"zemun",ll:[44.833,20.436],emoji:"🏝️",
+ {id:"ratno-ostrvo",op:"zemun",ll:[44.833,20.436],
   name:{ru:"Большой военный остров",en:"Great War Island",sr:"Велико ратно острво"},
   nl:"Veliko ratno ostrvo",
   story:"Дикий речной остров у слияния Савы и Дуная — заповедник птиц и популярный летний пляж Лидо. Летом сюда ведёт понтонный мост.",img:"img/ratno-ostrvo.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%92%D0%B5%D0%BB%D0%B8%D0%BA%D0%BE_%D1%80%D0%B0%D1%82%D0%BD%D0%BE_%D0%BE%D1%81%D1%82%D1%80%D0%B2%D0%BE",gq:"Veliko ratno ostrvo, Beograd"},
- {id:"most-pupina",op:"palilula",ll:[44.8945,20.464],emoji:"🌉",
+ {id:"most-pupina",op:"palilula",ll:[44.8945,20.464],
   name:{ru:"Мост Михайла Пупина",en:"Pupin Bridge",sr:"Мост Михајла Пупина"},
   nl:"Most Mihajla Pupina",
   story:"Вантовый мост через Дунай (2014), связавший Земун с борчанской стороной Палилулы. Разгрузил единственный прежде Панчевацкий мост; в народе его зовут «Кинески мост» — строила китайская компания.",img:"img/most-pupina.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%9C%D0%BE%D1%81%D1%82_%D0%9C%D0%B8%D1%85%D0%B0%D1%98%D0%BB%D0%B0_%D0%9F%D1%83%D0%BF%D0%B8%D0%BD%D0%B0_%28%D0%91%D0%B5%D0%BE%D0%B3%D1%80%D0%B0%D0%B4%29",gq:"Most Mihajla Pupina, Beograd"},
- {id:"veliko-blato",op:"palilula",ll:[44.906,20.543],emoji:"🦢",
+ {id:"veliko-blato",op:"palilula",ll:[44.906,20.543],
   name:{ru:"Заказник Велико блато",en:"Veliko Blato reserve",sr:"Резерват Велико блато"},
   nl:"Veliko blato",
   story:"Озеро и заболоченный заказник на севере Палилулы, у Ковилова. Место гнездования водоплавающих птиц и тихих прогулок вдали от города — часть дунавских влажных угодий.",img:"img/veliko-blato.jpg",gq:"Veliko blato, Beograd"},
- {id:"kinoteka",op:"stari-grad",ll:[44.8215,20.4555],emoji:"🎬",
+ {id:"kinoteka",op:"stari-grad",ll:[44.8215,20.4555],
   name:{ru:"Югославская кинотека",en:"Yugoslav Film Archive",sr:"Југословенска кинотека"},
   nl:"Jugoslovenska kinoteka",
   story:"Национальный киноархив и музей кино (1949) — одно из крупнейших собраний в мире. В историческом здании показывают классику и ретроспективы, рядом — музейная экспозиция о кино.",img:"img/kinoteka.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%88%D1%83%D0%B3%D0%BE%D1%81%D0%BB%D0%BE%D0%B2%D0%B5%D0%BD%D1%81%D0%BA%D0%B0_%D0%BA%D0%B8%D0%BD%D0%BE%D1%82%D0%B5%D0%BA%D0%B0",gq:"Jugoslovenska kinoteka, Uzun Mirkova, Beograd"},
- {id:"auto-muzej",op:"stari-grad",ll:[44.8156,20.4648],emoji:"🚗",
+ {id:"auto-muzej",op:"stari-grad",ll:[44.8156,20.4648],
   name:{ru:"Музей автомобилей",en:"Automobile Museum",sr:"Музеј аутомобила"},
   nl:"Muzej automobila",
   story:"Коллекция старинных автомобилей в здании бывшей «Модерной гаражи» (1929) — одной из первых в городе. Собрание Братислава Петковича: редкие довоенные марки и история моторизации.",img:"img/auto-muzej.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%9C%D1%83%D0%B7%D0%B5%D1%98_%D0%B0%D1%83%D1%82%D0%BE%D0%BC%D0%BE%D0%B1%D0%B8%D0%BB%D0%B0_%D1%83_%D0%91%D0%B5%D0%BE%D0%B3%D1%80%D0%B0%D0%B4%D1%83",gq:"Muzej automobila, Beograd"},
- {id:"cvijeta-zuzoric",op:"stari-grad",ll:[44.8232,20.4552],emoji:"🖼️",
+ {id:"cvijeta-zuzoric",op:"stari-grad",ll:[44.8232,20.4552],
   name:{ru:"Павильон «Цвиета Зузорич»",en:"Cvijeta Zuzorić Art Pavilion",sr:"Уметнички павиљон Цвијета Зузорић"},
   nl:"Paviljon Cvijeta Zuzorić",
   story:"Выставочный павильон на Калемегдане (1928) — почти век один из главных залов современного искусства в городе. Назван в честь ренессансной поэтессы из Дубровника.",img:"img/cvijeta-zuzoric.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%A3%D0%BC%D0%B5%D1%82%D0%BD%D0%B8%D1%87%D0%BA%D0%B8_%D0%BF%D0%B0%D0%B2%D0%B8%D1%99%D0%BE%D0%BD_%D0%A6%D0%B2%D0%B8%D1%98%D0%B5%D1%82%D0%B0_%D0%97%D1%83%D0%B7%D0%BE%D1%80%D0%B8%D1%9B",gq:"Umetnički paviljon Cvijeta Zuzorić, Beograd"},
- {id:"kapetan-misa",op:"stari-grad",ll:[44.8186,20.4573],emoji:"🏛️",
+ {id:"kapetan-misa",op:"stari-grad",ll:[44.8186,20.4573],
   name:{ru:"Капитан-Мишино здание",en:"Captain Miša's Mansion",sr:"Капетан-Мишино здање"},
   nl:"Kapetan-Mišino zdanje",
   story:"Самое роскошное здание Белграда XIX века (1863), подаренное меценатом Мишей Анастасиевичем государству «для нужд просвещения». Сегодня — ректорат Белградского университета.",img:"img/kapetan-misa.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%9A%D0%B0%D0%BF%D0%B5%D1%82%D0%B0%D0%BD-%D0%9C%D0%B8%D1%88%D0%B8%D0%BD%D0%BE_%D0%B7%D0%B4%D0%B0%D1%9A%D0%B5",gq:"Kapetan Mišino zdanje, Beograd"},
- {id:"palata-albanija",op:"stari-grad",ll:[44.8147,20.46],emoji:"🏢",
+ {id:"palata-albanija",op:"stari-grad",ll:[44.8147,20.46],
   name:{ru:"Палата «Албания»",en:"Albania Palace",sr:"Палата Албанија"},
   nl:"Palata Albanija",
   story:"Первый небоскрёб Белграда и всего региона (1940), 12 этажей на углу Теразие. Назван по кафане, что стояла здесь прежде; стал символом модернизации довоенного города.",img:"img/palata-albanija.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%9F%D0%B0%D0%BB%D0%B0%D1%82%D0%B0_%D0%90%D0%BB%D0%B1%D0%B0%D0%BD%D0%B8%D1%98%D0%B0",gq:"Palata Albanija, Beograd"},
- {id:"manakova-kuca",op:"savski-venac",ll:[44.8122,20.4568],emoji:"🏠",
+ {id:"manakova-kuca",op:"savski-venac",ll:[44.8122,20.4568],
   name:{ru:"Манакова кућа",en:"Manak's House",sr:"Манакова кућа"},
   nl:"Manakova kuća",
   story:"Городской дом балканского типа начала XIX века в Савамале — один из редких сохранившихся. Часть Этнографического музея: народные костюмы, украшения и ремёсла.",img:"img/manakova-kuca.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%9C%D0%B0%D0%BD%D0%B0%D0%BA%D0%BE%D0%B2%D0%B0_%D0%BA%D1%83%D1%9B%D0%B0",gq:"Manakova kuća, Beograd"},
+ {id:"london",op:"stari-grad",ll:[44.8085,20.4632],
+  name:{ru:"Лондон",en:"London",sr:"Лондон"},
+  nl:"London",
+  story:"«Код Лондона» — «у Лондона» — так белградцы называют перекрёсток улиц Кралья Милана и Кнеза Милоша. В 1873 году здесь построили скромный невысокий отель «Лондон», названный в честь британской столицы, и вскоре так стали звать весь квартал. Скупщина тогда заседала в соседнем квартале, и депутаты в перерывах собирались в здешней кафане. «Лондон» был восточной окраиной города: дальше шли сады и болотистый пруд на месте нынешней Славии, куда ходили охотиться на уток. Старый отель закрыли в 1962 году, на его месте выросло здание из стекла и алюминия, где успели побывать ресторан, диско-клуб, банк, казино и супермаркет. А название осталось: в Белграде до сих пор договариваются встретиться «код Лондона».",img:"img/london.jpg",wiki:"https://sr.wikipedia.org/wiki/%D0%9B%D0%BE%D0%BD%D0%B4%D0%BE%D0%BD_(%D0%91%D0%B5%D0%BE%D0%B3%D1%80%D0%B0%D0%B4)",gq:"Kralja Milana i Kneza Miloša, Beograd"}
 ];
 const poiById = Object.fromEntries(POIS.map(p=>[p.id,p]));
 function poiName(p){ return (p.name&&p.name[lang])||p.nl||(p.name&&p.name.ru)||''; }
 
 // Готовые маршруты
 const PRESETS = [
- {id:"old-town",emoji:"🏛️",stops:["kalemegdan","knez","trg","skadarlija"],
+ {id:"old-town",stops:["kalemegdan","knez","trg","skadarlija"],
   name:{ru:"Старый град",en:"Old Town",sr:"Стари град"},
   intro:"Классическая прогулка по историческому ядру: от крепости на стрелке рек через пешеходную Кнез-Михайлову и площадь Республики к богемной Скадарлии."},
- {id:"vracar",emoji:"⛪",stops:["sava-temple","tesla","botanika"],
+ {id:"vracar",stops:["sava-temple","tesla","botanika"],
   name:{ru:"Врачар и Ташмайдан",en:"Vračar & Tašmajdan",sr:"Врачар и Ташмајдан"},
   intro:"Плато Врачара: главный храм страны, музей Николы Теслы и зелёный ботанический сад у Ташмайдана."},
- {id:"rivers",emoji:"🌊",stops:["usce","gardos"],
+ {id:"rivers",stops:["usce","gardos"],
   name:{ru:"Ушће и Земун",en:"Ušće & Zemun",sr:"Ушће и Земун"},
   intro:"Вдоль воды: от слияния Савы и Дуная и Музея современного искусства к черепичным крышам старого Земуна и башне Гардош."},
 ];
 function presetName(pr){ return pr.name[lang]||pr.name.ru; }
 
 /* ═══════════ ПЕРЕВОДЫ ОПИСАНИЙ (EN/SR) ═══════════ */
-const STORY_TR={"en": {"kalemegdan": "Belgrade Fortress on the headland where the Sava meets the Danube. Over two thousand years it was taken by Celts, Romans, Byzantines, Serbs, Hungarians, Turks and Austrians — so its walls blend Roman masonry, medieval gates and Ottoman towers. Today it is the city's largest park, with a museum and famous sunsets over the confluence.", "knez": "The main pedestrian street, laid along the line of Roman Belgrade. Art Nouveau mansions, bookshops, cafés and street musicians run from Republic Square to the gates of Kalemegdan.", "trg": "The heart of the pedestrian centre, with the equestrian monument to Prince Mihailo, the National Theatre and the National Museum of Serbia. The classic meeting point — 'kod konja', 'by the horse'.", "skadarlija": "A cobbled bohemian lane — 'Belgrade's Montmartre'. Poets and painters have gathered here since the late 19th century; bands still play in the old kafanas under the lime trees.", "sava-temple": "One of the largest Orthodox churches in the world, on the spot where in 1595 the Ottomans burned the relics of St Sava, founder of the Serbian church. Built over more than a century; its golden dome mosaic is visible from almost everywhere.", "tesla": "The inventor's personal archive and the urn with his ashes. Working models show how alternating current and the Tesla coil turn electricity into lightning.", "botanika": "Founded in 1874 on the initiative of the botanist Josif Pancic. In 1889 King Milan Obrenovic donated the estate and named it 'Jevremovac' after his grandfather, Jevrem Obrenovic. A quiet green oasis in the centre, with a historic glasshouse and a Japanese corner.", "flowers": "The mausoleum of Josip Broz Tito in a park at Dedinje. This modest glass building among the greenery became a place of pilgrimage for millions — a monument to the Yugoslav era.", "usce": "Usce is the very tip of the Sava–Danube confluence, a green park with a tower and a fountain. Nearby stands the Museum of Contemporary Art, a glass building from 1965 with a strong collection.", "ada": "A river island that became a peninsula: the Sava was dammed and a clean lake with beaches formed. In summer 'Belgrade's sea' draws thousands of locals.", "gardos": "The Millennium Tower on Gardos hill (1896), built for the millennium of the Hungarians' arrival. From the top, above the tiled roofs of old Zemun, opens a view of the Danube.", "avala": "A mountain to the south with a TV tower and Mestrovic's Monument to the Unknown Hero. The tower was destroyed in 1999 and rebuilt in 2010 through public donations.", "saborna-crkva": "The Cathedral Church of St Michael the Archangel (1840) in the Classicist style. Rulers of the Obrenovic dynasty and the reformers Vuk Karadzic and Dositej Obradovic rest here; opposite stands the oldest kafana, 'The Question Mark'.", "konak-ljubice": "A Balkan-style residence built by Prince Milos in the 1830s for his wife Ljubica. One of few surviving monuments of Serbian-Ottoman architecture; now a museum of 19th-century city life.", "bajrakli": "The only survivor of nearly 270 Ottoman-era Belgrade mosques (around 1575). Its name comes from the flag (bajrak) with which it signalled the call to prayer to all the others.", "skupstina": "The parliament building, constructed between 1907 and 1936, with the famous 'Playing Horses' sculpture at the entrance. A witness to key 20th-century events, including the turning point of 5 October 2000.", "hotel-moskva": "Opened in 1908 in the Serbian Art Nouveau style and clad in green ceramic tiles. A legendary meeting place for writers and artists and one of Belgrade's symbols.", "sv-marko": "A majestic church in the Serbian-Byzantine style (1940) on the edge of Tasmajdan, echoing the outline of Gracanica monastery. The Serbian Tsar Stefan Dusan rests here; beside it stands a small Russian church.", "nikolajevska": "The oldest surviving church in Belgrade (around 1731), in Baroque Zemun. It holds a richly carved 18th-century iconostasis and recalls the time when Zemun was a border town of the Austrian Empire.", "genex": "The 'Western Gate of Belgrade' (late 1970s) — a famous example of Brutalism: two towers joined by a bridge and once crowned by a revolving restaurant. A symbol of socialist modernism.", "topcider": "The residence of Prince Milos Obrenovic (1831) in Topcider Park, around which modern Belgrade grew. Nearby stand century-old plane trees and the Museum of the First Serbian Uprising.", "opservatorija": "The observatory on Zvezdara hill (1932), which gave the whole district its name (zvezda — 'star'). Its domes and old telescopes among the forest still serve science.", "rakovica-manastir": "A medieval monastery, by tradition linked to Despot Stefan Lazarevic. The resting place of Patriarch Pavle — a revered head of the Serbian Church; a quiet oasis in the city's south.", "waterfront": "A modern residential and business district on the right bank of the Sava, built in the 2010s on the site of a former freight station. Its landmark is the Kula Beograd tower, the tallest building in the country, with a viewing deck; a new riverside promenade with cafés and a park runs along the water.", "dorcol": "One of the city's oldest quarters, descending from Kalemegdan to the Danube. The name comes from the Turkish 'dort yol' — 'four roads'. For centuries different communities and crafts lived side by side here; today Dorcol is a cosy district of quiet streets, coffee shops and workshops.", "kosancicev-venac": "A picturesque old quarter on the slope above the Sava, with cobblestones and 19th-century houses. The National Library once stood here, lost in 1941. Today it is one of the most atmospheric spots of old Belgrade, with a view of the river and sunsets.", "stari-dvor": "The Old Palace (1884) — a former royal residence in the academic style, surrounded by a park with fountains. Today it houses the City Assembly of Belgrade; the New Palace stands opposite.", "beton-hala": "Former port warehouses by the Sava, now a lively waterfront with restaurants and a view of the Branko Bridge and New Belgrade. A popular spot for evening walks right by the water.", "zemunski-kej": "The Danube quay of old Zemun — a long green promenade along the river, with views of the water, boats and traditional fish restaurants. A favourite place for a stroll.", "most-na-adi": "A cable-stayed bridge over the Sava (2012) with a single tall pylon from which the cables fan out — a striking modern silhouette. It runs beside Ada Ciganlija island.", "nebojsa": "A 15th-century river watchtower that guarded the fortress port; under the Ottomans it served as a prison. Today a museum and one of few surviving structures of medieval Belgrade from the time of Despot Stefan Lazarevic.", "kafana-znak": "Belgrade's oldest working kafana, opposite the Cathedral Church. Its enigmatic name arose from a dispute with the church over the sign: a temporary question mark became the permanent name.", "vuk-dositej": "Housed in one of the city's oldest surviving Ottoman buildings. Dedicated to Vuk Karadzic — reformer of the language and creator of modern Serbian Cyrillic — and the educator Dositej Obradovic.", "nb-srbije": "A 1973 building near the Church of St Sava — the new national library replacing the one destroyed in 1941 at Kosancicev venac. The institution was rebuilt, but on a different site; the old one remained empty.", "kalenic": "Belgrade's largest working farmers' market: an open section with fruit and vegetables and a covered hall with cheese, eggs and meat. A lively, non-touristy layer of the city.", "vuk-monument": "A 1937 monument to the reformer of the Serbian language. It gave the colloquial name to the whole quarter and station — 'Vukov spomenik': that's what people call the area, not the sculpture itself.", "cubura": "The historic core of Vracar: low, dense building, courtyards and kafanas — the classic image of the 'old Belgrade yard' at the foot of the Church of St Sava.", "slavija": "The city's largest roundabout and a main transport hub. The name comes from the Slavija hotel that once stood here. A character of city folklore in its own right.", "beli-dvor": "Part of the royal complex at Dedinje (1934–1937), residence of the Karadjordjevic dynasty. Dedinje is the most closed-off district in the city. Visits by guided tour only.", "african-art": "The only museum of its kind in the region (1977), based on the Marjanovic couple's collection. A material trace of Non-Aligned Movement policy: Yugoslavia built ties with African countries.", "old-station": "Belgrade's main railway station for over 130 years (1884), closed in 2018. The Orient Express passed through it. Today a historic building of the redesigned Sava Square, with a monument to Stefan Nemanja.", "senjak": "An upscale district of villas on high ground. The name comes from 'seno' (hay): hay was stored here after being ordered out of the city because of fire risk.", "tasmajdan": "The name comes from the Turkish 'tas meydan' — 'stone field', a quarry. For centuries stone was mined here to build and pave Belgrade; underground workings survive beneath the park.", "russian-church": "A 1924 church for the first wave of Russian émigrés who arrived after the revolution. General Pyotr Wrangel is buried here. A material trace of Russian emigration in Belgrade.", "karaburma": "A district with an Ottoman name that became working-class and industrial in the socialist period. Dense residential building of the late 20th century — the 'unpolished' Belgrade.", "ada-huja": "A former Danube island joined to the shore and turned into an industrial zone; the lowest point of Belgrade (~70 m). Another island that stopped being an island — a trace of how the city rewrote its rivers' courses.", "zvezdarska-suma": "The forest around the observatory, a protected natural site and the main green zone of the city's east — a place where the city physically recedes.", "djeram": "One of the old neighbourhood markets. The name 'djeram' is a well-sweep, a water-lifting device that once stood here. A place name from a long-vanished object.", "cvetkova": "A large neighbourhood market that gave its name to the surrounding quarter — another example of a market becoming a unit of city navigation.", "mirijevo": "A former village in the city's east, built up in the second half of the 20th century. Teodor Jankovic-Mirijevski, a reformer of schooling in the Habsburg and Russian empires, came from here.", "neznani-junak": "A mausoleum on the summit of Avala (1934–1938) by Ivan Mestrovic, in black labradorite, with caryatids — women of the peoples of Yugoslavia. Built on the site of the medieval town of Zrnov.", "banjica": "A museum in the building of a former concentration camp from the German occupation of 1941–1944. The display is built on documents and prisoners' personal belongings. A place of remembrance.", "jajinci": "A memorial park on the site of mass shootings during the 1941–1944 occupation. Today a monument and a place of remembrance.", "kosutnjak": "A forest, the former hunting grounds of the Obrenovic family (from 'kosuta' — a doe). On 10 June 1868 Prince Mihailo Obrenovic was killed here; the city's main street was later named after him.", "cerak": "A housing estate (1978–1985) by architects Darko and Milena Marusic — one of the finest examples of late Yugoslav residential modernism: the buildings fit the terrain, with thoughtful pedestrian links and greenery.", "filmski-grad": "A film-studio complex in Kosutnjak — the centre of Yugoslav film production and the material base of the 'Black Wave' and of Yugoslav cinema as a whole.", "banovo-brdo": "The main residential and commercial centre of Cukarica, on high ground above the Sava — a self-sufficient 'city within the city', with its own centre, market and shopping street.", "vidikovac": "A residential district on high ground; the name means 'lookout'. An example of mass housing from the late socialist period.", "miljakovac-les": "A forest in the city's south, a recreation area — part of the system of city forests that sets Belgrade apart from many European capitals.", "palata-srbije": "The main administrative building of socialist Yugoslavia (1947–1961), which housed the federal government. Its interiors are decorated with works by artists from every Yugoslav republic — an embodiment of the idea of the federation.", "usce-park": "A park right at the Sava–Danube confluence, with the Eternal Flame monument and the city's main concert ground. The geographic point for which Belgrade came into being.", "staro-sajmiste": "Built in 1937–1938 as the exhibition complex of the Kingdom of Yugoslavia. After the 1941 occupation the site was turned into a concentration camp. Today a protected historic monument and a place of remembrance.", "sava-centar": "The country's largest congress centre (1976–1979), designed by Stojan Maksimovic and built for an OSCE conference. A material trace of Yugoslavia's diplomatic role; restored in the 2020s.", "studentski-grad": "Serbia's largest student campus and one of the first developments of New Belgrade (from 1948). At first it housed the youth brigades who built the district on a filled-in marsh.", "zemun-muzej": "In a 19th-century merchant's house (the Spirta family house); a collection on the archaeology, history and culture of Zemun. The district has its own local museum — a rarity among Belgrade's municipalities.", "magistratski-trg": "The central square of old Zemun, named after the Magistrate building — the self-government body of the free military community. Evidence that Zemun had its own self-rule.", "beogradanka": "A 27-storey tower from 1974 — one of the centre's first high-rises and a notable landmark of the skyline. A shopping mall below; a café with a panorama of all Belgrade once operated at the top.", "muzej-jugoslavije": "A museum complex on the history of Yugoslavia; on its grounds is the 'House of Flowers' with the mausoleum of Josip Broz Tito. A modernist building from 1962 with a large collection and a mosaic on the façade.", "zoo": "The 'Garden of Good Hope' zoo at Kalemegdan, founded in 1936 — one of the oldest in the region. Known for its long-lived animals and the view of the fortress.", "narodni-muzej": "The country's main museum (1844) on Republic Square: from archaeology and medieval frescoes to European painting, including the Impressionists. Reopened in 2018 after a long restoration.", "ruzica": "One of the city's oldest churches, tucked into the walls of Kalemegdan and covered in ivy. Inside hang chandeliers made by Serbian soldiers from spent cartridges and weapon parts from the First World War.", "cetinjska": "The courtyards of the former Bajloni brewery, now a hub of alternative nightlife: bars, clubs and concert stages in old industrial halls. A favourite of young people and expats.", "ratno-ostrvo": "A wild river island at the Sava–Danube confluence — a bird reserve and a popular summer beach, Lido. In summer a pontoon bridge leads across.", "most-pupina": "A cable-stayed bridge over the Danube (2014) linking Zemun with the Borča side of Palilula. It eased the long-overloaded Pančevo bridge; locals call it the 'Chinese bridge', as a Chinese company built it.", "veliko-blato": "A lake and wetland reserve in northern Palilula, near Kovilovo. A nesting ground for waterbirds and a quiet spot for walks away from the city — part of the Danube wetlands.", "kinoteka": "The national film archive and cinema museum (1949) — one of the largest collections in the world. The historic building screens classics and retrospectives, with a museum display on cinema next door.", "auto-muzej": "A collection of vintage cars in the former 'Modern Garage' (1929), one of the city's first. Bratislav Petković's collection: rare pre-war makes and the story of motorisation.", "cvijeta-zuzoric": "An exhibition pavilion on Kalemegdan (1928) — one of the city's main contemporary-art halls for nearly a century. Named after a Renaissance poetess from Dubrovnik.", "kapetan-misa": "Belgrade's most lavish 19th-century building (1863), donated by the benefactor Miša Anastasijević to the state 'for the needs of education'. Today the rectorate of the University of Belgrade.", "palata-albanija": "The first skyscraper in Belgrade and the whole region (1940), 12 storeys on the corner of Terazije. Named after the kafana that once stood here; a symbol of the pre-war city's modernisation.", "manakova-kuca": "An early-19th-century Balkan-style town house in Savamala — one of few that survive. Part of the Ethnographic Museum: folk costumes, jewellery and crafts."}, "sr": {"kalemegdan": "Београдска тврђава на ушћу Саве у Дунав. Кроз две хиљаде година освајали су је Келти, Римљани, Византинци, Срби, Мађари, Турци и Аустријанци — зато зидине спајају римски зид, средњовековне капије и османске куле. Данас је то највећи градски парк, са музејом и чувеним заласцима сунца над ушћем.", "knez": "Главна пешачка улица, трасирана линијом римског Београда. Здања у стилу модерне, књижаре, кафићи и улични свирачи — од Трга републике до капије Калемегдана.", "trg": "Срце пешачког центра са коњаничким спомеником кнезу Михаилу, Народним позориштем и Народним музејом Србије. Класично место сусрета — „код коња“.", "skadarlija": "Калдрмисана боемска улица — „београдски Монмартр“. Од краја 19. века овде су се окупљали песници и сликари; и данас у старим кафанама под липама свирају оркестри.", "sava-temple": "Један од највећих православних храмова на свету — на месту где су Османлије 1595. спалиле мошти светог Саве, оснивача српске цркве. Грађен више од века; златни мозаик куполе види се готово одсвуда.", "tesla": "Лична заоставштина проналазача и урна са његовим пепелом. На моделима који раде види се како наизменична струја и Теслин калем претварају електрицитет у муње.", "botanika": "Основана 1874. на иницијативу ботаничара Јосифа Панчића. Краљ Милан Обреновић 1889. поклонио јој је имање и назвао га „Јевремовац“ по деди Јеврему Обреновићу. Тиха зелена оаза у центру, са старом стакленом баштом и јапанским кутком.", "flowers": "Маузолеј Јосипа Броза Тита у парку на Дедињу. Скромно застакљено здање у зеленилу постало је место ходочашћа милиона — споменик југословенској епохи.", "usce": "Ушће је сам врх споја Саве и Дунава, зелени парк са кулом и фонтаном. У близини је Музеј савремене уметности, стаклено здање из 1965. са снажном збирком.", "ada": "Речно острво које је постало полуострво: Сава је преграђена и настало је чисто језеро са плажама. Лети „београдско море“ окупља хиљаде грађана.", "gardos": "Кула Миленијум на брду Гардош (1896), за хиљадугодишњицу доласка Мађара. Са врха, изнад црепова старог Земуна, пружа се поглед на Дунав.", "avala": "Планина на југу са ТВ-торњем и Спомеником незнаном јунаку Ивана Мештровића. Торањ је срушен 1999. и поново подигнут 2010. народним прилозима.", "saborna-crkva": "Саборна црква Светог арханђела Михаила (1840) у стилу класицизма. Ту почивају владари из династије Обреновић и просветитељи Вук Караџић и Доситеј Обрадовић; преко пута је најстарија кафана „Знак питања“.", "konak-ljubice": "Конак у балканском стилу који је кнез Милош подигао тридесетих година 19. века за супругу Љубицу. Један од ретких сачуваних споменика српско-османске архитектуре; данас музеј градског живота 19. века.", "bajrakli": "Једина сачувана од скоро 270 београдских џамија из османског доба (око 1575). Име је по застави (бајрак) којом је давала знак за молитву осталима.", "skupstina": "Здање парламента, грађено од 1907. до 1936, са чувеном скулптуром „Играли се коњи“ на улазу. Сведок кључних догађаја 20. века, укључујући преломни 5. октобар 2000.", "hotel-moskva": "Отворен 1908. у стилу српске модерне и обложен зеленим керамичким плочицама. Легендарно место сусрета писаца и уметника и један од симбола Београда.", "sv-marko": "Величанствени храм у српско-византијском стилу (1940) на ивици Ташмајдана, обликован по манастиру Грачаница. Ту почива цар Стефан Душан; поред је мала руска црква.", "nikolajevska": "Најстарија сачувана црква у Београду (око 1731) у барокном Земуну. Чува богато резбарени иконостас из 18. века и памти време када је Земун био погранични град Аустријске царевине.", "genex": "„Западна капија Београда“ (крај 1970-их) — чувени пример бруталистичке архитектуре: две куле спојене мостом и некада крунисане ротирајућим рестораном. Симбол социјалистичког модернизма.", "topcider": "Резиденција кнеза Милоша Обреновића (1831) у парку Топчидер, око којег је растао савремени Београд. У близини су вековни платани и Музеј Првог српског устанка.", "opservatorija": "Опсерваторија на брду Звездара (1932), која је дала име целом крају (звезда). Њене куполе и стари телескопи у шуми и данас служе науци.", "rakovica-manastir": "Средњовековни манастир, по предању повезан са деспотом Стефаном Лазаревићем. Место почивања патријарха Павла — поштованог поглавара Српске цркве; тиха оаза на југу града.", "waterfront": "Савремена стамбено-пословна четврт на десној обали Саве, изграђена 2010-их на месту некадашње теретне станице. Доминанта је Кула Београд, највиша зграда у земљи са видиковцем; уз реку је нова обала са кафићима и парком.", "dorcol": "Једна од најстаријих градских четврти, која се спушта од Калемегдана ка Дунаву. Име потиче од турског „dört yol“ — „четири пута“. Вековима су ту живеле различите заједнице и занати; данас је Дорћол пријатан крај тихих улица, кафеа и радионица.", "kosancicev-venac": "Живописна стара четврт на падини изнад Саве, са калдрмом и кућама из 19. века. Ту је стајала Народна библиотека, изгубљена 1941. Данас је то једно од места старог Београда са најлепшом атмосфером, погледом на реку и заласке.", "stari-dvor": "Стари двор (1884) — некадашња краљевска резиденција у академском стилу, окружена парком са фонтанама. Данас у њему заседа Скупштина града Београда; преко пута је Нови двор.", "beton-hala": "Некадашња лучка складишта уз Саву, данас живо шеталиште са рестораном и погледом на Бранков мост и Нови Београд. Омиљено место вечерњих шетњи уз саму воду.", "zemunski-kej": "Дунавски кеј старог Земуна — дуга зелена променада уз реку, са погледом на воду, чамце и традиционалне рибље ресторане. Омиљено шеталиште грађана.", "most-na-adi": "Кабловски мост преко Саве (2012) са једним високим пилоном од којег се лепезасто шире сајле — упечатљива савремена силуета града. Пролази поред острва Ада Циганлија.", "nebojsa": "Речна осматрачка кула из 15. века која је чувала луку тврђаве; под Османлијама је служила као тамница. Данас музеј и један од ретких сачуваних објеката средњовековног Београда из доба деспота Стефана Лазаревића.", "kafana-znak": "Најстарија активна београдска кафана преко пута Саборне цркве. Загонетно име настало је из спора са црквом око фирме: привремени знак питања остао је стално име.", "vuk-dositej": "У једном од најстаријих сачуваних објеката османске архитектуре у граду. Посвећен Вуку Караџићу — реформатору језика и творцу савремене српске ћирилице — и просветитељу Доситеју Обрадовићу.", "nb-srbije": "Здање из 1973. код Храма Светог Саве — нова национална библиотека уместо оне уништене 1941. на Косанчићевом венцу. Установа је обновљена, али на другом месту; старо здање остало је празно.", "kalenic": "Највећа активна београдска пијаца: отворени део са воћем и поврћем и затворени павиљон са сиром, јајима и месом. Жив, нетуристички слој града.", "vuk-monument": "Споменик из 1937. реформатору српског језика. Дао је разговорно име целом крају и станици — „Вуков споменик“: тако се зове крај, а не сама скулптура.", "cubura": "Историјско језгро Врачара: ниска густа градња, дворишта и кафане — класична слика „старог београдског дворишта“ у подножју Храма Светог Саве.", "slavija": "Највећа кружна раскрсница у граду и главно саобраћајно чвориште. Име је по хотелу „Славија“ који је ту стајао. Посебан лик градског фолклора.", "beli-dvor": "Део краљевског комплекса на Дедињу (1934–1937), резиденција династије Карађорђевић. Дедиње је најзатворенији део града. Посета само уз организовану туру.", "african-art": "Једини музеј тог профила у региону (1977), заснован на збирци брачног пара Марјановић. Материјални траг политике Покрета несврстаних: Југославија је градила везе са земљама Африке.", "old-station": "Главна железничка станица Београда више од 130 година (1884), затворена 2018. Кроз њу је пролазио Оријент експрес. Данас историјско здање преображеног Савског трга, са спомеником Стефану Немањи.", "senjak": "Елитни крај вила на узвишици. Име је од „сено“: ту се складиштило сено које је наређено да се изнесе ван града због опасности од пожара.", "tasmajdan": "Име од турског „taş meydan“ — „камено поље“, каменолом. Одавде се вековима вадио камен којим је Београд грађен и калдрмисан; испод парка сачувани су подземни ходници.", "russian-church": "Црква из 1924. за руске емигранте првог таласа, који су стигли после револуције. Ту је сахрањен генерал Пјотр Врангел. Материјални траг руске емиграције у Београду.", "karaburma": "Крај са османским именом, који је у социјалистичком периоду постао раднички и индустријски. Густа стамбена градња друге половине 20. века — „неулепшани“ Београд.", "ada-huja": "Некадашње дунавско острво спојено са обалом и претворено у индустријску зону; најнижа тачка Београда (~70 m). Још једно острво које је престало да буде острво — траг тога како је град исписивао токове својих река.", "zvezdarska-suma": "Шума око опсерваторије, заштићено природно добро и главна зелена зона истока града — место где се град физички повлачи.", "djeram": "Једна од старих квартовских пијаца. Име „ђерам“ је справа за подизање воде из бунара која је некада ту стајала. Топоним по одавно несталом објекту.", "cvetkova": "Велика квартовска пијаца која је дала име околном крају — још један пример како пијаца постаје јединица градске оријентације.", "mirijevo": "Некадашње село на истоку града, изграђено у другој половини 20. века. Одавде потиче Теодор Јанковић Миријевски, реформатор школства у Хабзбуршкој и Руској царевини.", "neznani-junak": "Маузолеј на врху Авале (1934–1938) Ивана Мештровића, од црног лабрадорита, са каријатидама — женама народа Југославије. Подигнут на месту средњовековног града Жрнова.", "banjica": "Музеј у згради некадашњег концентрационог логора из времена немачке окупације 1941–1944. Поставка се заснива на документима и личним стварима заточеника. Место сећања.", "jajinci": "Меморијални парк на месту масовних стрељања за време окупације 1941–1944. Данас споменик и место сећања.", "kosutnjak": "Шума, некадашње ловиште Обреновића (од „кошута“). Ту је 10. јуна 1868. убијен кнез Михаило Обреновић; по њему је потом названа главна улица града.", "cerak": "Стамбено насеље (1978–1985) архитеката Дарка и Милене Марушић — један од најбољих примера позног југословенског стамбеног модернизма: градња уклопљена у терен, са промишљеним пешачким везама и зеленилом.", "filmski-grad": "Филмски студијски комплекс у Кошутњаку — центар југословенске филмске производње и материјална база „црног таласа“ и целог југословенског филма.", "banovo-brdo": "Главни стамбени и трговачки центар Чукарице на узвишици изнад Саве — самодовољан „град у граду“, са својим центром, пијацом и трговачком улицом.", "vidikovac": "Стамбени крај на узвишици; име значи „видиковац“. Пример масовне стамбене градње позног социјалистичког периода.", "miljakovac-les": "Шума на југу града, зона рекреације — део система градских шума по којима се Београд разликује од многих европских престоница.", "palata-srbije": "Главно управно здање социјалистичке Југославије (1947–1961), у ком је било савезно врховно тело. Ентеријере су украсили уметници из свих југословенских република — оваплоћење идеје федерације.", "usce-park": "Парк на самом ушћу Саве у Дунав, са Спомеником вечне ватре и главним концертним простором града. Географска тачка због које је Београд и настао.", "staro-sajmiste": "Изграђено 1937–1938. као сајамски комплекс Краљевине Југославије. После окупације 1941. простор је претворен у концентрациони логор. Данас заштићени историјски споменик и место сећања.", "sava-centar": "Највећи конгресни центар у земљи (1976–1979) по пројекту Стојана Максимовића, подигнут за конференцију КЕБС-а. Материјални траг дипломатске улоге Југославије; обновљен 2020-их.", "studentski-grad": "Највећи студентски кампус Србије и један од првих објеката Новог Београда (од 1948). Испрва су ту живеле омладинске бригаде које су градиле насеље на насутој мочвари.", "zemun-muzej": "У трговачкој кући из 19. века (кућа породице Спирта); збирка о археологији, историји и култури Земуна. Крај има сопствени завичајни музеј — реткост међу београдским општинама.", "magistratski-trg": "Централни трг старог Земуна, назван по згради Магистрата — органа самоуправе слободне војне општине. Сведочанство да је Земун имао сопствену самоуправу.", "beogradanka": "Кула од 27 спратова из 1974 — један од првих солитера центра и упечатљив оријентир силуете града. Доле тржни центар, горе је некада радио кафе са панорамом целог Београда.", "muzej-jugoslavije": "Музејски комплекс о историји Југославије; на његовом простору је „Кућа цвећа“ са маузолејем Јосипа Броза Тита. Модернистичко здање из 1962. са великом збирком и мозаиком на фасади.", "zoo": "Зоо-врт „Врт добре наде“ на Калемегдану, основан 1936 — један од најстаријих у региону. Познат по дуговечним животињама и погледу на тврђаву.", "narodni-muzej": "Главни музеј земље (1844) на Тргу републике: од археологије и средњовековних фресака до европског сликарства, укључујући импресионисте. Поново отворен 2018. после дуге обнове.", "ruzica": "Једна од најстаријих цркава у граду, скривена у зидинама Калемегдана и обрасла бршљаном. Унутра су лустери које су српски војници направили од испаљених чаура и делова оружја из Првог светског рата.", "cetinjska": "Дворишта некадашње пиваре Бајлони, данас средиште алтернативног ноћног живота: барови, клубови и концертне бине у старим индустријским халама. Омиљено место младих и странаца.", "ratno-ostrvo": "Дивље речно острво на ушћу Саве у Дунав — резерват птица и популарна летња плажа Лидо. Лети до њега води понтонски мост.", "most-pupina": "Кабловски мост преко Дунава (2014) који је повезао Земун са борчанском страном Палилуле. Растеретио је дуго препуни Панчевачки мост; у народу га зову „Кинески мост“, јер га је градила кинеска компанија.", "veliko-blato": "Језеро и мочварни резерват на северу Палилуле, код Ковилова. Гнездилиште водених птица и мирно место за шетњу далеко од града — део дунавских влажних станишта.", "kinoteka": "Национални филмски архив и музеј кинематографије (1949) — једна од највећих збирки на свету. У историјској згради приказују се класици и ретроспективе, а ту је и музејска поставка о филму.", "auto-muzej": "Збирка старих аутомобила у некадашњој „Модерној гаражи“ (1929), једној од првих у граду. Збирка Братислава Петковића: ретке предратне марке и историја моторизације.", "cvijeta-zuzoric": "Изложбени павиљон на Калемегдану (1928) — скоро век један од главних простора савремене уметности у граду. Назван по ренесансној песникињи из Дубровника.", "kapetan-misa": "Најраскошнија београдска зграда 19. века (1863), коју је добротвор Миша Анастасијевић поклонио држави „отачеству на корист“. Данас ректорат Универзитета у Београду.", "palata-albanija": "Први солитер у Београду и целом региону (1940), 12 спратова на углу Теразија. Назван по кафани која је ту некада стајала; симбол модернизације предратног града.", "manakova-kuca": "Градска кућа балканског типа с почетка 19. века у Савамали — једна од ретких сачуваних. Део Етнографског музеја: народне ношње, накит и занати."}};
-const ABOUT_TR={"en": {"stari-grad": "The historic core on the Sava–Danube headland: Kalemegdan, pedestrian Knez Mihailova, Skadarlija and Republic Square.", "savski-venac": "A green 'diplomatic' district along the Sava — railway stations, Dedinje, the Nikola Tesla Museum and the House of Flowers.", "vracar": "The smallest but dense and prestigious municipality. Its skyline is set by the vast Church of St Sava.", "novi-beograd": "Built from scratch after the war on the left bank of the Sava — modernist blocks, a business centre and the Museum of Contemporary Art at the confluence.", "zemun": "A separate town until the 20th century with an Austro-Hungarian soul: tiled roofs and the Gardos tower above the Danube.", "palilula": "Stretches from the centre far beyond the Danube, to river islands and meadows. Home to the Jevremovac Botanical Garden and Tasmajdan.", "vozdovac": "A large southern district rising towards Mount Avala with its memorial tower.", "zvezdara": "A hilly residential east, named after the old astronomical observatory (zvezda — 'star').", "rakovica": "An industrial-residential south-west: Rakovica monastery and the old car factory — a symbol of industrial Belgrade.", "cukarica": "Stretches along the Sava to the south-west. Home to the island-beach Ada Ciganlija — Belgrade's 'sea'."}, "sr": {"stari-grad": "Историјско језгро на ушћу Саве у Дунав: Калемегдан, пешачка Кнез Михаилова, Скадарлија и Трг републике.", "savski-venac": "Зелена „дипломатска“ општина уз Саву — железничке станице, Дедиње, Музеј Николе Тесле и Кућа цвећа.", "vracar": "Најмања, али густа и престижна општина. Њену силуету одређује огромни Храм Светог Саве.", "novi-beograd": "Изграђен из темеља после рата на левој обали Саве — модернистички блокови, пословни центар и Музеј савремене уметности на ушћу.", "zemun": "Засебан град до 20. века, аустроугарске душе: црепови и кула Гардош над Дунавом.", "palilula": "Пружа се од центра далеко преко Дунава, до речних острва и ливада. Ту су Ботаничка башта „Јевремовац“ и Ташмајдан.", "vozdovac": "Велика јужна општина која се пење ка планини Авали са спомен-торњем.", "zvezdara": "Брежуљкасти стамбени исток, назван по старој астрономској опсерваторији (звезда).", "rakovica": "Индустријско-стамбени југозапад: манастир Раковица и стара фабрика аутомобила — симбол индустријског Београда.", "cukarica": "Пружа се уз Саву ка југозападу. Ту је острво-плажа Ада Циганлија — „море“ Београда."}};
-const INTRO_TR={"en": {"old-town": "A classic walk through the historic core: from the fortress at the confluence, along pedestrian Knez Mihailova and Republic Square, to bohemian Skadarlija.", "vracar": "The Vracar plateau: the country's main church, the Nikola Tesla Museum and the green botanical garden by Tasmajdan.", "rivers": "Along the water: from the Sava–Danube confluence and the Museum of Contemporary Art to the tiled roofs of old Zemun and the Gardos tower."}, "sr": {"old-town": "Класична шетња кроз историјско језгро: од тврђаве на ушћу, кроз пешачку Кнез Михаилову и Трг републике, до боемске Скадарлије.", "vracar": "Врачарски плато: главни храм земље, Музеј Николе Тесле и зелена ботаничка башта код Ташмајдана.", "rivers": "Уз воду: од ушћа Саве у Дунав и Музеја савремене уметности до црепова старог Земуна и куле Гардош."}};
+const STORY_TR={"en": {"kalemegdan": "Belgrade Fortress on the headland where the Sava meets the Danube. Over two thousand years it was taken by Celts, Romans, Byzantines, Serbs, Hungarians, Turks and Austrians — so its walls blend Roman masonry, medieval gates and Ottoman towers. Today it is the city's largest park, with a museum and famous sunsets over the confluence.", "knez": "The main pedestrian street, laid along the line of Roman Belgrade. Art Nouveau mansions, bookshops, cafés and street musicians run from Republic Square to the gates of Kalemegdan.", "trg": "The heart of the pedestrian centre, with the equestrian monument to Prince Mihailo, the National Theatre and the National Museum of Serbia. The classic meeting point — 'kod konja', 'by the horse'.", "skadarlija": "A cobbled bohemian lane — 'Belgrade's Montmartre'. Poets and painters have gathered here since the late 19th century; bands still play in the old kafanas under the lime trees.", "sava-temple": "One of the largest Orthodox churches in the world, on the spot where in 1595 the Ottomans burned the relics of St Sava, founder of the Serbian church. Built over more than a century; its golden dome mosaic is visible from almost everywhere.", "tesla": "The inventor's personal archive and the urn with his ashes. Working models show how alternating current and the Tesla coil turn electricity into lightning.", "botanika": "Founded in 1874 on the initiative of the botanist Josif Pančić. In 1889 King Milan Obrenović donated the estate and named it 'Jevremovac' after his grandfather, Jevrem Obrenović. A quiet green oasis in the centre, with a historic glasshouse and a Japanese corner.", "flowers": "The mausoleum of Josip Broz Tito in a park at Dedinje. This modest glass building among the greenery became a place of pilgrimage for millions — a monument to the Yugoslav era.", "usce": "Ušće is the very tip of the Sava–Danube confluence, a green park with a tower and a fountain. Nearby stands the Museum of Contemporary Art, a glass building from 1965 with a strong collection.", "ada": "A river island that became a peninsula: the Sava was dammed and a clean lake with beaches formed. In summer 'Belgrade's sea' draws thousands of locals.", "gardos": "The Millennium Tower on Gardoš hill (1896), built for the millennium of the Hungarians' arrival. From the top you look out over the tiled roofs of old Zemun to the Danube.", "avala": "A mountain to the south with a TV tower and Meštrović's Monument to the Unknown Hero. The tower was destroyed in 1999 and rebuilt in 2010 through public donations.", "saborna-crkva": "The Cathedral Church of St Michael the Archangel (1840) in the Classicist style. Rulers of the Obrenović dynasty and the reformers Vuk Karadžić and Dositej Obradovic rest here; opposite stands the oldest kafana, 'The Question Mark'.", "konak-ljubice": "A Balkan-style residence built by Prince Miloš in the 1830s for his wife Ljubica. One of few surviving monuments of Serbian-Ottoman architecture; now a museum of 19th-century city life.", "bajrakli": "The only survivor of nearly 270 Ottoman-era Belgrade mosques (around 1575). Its name comes from the flag (bajrak) with which it signalled the call to prayer to all the others.", "skupstina": "The parliament building, constructed between 1907 and 1936, with the famous 'Playing Horses' sculpture at the entrance. A witness to key 20th-century events, including the turning point of 5 October 2000.", "hotel-moskva": "Opened in 1908 in the Serbian Art Nouveau style and clad in green ceramic tiles. A legendary meeting place for writers and artists and one of Belgrade's symbols.", "sv-marko": "A majestic church in the Serbian-Byzantine style (1940) on the edge of Tašmajdan, echoing the outline of Gračanica monastery. The Serbian Tsar Stefan Dušan rests here; beside it stands a small Russian church.", "nikolajevska": "The oldest surviving church in Belgrade (around 1731), in Baroque Zemun. It holds a richly carved 18th-century iconostasis and recalls the time when Zemun was a border town of the Austrian Empire.", "genex": "The 'Western Gate of Belgrade' (late 1970s) — a famous example of Brutalism: two towers joined by a bridge and once crowned by a revolving restaurant. A symbol of socialist modernism.", "topcider": "The residence of Prince Miloš Obrenović (1831) in Topčider Park, around which modern Belgrade grew. Nearby stand century-old plane trees and the Museum of the First Serbian Uprising.", "opservatorija": "The observatory on Zvezdara hill (1932), which gave the whole district its name (zvezda — 'star'). Its domes and old telescopes among the forest still serve science.", "rakovica-manastir": "A medieval monastery, by tradition linked to Despot Stefan Lazarević. The resting place of Patriarch Pavle — a revered head of the Serbian Church; a quiet oasis in the city's south.", "waterfront": "A modern residential and business district on the right bank of the Sava, built in the 2010s on the site of a former freight station. Its landmark is the Kula Beograd tower, the tallest building in the country, with a viewing deck; a new riverside promenade with cafés and a park runs along the water.", "dorcol": "One of the city's oldest quarters, descending from Kalemegdan to the Danube. The name comes from the Turkish 'dört yol' — 'four roads'. For centuries different communities and crafts lived side by side here; today Dorćol is a cosy district of quiet streets, coffee shops and workshops.", "kosancicev-venac": "A picturesque old quarter on the slope above the Sava, with cobblestones and 19th-century houses. The National Library once stood here, lost in 1941. Today it is one of the most atmospheric spots of old Belgrade, with a view of the river and sunsets.", "stari-dvor": "The Old Palace (1884) — a former royal residence in the academic style, surrounded by a park with fountains. Today it houses the City Assembly of Belgrade; the New Palace stands opposite.", "beton-hala": "Former port warehouses by the Sava, now a lively waterfront with restaurants and a view of the Branko Bridge and New Belgrade. A popular spot for evening walks right by the water.", "zemunski-kej": "The Danube quay of old Zemun — a long green promenade along the river, with views of the water, boats and traditional fish restaurants. A favourite place for a stroll.", "most-na-adi": "A cable-stayed bridge over the Sava (2012) with a single tall pylon from which the cables fan out — a striking modern silhouette. It runs beside Ada Ciganlija island.", "nebojsa": "A 15th-century river watchtower that guarded the fortress port; under the Ottomans it served as a prison. Today a museum and one of few surviving structures of medieval Belgrade from the time of Despot Stefan Lazarević.", "kafana-znak": "Belgrade's oldest working kafana, opposite the Cathedral Church. Its enigmatic name arose from a dispute with the church over the sign: a temporary question mark became the permanent name.", "vuk-dositej": "Housed in one of the city's oldest surviving Ottoman buildings. Dedicated to Vuk Karadžić — reformer of the language and creator of modern Serbian Cyrillic — and the educator Dositej Obradovic.", "nb-srbije": "A 1973 building near the Church of St Sava — the new national library replacing the one destroyed in 1941 at Kosančićev Venac. The institution was rebuilt, but on a different site; the old one remained empty.", "kalenic": "Belgrade's largest working farmers' market: an open section with fruit and vegetables and a covered hall with cheese, eggs and meat. A lively, non-touristy layer of the city.", "vuk-monument": "A 1937 monument to the reformer of the Serbian language. It gave the colloquial name to the whole quarter and station — 'Vukov spomenik': that's what people call the area, not the sculpture itself.", "cubura": "The historic core of Vračar: low, dense building, courtyards and kafanas — the classic image of the 'old Belgrade yard' at the foot of the Church of St Sava.", "slavija": "The city's largest roundabout and a main transport hub. The name comes from the Slavija hotel that once stood here. A character of city folklore in its own right.", "beli-dvor": "Part of the royal complex at Dedinje (1934–1937), residence of the Karađorđević dynasty. Dedinje is the most closed-off district in the city. Visits by guided tour only.", "african-art": "The only museum of its kind in the region (1977), based on the Marjanović couple's collection. A material trace of Non-Aligned Movement policy: Yugoslavia built ties with African countries.", "old-station": "Belgrade's main railway station for over 130 years (1884), closed in 2018. The Orient Express passed through it. Today a historic building of the redesigned Sava Square, with a monument to Stefan Nemanja.", "senjak": "An upscale district of villas on high ground. The name comes from 'seno' (hay): hay was stored here after being ordered out of the city because of fire risk.", "tasmajdan": "The name comes from the Turkish 'taş meydan' — 'stone field', a quarry. For centuries stone was mined here to build and pave Belgrade; underground workings survive beneath the park.", "russian-church": "A 1924 church for the first wave of Russian émigrés who arrived after the revolution. General Pyotr Wrangel is buried here. A material trace of Russian emigration in Belgrade.", "karaburma": "A district with an Ottoman name that became working-class and industrial in the socialist period. Dense residential building of the late 20th century — the 'unpolished' Belgrade.", "ada-huja": "A former Danube island joined to the shore and turned into an industrial zone; the lowest point of Belgrade (~70 m). Another island that stopped being an island — a trace of how the city rewrote its rivers' courses.", "zvezdarska-suma": "The forest around the observatory, a protected natural site and the main green zone of the city's east — a place where the city physically recedes.", "djeram": "One of the old neighbourhood markets. The name 'đeram' is a well-sweep, a water-lifting device that once stood here. A place name from a long-vanished object.", "cvetkova": "A large neighbourhood market that gave its name to the surrounding quarter — another example of a market becoming a unit of city navigation.", "mirijevo": "A former village in the city's east, built up in the second half of the 20th century. Teodor Janković-Mirijevski, a reformer of schooling in the Habsburg and Russian empires, came from here.", "neznani-junak": "A mausoleum on the summit of Avala (1934–1938) by Ivan Meštrović, in black labradorite, with caryatids — women of the peoples of Yugoslavia. Built on the site of the medieval town of Žrnov.", "banjica": "A museum in the building of a former concentration camp from the German occupation of 1941–1944. The display is built on documents and prisoners' personal belongings. A place of remembrance.", "jajinci": "A memorial park on the site of mass shootings during the 1941–1944 occupation. Today a monument and a place of remembrance.", "kosutnjak": "A forest, the former hunting grounds of the Obrenović family (from 'košuta' — a doe). On 10 June 1868 Prince Mihailo Obrenović was killed here; the city's main street was later named after him.", "cerak": "A housing estate (1978–1985) by architects Darko and Milena Marušić — one of the finest examples of late Yugoslav residential modernism: the buildings fit the terrain, with thoughtful pedestrian links and greenery.", "filmski-grad": "A film-studio complex in Košutnjak — the centre of Yugoslav film production and the material base of the 'Black Wave' and of Yugoslav cinema as a whole.", "banovo-brdo": "The main residential and commercial centre of Čukarica, on high ground above the Sava — a self-sufficient 'city within the city', with its own centre, market and shopping street.", "vidikovac": "A residential district on high ground; the name means 'lookout'. An example of mass housing from the late socialist period.", "miljakovac-les": "A forest in the city's south, a recreation area — part of the system of city forests that sets Belgrade apart from many European capitals.", "palata-srbije": "The main administrative building of socialist Yugoslavia (1947–1961), which housed the federal government. Its interiors are decorated with works by artists from every Yugoslav republic — an embodiment of the idea of the federation.", "usce-park": "A park right at the Sava–Danube confluence, with the Eternal Flame monument and the city's main concert ground. The geographic point for which Belgrade came into being.", "staro-sajmiste": "Built in 1937–1938 as the exhibition complex of the Kingdom of Yugoslavia. After the 1941 occupation the site was turned into a concentration camp. Today a protected historic monument and a place of remembrance.", "sava-centar": "The country's largest congress centre (1976–1979), designed by Stojan Maksimović and built for an CSCE conference. A material trace of Yugoslavia's diplomatic role; restored in the 2020s.", "studentski-grad": "Serbia's largest student campus and one of the first developments of New Belgrade (from 1948). At first it housed the youth brigades who built the district on a filled-in marsh.", "zemun-muzej": "In a 19th-century merchant's house (the Spirta family house); a collection on the archaeology, history and culture of Zemun. The district has its own local museum — a rarity among Belgrade's municipalities.", "magistratski-trg": "The central square of old Zemun, named after the Magistrate building — the self-government body of the free military community. Evidence that Zemun had its own self-rule.", "beogradanka": "A 27-storey tower from 1974 — one of the centre's first high-rises and a notable landmark of the skyline. A shopping mall below; a café with a panorama of all Belgrade once operated at the top.", "muzej-jugoslavije": "A museum complex on the history of Yugoslavia; on its grounds is the 'House of Flowers' with the mausoleum of Josip Broz Tito. A modernist building from 1962 with a large collection and a mosaic on the façade.", "zoo": "The 'Garden of Good Hope' zoo at Kalemegdan, founded in 1936 — one of the oldest in the region. Known for its long-lived animals and the view of the fortress.", "narodni-muzej": "The country's main museum (1844) on Republic Square: from archaeology and medieval frescoes to European painting, including the Impressionists. Reopened in 2018 after a long restoration.", "ruzica": "One of the city's oldest churches, tucked into the walls of Kalemegdan and covered in ivy. Inside hang chandeliers made by Serbian soldiers from spent cartridges and weapon parts from the First World War.", "cetinjska": "The courtyards of the former Bajloni brewery, now a hub of alternative nightlife: bars, clubs and concert stages in old industrial halls. A favourite of young people and expats.", "ratno-ostrvo": "A wild river island at the Sava–Danube confluence — a bird reserve and a popular summer beach, Lido. In summer a pontoon bridge leads across.", "most-pupina": "A cable-stayed bridge over the Danube (2014) linking Zemun with the Borča side of Palilula. It eased the long-overloaded Pančevo bridge; locals call it the 'Chinese bridge', as a Chinese company built it.", "veliko-blato": "A lake and wetland reserve in northern Palilula, near Kovilovo. A nesting ground for waterbirds and a quiet spot for walks away from the city — part of the Danube wetlands.", "kinoteka": "The national film archive and cinema museum (1949) — one of the largest collections in the world. The historic building screens classics and retrospectives, with a museum display on cinema next door.", "auto-muzej": "A collection of vintage cars in the former 'Modern Garage' (1929), one of the city's first. Bratislav Petković's collection: rare pre-war makes and the story of motorisation.", "cvijeta-zuzoric": "An exhibition pavilion on Kalemegdan (1928) — one of the city's main contemporary-art halls for nearly a century. Named after a Renaissance poetess from Dubrovnik.", "kapetan-misa": "Belgrade's most lavish 19th-century building (1863), donated by the benefactor Miša Anastasijević to the state 'for the needs of education'. Today the rectorate of the University of Belgrade.", "palata-albanija": "The first skyscraper in Belgrade and the whole region (1940), 12 storeys on the corner of Terazije. Named after the kafana that once stood here; a symbol of the pre-war city's modernisation.", "manakova-kuca": "An early-19th-century Balkan-style town house in Savamala — one of few that survive. Part of the Ethnographic Museum: folk costumes, jewellery and crafts.", "london": "'Kod Londona' — 'at London' — is what Belgraders call the crossroads of Kralja Milana and Kneza Miloša streets. In 1873 a modest, low-rise Hotel London was built here, named after the British capital, and soon the whole quarter took its name. The National Assembly then sat one block away, and deputies gathered in the hotel's kafana during breaks. London marked the eastern edge of the city: beyond lay gardens and a marshy pond where Slavija is today, where locals went duck hunting. The old hotel closed in 1962 and was replaced by a glass-and-aluminium building that has since housed a restaurant, a disco, a bank, a casino and a supermarket. The name stuck: Belgraders still arrange to meet 'kod Londona'."}, "sr": {"kalemegdan": "Београдска тврђава на ушћу Саве у Дунав. Кроз две хиљаде година освајали су је Келти, Римљани, Византинци, Срби, Мађари, Турци и Аустријанци — зато зидине спајају римски зид, средњовековне капије и османске куле. Данас је то највећи градски парк, са музејом и чувеним заласцима сунца над ушћем.", "knez": "Главна пешачка улица, трасирана линијом римског Београда. Здања у стилу модерне, књижаре, кафићи и улични свирачи — од Трга републике до капије Калемегдана.", "trg": "Срце пешачког центра са коњаничким спомеником кнезу Михаилу, Народним позориштем и Народним музејом Србије. Класично место сусрета — „код коња“.", "skadarlija": "Калдрмисана боемска улица — „београдски Монмартр“. Од краја 19. века овде су се окупљали песници и сликари; и данас у старим кафанама под липама свирају оркестри.", "sava-temple": "Један од највећих православних храмова на свету — на месту где су Османлије 1595. спалиле мошти светог Саве, оснивача српске цркве. Грађен више од века; златни мозаик куполе види се готово одсвуда.", "tesla": "Лична заоставштина проналазача и урна са његовим пепелом. На моделима који раде види се како наизменична струја и Теслин калем претварају електрицитет у муње.", "botanika": "Основана 1874. на иницијативу ботаничара Јосифа Панчића. Краљ Милан Обреновић 1889. поклонио јој је имање и назвао га „Јевремовац“ по деди Јеврему Обреновићу. Тиха зелена оаза у центру, са старом стакленом баштом и јапанским кутком.", "flowers": "Маузолеј Јосипа Броза Тита у парку на Дедињу. Скромно застакљено здање у зеленилу постало је место ходочашћа милиона — споменик југословенској епохи.", "usce": "Ушће је сам врх споја Саве и Дунава, зелени парк са кулом и фонтаном. У близини је Музеј савремене уметности, стаклено здање из 1965. са снажном збирком.", "ada": "Речно острво које је постало полуострво: Сава је преграђена и настало је чисто језеро са плажама. Лети „београдско море“ окупља хиљаде грађана.", "gardos": "Кула Миленијум на брду Гардош (1896), за хиљадугодишњицу доласка Мађара. Са врха, изнад црепова старог Земуна, пружа се поглед на Дунав.", "avala": "Планина на југу са ТВ-торњем и Спомеником незнаном јунаку Ивана Мештровића. Торањ је срушен 1999. и поново подигнут 2010. народним прилозима.", "saborna-crkva": "Саборна црква Светог арханђела Михаила (1840) у стилу класицизма. Ту почивају владари из династије Обреновић и просветитељи Вук Караџић и Доситеј Обрадовић; преко пута је најстарија кафана „Знак питања“.", "konak-ljubice": "Конак у балканском стилу који је кнез Милош подигао тридесетих година 19. века за супругу Љубицу. Један од ретких сачуваних споменика српско-османске архитектуре; данас музеј градског живота 19. века.", "bajrakli": "Једина сачувана од скоро 270 београдских џамија из османског доба (око 1575). Име је по застави (бајрак) којом је давала знак за молитву осталима.", "skupstina": "Здање парламента, грађено од 1907. до 1936, са чувеном скулптуром „Играли се коњи“ на улазу. Сведок кључних догађаја 20. века, укључујући преломни 5. октобар 2000.", "hotel-moskva": "Отворен 1908. у стилу српске модерне и обложен зеленим керамичким плочицама. Легендарно место сусрета писаца и уметника и један од симбола Београда.", "sv-marko": "Величанствени храм у српско-византијском стилу (1940) на ивици Ташмајдана, обликован по манастиру Грачаница. Ту почива цар Стефан Душан; поред је мала руска црква.", "nikolajevska": "Најстарија сачувана црква у Београду (око 1731) у барокном Земуну. Чува богато резбарени иконостас из 18. века и памти време када је Земун био погранични град Аустријске царевине.", "genex": "„Западна капија Београда“ (крај 1970-их) — чувени пример бруталистичке архитектуре: две куле спојене мостом и некада крунисане ротирајућим рестораном. Симбол социјалистичког модернизма.", "topcider": "Резиденција кнеза Милоша Обреновића (1831) у парку Топчидер, око којег је растао савремени Београд. У близини су вековни платани и Музеј Првог српског устанка.", "opservatorija": "Опсерваторија на брду Звездара (1932), која је дала име целом крају (звезда). Њене куполе и стари телескопи у шуми и данас служе науци.", "rakovica-manastir": "Средњовековни манастир, по предању повезан са деспотом Стефаном Лазаревићем. Место почивања патријарха Павла — поштованог поглавара Српске цркве; тиха оаза на југу града.", "waterfront": "Савремена стамбено-пословна четврт на десној обали Саве, изграђена 2010-их на месту некадашње теретне станице. Доминанта је Кула Београд, највиша зграда у земљи са видиковцем; уз реку је нова обала са кафићима и парком.", "dorcol": "Једна од најстаријих градских четврти, која се спушта од Калемегдана ка Дунаву. Име потиче од турског „dört yol“ — „четири пута“. Вековима су ту живеле различите заједнице и занати; данас је Дорћол пријатан крај тихих улица, кафеа и радионица.", "kosancicev-venac": "Живописна стара четврт на падини изнад Саве, са калдрмом и кућама из 19. века. Ту је стајала Народна библиотека, изгубљена 1941. Данас је то једно од места старог Београда са најлепшом атмосфером, погледом на реку и заласке сунца.", "stari-dvor": "Стари двор (1884) — некадашња краљевска резиденција у академском стилу, окружена парком са фонтанама. Данас у њему заседа Скупштина града Београда; преко пута је Нови двор.", "beton-hala": "Некадашња лучка складишта уз Саву, данас живо шеталиште са ресторанима и погледом на Бранков мост и Нови Београд. Омиљено место вечерњих шетњи уз саму воду.", "zemunski-kej": "Дунавски кеј старог Земуна — дуга зелена променада уз реку, са погледом на воду, чамце и традиционалне рибље ресторане. Омиљено шеталиште грађана.", "most-na-adi": "Кабловски мост преко Саве (2012) са једним високим пилоном од којег се лепезасто шире сајле — упечатљива савремена силуета града. Пролази поред острва Ада Циганлија.", "nebojsa": "Речна осматрачка кула из 15. века која је чувала луку тврђаве; под Османлијама је служила као тамница. Данас музеј и један од ретких сачуваних објеката средњовековног Београда из доба деспота Стефана Лазаревића.", "kafana-znak": "Најстарија активна београдска кафана преко пута Саборне цркве. Загонетно име настало је из спора са црквом око фирме: привремени знак питања остао је стално име.", "vuk-dositej": "У једном од најстаријих сачуваних објеката османске архитектуре у граду. Посвећен Вуку Караџићу — реформатору језика и творцу савремене српске ћирилице — и просветитељу Доситеју Обрадовићу.", "nb-srbije": "Здање из 1973. код Храма Светог Саве — нова национална библиотека уместо оне уништене 1941. на Косанчићевом венцу. Установа је обновљена, али на другом месту; старо здање остало је празно.", "kalenic": "Највећа активна београдска пијаца: отворени део са воћем и поврћем и затворени павиљон са сиром, јајима и месом. Жив, нетуристички слој града.", "vuk-monument": "Споменик из 1937. реформатору српског језика. Дао је разговорно име целом крају и станици — „Вуков споменик“: тако се зове крај, а не сама скулптура.", "cubura": "Историјско језгро Врачара: ниска густа градња, дворишта и кафане — класична слика „старог београдског дворишта“ у подножју Храма Светог Саве.", "slavija": "Највећа кружна раскрсница у граду и главно саобраћајно чвориште. Име је по хотелу „Славија“ који је ту стајао. Посебан лик градског фолклора.", "beli-dvor": "Део краљевског комплекса на Дедињу (1934–1937), резиденција династије Карађорђевић. Дедиње је најзатворенији део града. Посета само уз организовану туру.", "african-art": "Једини музеј тог профила у региону (1977), заснован на збирци брачног пара Марјановић. Материјални траг политике Покрета несврстаних: Југославија је градила везе са земљама Африке.", "old-station": "Главна железничка станица Београда више од 130 година (1884), затворена 2018. Кроз њу је пролазио Оријент експрес. Данас историјско здање преображеног Савског трга, са спомеником Стефану Немањи.", "senjak": "Елитни крај вила на узвишици. Име је од „сено“: ту се складиштило сено које је наређено да се изнесе ван града због опасности од пожара.", "tasmajdan": "Име од турског „taş meydan“ — „камено поље“, каменолом. Одавде се вековима вадио камен којим је Београд грађен и калдрмисан; испод парка сачувани су подземни ходници.", "russian-church": "Црква из 1924. за руске емигранте првог таласа, који су стигли после револуције. Ту је сахрањен генерал Пјотр Врангел. Материјални траг руске емиграције у Београду.", "karaburma": "Крај са османским именом, који је у социјалистичком периоду постао раднички и индустријски. Густа стамбена градња друге половине 20. века — „неулепшани“ Београд.", "ada-huja": "Некадашње дунавско острво спојено са обалом и претворено у индустријску зону; најнижа тачка Београда (~70 m). Још једно острво које је престало да буде острво — траг тога како је град исписивао токове својих река.", "zvezdarska-suma": "Шума око опсерваторије, заштићено природно добро и главна зелена зона истока града — место где се град физички повлачи.", "djeram": "Једна од старих квартовских пијаца. Име „ђерам“ је справа за подизање воде из бунара која је некада ту стајала. Топоним по одавно несталом објекту.", "cvetkova": "Велика квартовска пијаца која је дала име околном крају — још један пример како пијаца постаје јединица градске оријентације.", "mirijevo": "Некадашње село на истоку града, изграђено у другој половини 20. века. Одавде потиче Теодор Јанковић Миријевски, реформатор школства у Хабзбуршкој и Руској царевини.", "neznani-junak": "Маузолеј на врху Авале (1934–1938) Ивана Мештровића, од црног лабрадорита, са каријатидама — женама народа Југославије. Подигнут на месту средњовековног града Жрнова.", "banjica": "Музеј у згради некадашњег концентрационог логора из времена немачке окупације 1941–1944. Поставка се заснива на документима и личним стварима заточеника. Место сећања.", "jajinci": "Меморијални парк на месту масовних стрељања за време окупације 1941–1944. Данас споменик и место сећања.", "kosutnjak": "Шума, некадашње ловиште Обреновића (од „кошута“). Ту је 10. јуна 1868. убијен кнез Михаило Обреновић; по њему је потом названа главна улица града.", "cerak": "Стамбено насеље (1978–1985) архитеката Дарка и Милене Марушић — један од најбољих примера позног југословенског стамбеног модернизма: градња уклопљена у терен, са промишљеним пешачким везама и зеленилом.", "filmski-grad": "Филмски студијски комплекс у Кошутњаку — центар југословенске филмске производње и материјална база „црног таласа“ и целог југословенског филма.", "banovo-brdo": "Главни стамбени и трговачки центар Чукарице на узвишици изнад Саве — самодовољан „град у граду“, са својим центром, пијацом и трговачком улицом.", "vidikovac": "Стамбени крај на узвишици; име значи „видиковац“. Пример масовне стамбене градње позног социјалистичког периода.", "miljakovac-les": "Шума на југу града, зона рекреације — део система градских шума по којима се Београд разликује од многих европских престоница.", "palata-srbije": "Главно управно здање социјалистичке Југославије (1947–1961), у ком је заседало Савезно извршно веће. Ентеријере су украсили уметници из свих југословенских република — оваплоћење идеје федерације.", "usce-park": "Парк на самом ушћу Саве у Дунав, са Спомеником вечне ватре и главним концертним простором града. Географска тачка због које је Београд и настао.", "staro-sajmiste": "Изграђено 1937–1938. као сајамски комплекс Краљевине Југославије. После окупације 1941. простор је претворен у концентрациони логор. Данас заштићени историјски споменик и место сећања.", "sava-centar": "Највећи конгресни центар у земљи (1976–1979) по пројекту Стојана Максимовића, подигнут за конференцију КЕБС-а. Материјални траг дипломатске улоге Југославије; обновљен 2020-их.", "studentski-grad": "Највећи студентски кампус Србије и један од првих објеката Новог Београда (од 1948). Испрва су ту живеле омладинске бригаде које су градиле насеље на насутој мочвари.", "zemun-muzej": "У трговачкој кући из 19. века (кућа породице Спирта); збирка о археологији, историји и култури Земуна. Крај има сопствени завичајни музеј — реткост међу београдским општинама.", "magistratski-trg": "Централни трг старог Земуна, назван по згради Магистрата — органа самоуправе слободне војне општине. Сведочанство да је Земун имао сопствену самоуправу.", "beogradanka": "Кула од 27 спратова из 1974 — један од првих солитера центра и упечатљив оријентир силуете града. Доле тржни центар, горе је некада радио кафе са панорамом целог Београда.", "muzej-jugoslavije": "Музејски комплекс о историји Југославије; на његовом простору је „Кућа цвећа“ са маузолејем Јосипа Броза Тита. Модернистичко здање из 1962. са великом збирком и мозаиком на фасади.", "zoo": "Зоо-врт „Врт добре наде“ на Калемегдану, основан 1936 — један од најстаријих у региону. Познат по дуговечним животињама и погледу на тврђаву.", "narodni-muzej": "Главни музеј земље (1844) на Тргу републике: од археологије и средњовековних фресака до европског сликарства, укључујући импресионисте. Поново отворен 2018. после дуге обнове.", "ruzica": "Једна од најстаријих цркава у граду, скривена у зидинама Калемегдана и обрасла бршљаном. Унутра су лустери које су српски војници направили од испаљених чаура и делова оружја из Првог светског рата.", "cetinjska": "Дворишта некадашње пиваре Бајлони, данас средиште алтернативног ноћног живота: барови, клубови и концертне бине у старим индустријским халама. Омиљено место младих и странаца.", "ratno-ostrvo": "Дивље речно острво на ушћу Саве у Дунав — резерват птица и популарна летња плажа Лидо. Лети до њега води понтонски мост.", "most-pupina": "Кабловски мост преко Дунава (2014) који је повезао Земун са борчанском страном Палилуле. Растеретио је дуго препуни Панчевачки мост; у народу га зову „Кинески мост“, јер га је градила кинеска компанија.", "veliko-blato": "Језеро и мочварни резерват на северу Палилуле, код Ковилова. Гнездилиште водених птица и мирно место за шетњу далеко од града — део дунавских влажних станишта.", "kinoteka": "Национални филмски архив и музеј кинематографије (1949) — једна од највећих збирки на свету. У историјској згради приказују се класици и ретроспективе, а ту је и музејска поставка о филму.", "auto-muzej": "Збирка старих аутомобила у некадашњој „Модерној гаражи“ (1929), једној од првих у граду. Збирка Братислава Петковића: ретке предратне марке и историја моторизације.", "cvijeta-zuzoric": "Изложбени павиљон на Калемегдану (1928) — скоро век један од главних простора савремене уметности у граду. Назван по ренесансној песникињи из Дубровника.", "kapetan-misa": "Најраскошнија београдска зграда 19. века (1863), коју је добротвор Миша Анастасијевић поклонио држави „отачеству на корист“. Данас ректорат Универзитета у Београду.", "palata-albanija": "Први солитер у Београду и целом региону (1940), 12 спратова на углу Теразија. Назван по кафани која је ту некада стајала; симбол модернизације предратног града.", "manakova-kuca": "Градска кућа балканског типа с почетка 19. века у Савамали — једна од ретких сачуваних. Део Етнографског музеја: народне ношње, накит и занати.", "london": "„Код Лондона“ — тако Београђани зову раскрсницу улица Краља Милана и Кнеза Милоша. Године 1873. ту је подигнут скроман, низак хотел „Лондон“, назван по британској престоници, и ускоро је цео крај добио то име. Народна скупштина тада је заседала блок даље, па су се посланици у паузама окупљали у овдашњој кафани. Лондон је био источна ивица града: даље су се пружале баште и мочварни рибњак на месту данашње Славије, где се ишло у лов на патке. Стари хотел затворен је 1962, а на његовом месту никла је зграда од стакла и алуминијума у којој су се смењивали ресторан, диско-клуб, банка, казино и супермаркет. Име је остало: у Београду се и данас договара виђење „код Лондона“."}};
+const ABOUT_TR={"en": {"stari-grad": "The historic core on the Sava–Danube headland: Kalemegdan, pedestrian Knez Mihailova, Skadarlija and Republic Square.", "savski-venac": "A green 'diplomatic' district along the Sava — railway stations, Dedinje, the Nikola Tesla Museum and the House of Flowers.", "vracar": "The smallest municipality, but a dense and prestigious one. Its skyline is set by the vast Church of St Sava.", "novi-beograd": "Built from scratch after the war on the left bank of the Sava — modernist blocks, a business centre and the Museum of Contemporary Art at the confluence.", "zemun": "A separate town until the 20th century with an Austro-Hungarian soul: tiled roofs and the Gardoš tower above the Danube.", "palilula": "Stretches from the centre far beyond the Danube, to river islands and meadows. Home to the Jevremovac Botanical Garden and Tašmajdan.", "vozdovac": "A large southern district rising towards Mount Avala with its memorial tower.", "zvezdara": "The hilly, residential east of the city, named after the old astronomical observatory (zvezda — 'star').", "rakovica": "The industrial and residential south-west: Rakovica monastery and the old car factory — a symbol of industrial Belgrade.", "cukarica": "Stretches along the Sava to the south-west. Home to the island-beach Ada Ciganlija — Belgrade's 'sea'.", "barajevo": "A rural municipality in the south: hills, villages and light aviation.", "grocka": "Danube slopes and orchards in the south-east, famous for its fruit and old čaršija (market street).", "lazarevac": "The Kolubara coal basin and large power plants — the energy heart of Serbia.", "mladenovac": "A small southern town with the Selters thermal springs.", "obrenovac": "On the Sava, home to the largest power plant, Nikola Tesla; badly hit by the 2014 floods.", "sopot": "At the foot of Mount Kosmaj — monasteries, springs and nature.", "surcin": "The western municipality, home to Nikola Tesla Airport."}, "sr": {"stari-grad": "Историјско језгро на ушћу Саве у Дунав: Калемегдан, пешачка Кнез Михаилова, Скадарлија и Трг републике.", "savski-venac": "Зелена „дипломатска“ општина уз Саву — железничке станице, Дедиње, Музеј Николе Тесле и Кућа цвећа.", "vracar": "Најмања, али густа и престижна општина. Њену силуету одређује огромни Храм Светог Саве.", "novi-beograd": "Изграђен из темеља после рата на левој обали Саве — модернистички блокови, пословни центар и Музеј савремене уметности на ушћу.", "zemun": "Засебан град до 20. века, аустроугарске душе: црепови и кула Гардош над Дунавом.", "palilula": "Пружа се од центра далеко преко Дунава, до речних острва и ливада. Ту су Ботаничка башта „Јевремовац“ и Ташмајдан.", "vozdovac": "Велика јужна општина која се пење ка планини Авали са спомен-торњем.", "zvezdara": "Брежуљкасти стамбени исток, назван по старој астрономској опсерваторији (звезда).", "rakovica": "Индустријско-стамбени југозапад: манастир Раковица и стара фабрика аутомобила — симбол индустријског Београда.", "cukarica": "Пружа се уз Саву ка југозападу. Ту је острво-плажа Ада Циганлија — „море“ Београда.", "barajevo": "Сеоска општина на југу: брда, села и мала авијација.", "grocka": "Подунавске падине и воћњаци на југоистоку, чувена по воћу и старој чаршији.", "lazarevac": "Колубарски угљени басен и велике термоелектране — енергетско срце Србије.", "mladenovac": "Јужна варошица са термалним изворима „Селтерс“.", "obrenovac": "На Сави, са највећом термоелектраном „Никола Тесла“; тешко погођен поплавама 2014.", "sopot": "У подножју планине Космај — манастири, извори и природа.", "surcin": "Западна општина у којој се налази аеродром „Никола Тесла“."}};
+const INTRO_TR={"en": {"old-town": "A classic walk through the historic core: from the fortress at the confluence, along pedestrian Knez Mihailova and Republic Square, to bohemian Skadarlija.", "vracar": "The Vračar plateau: the country's main church, the Nikola Tesla Museum and the green botanical garden by Tašmajdan.", "rivers": "Along the water: from the Sava–Danube confluence and the Museum of Contemporary Art to the tiled roofs of old Zemun and the Gardoš tower."}, "sr": {"old-town": "Класична шетња кроз историјско језгро: од тврђаве на ушћу, кроз пешачку Кнез Михаилову и Трг републике, до боемске Скадарлије.", "vracar": "Врачарски плато: главни храм земље, Музеј Николе Тесле и зелена ботаничка башта код Ташмајдана.", "rivers": "Уз воду: од ушћа Саве у Дунав и Музеја савремене уметности до црепова старог Земуна и куле Гардош."}};
 function storyLoc(p){ if(lang==='ru') return p.story; const t=STORY_TR[lang]; return (t&&t[p.id])||p.story; }
 function aboutLoc(s){ if(lang==='ru') return ABOUT[s]||''; const t=ABOUT_TR[lang]; return (t&&t[s])||ABOUT[s]||''; }
 function introLoc(id,ru){ if(lang==='ru') return ru; const t=INTRO_TR[lang]; return (t&&t[id])||ru; }
@@ -817,13 +940,15 @@ const BG_STYLE={
     mask:{type:'geojson',data:'mask.geojson'}
   },
   layers:[
-    {id:'bg',type:'background',paint:{'background-color':'#ffffff'}},
+    {id:'bg',type:'background',paint:{'background-color':'#1B1B1B'}},
+    // светлые дороги «за городом»: внутри общин их закрывает непрозрачная заливка land, снаружи — проступают сквозь полупрозрачную маску
+    {id:'roads-out',type:'line',source:'om','source-layer':'transportation',paint:{'line-color':'rgba(255,255,255,0.6)','line-width':['interpolate',['linear'],['zoom'],10,0.5,12,1,14,1.8,16,3,18,5]}},
     {id:'land',type:'fill',source:'districts',paint:{'fill-color':['coalesce',['get','color'],'#dddddd'],'fill-antialias':false}},
-    {id:'water',type:'fill',source:'om','source-layer':'water',paint:{'fill-color':'rgba(255,255,255,0.55)'}},
-    {id:'landcover',type:'fill',source:'om','source-layer':'landcover',minzoom:11,paint:{'fill-color':'rgba(255,255,255,0.22)'}},
-    {id:'building',type:'fill',source:'om','source-layer':'building',minzoom:13.5,paint:{'fill-color':'rgba(255,255,255,0.4)','fill-antialias':false}},
-    {id:'mask',type:'fill',source:'mask',paint:{'fill-color':'#ffffff'}},
-    {id:'roads',type:'line',source:'om','source-layer':'transportation',paint:{'line-color':'rgba(38,42,52,0.34)','line-width':['interpolate',['linear'],['zoom'],10,0.6,12,1.2,14,2.1,16,3.6,18,6]}},
+    {id:'water',type:'fill',source:'om','source-layer':'water',paint:{'fill-color':'rgba(0,0,0,0.34)'}},
+    {id:'landcover',type:'fill',source:'om','source-layer':'landcover',minzoom:11,paint:{'fill-color':'rgba(0,0,0,0.2)'}},
+    {id:'building',type:'fill',source:'om','source-layer':'building',minzoom:13.5,paint:{'fill-color':'rgba(0,0,0,0.24)','fill-antialias':false}},
+    {id:'mask',type:'fill',source:'mask',paint:{'fill-color':'#1B1B1B','fill-opacity':0.74}},
+    {id:'roads',type:'line',source:'om','source-layer':'transportation',paint:{'line-color':'rgba(255,255,255,0.78)','line-width':['interpolate',['linear'],['zoom'],10,0.6,12,1.2,14,2.1,16,3.6,18,6]}},
     {id:'border',type:'line',source:'districts',paint:{'line-color':['coalesce',['get','color'],'#999'],'line-width':1.4,'line-opacity':.9}}
   ]
 };
@@ -849,8 +974,8 @@ function renderOpstine(geo){
       layer.on('click',()=>selectOpstina(p.slug));
       layer.on('mouseover',()=>{ if(layer!==activeLayer) layer.setStyle({weight:2,opacity:.85,color:'#ffffff'}); });
       layer.on('mouseout',()=>{ if(layer!==activeLayer) layer.setStyle({weight:0,opacity:0}); });
-      // круглый значок-логотип в центре района
-      const badge=L.divIcon({className:'',iconSize:[46,46],iconAnchor:[23,23],
+      // маленький круглый логотип в центре района (3D-фигура — в карточке района)
+      const badge=L.divIcon({className:'',iconSize:[32,32],iconAnchor:[16,16],
         html:`<div class="op-badge"><img src="logos/${p.slug}.png" alt="" loading="lazy"></div>`});
       L.marker(c,{icon:badge,zIndexOffset:-300,keyboard:false}).addTo(badgeLayer).on('click',()=>selectOpstina(p.slug));
     }
@@ -871,16 +996,15 @@ let whiteMask=null;
 function buildWhiteMask(){
   const world=[L.latLng(85,-179.9),L.latLng(85,179.9),L.latLng(-85,179.9),L.latLng(-85,-179.9)];
   let holes=[]; Object.values(opById).forEach(o=>{ holes=holes.concat(districtOuterRings(o.layer)); });
-  whiteMask=L.polygon([world,...holes],{stroke:false,fillColor:'#ffffff',fillOpacity:1,interactive:false}).addTo(map);
+  whiteMask=L.polygon([world,...holes],{stroke:false,fillColor:'#1B1B1B',fillOpacity:1,interactive:false}).addTo(map);
   whiteMask.bringToBack();
 }
 
 const poiMarkers={};
 function addPois(){
   POIS.forEach(poi=>{
-    const color=(opById[poi.op]||{}).color||'#2b7a78';
-    const icon=L.divIcon({className:'',iconSize:[26,26],iconAnchor:[13,26],
-      html:`<div class="poi-pin" style="background:${color}"><span>${poi.emoji}</span><b class="fav-badge"></b></div>`});
+    const icon=L.divIcon({className:'',iconSize:[36,36],iconAnchor:[18,42],
+      html:poi.img?`<div class="poi-pin" style="background-image:url(img/bw/${poi.id}.jpg)"><b class="fav-badge"></b></div>`:`<div class="poi-pin noimg"><b class="fav-badge"></b></div>`});
     const m=L.marker(poi.ll,{icon}).addTo(poiLayer);
     m.on('click',()=>{ if(selecting) toggleSelect(poi.id); else selectPoi(poi.id); });
     poiMarkers[poi.id]=m;
@@ -979,6 +1103,17 @@ function render(){
   }
 }
 
+
+/* линейные иконки для кнопок (вместо эмодзи) */
+const IC={
+ pin:'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c-4.2-4.6-6.3-7.9-6.3-10.7a6.3 6.3 0 0 1 12.6 0c0 2.8-2.1 6.1-6.3 10.7z"/><circle cx="12" cy="10.3" r="1.6" fill="currentColor" stroke="none"/></svg>',
+ route:'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M8 18h7.5a3 3 0 0 0 0-6h-7a3 3 0 0 1 0-6H16"/></svg>',
+ plus:'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5.5v13M5.5 12h13"/></svg>',
+ star:'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10v16l-5-3.8L7 20z"/></svg>',
+ check:'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 12.5l4.2 4.2 8.8-9"/></svg>',
+ arrow:'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 16.5l9-9M9.5 7.5h7v7"/></svg>'
+};
+function thumb(p){ return p.img?`<img class="thumb" src="img/bw/${p.id}.jpg" alt="" loading="lazy">`:`<span class="thumb thumb-empty"></span>`; }
 /* — Список районов — */
 function showDistricts(){ currentView={type:'districts'}; renderDistricts(); openSheet(); }
 function renderDistricts(){
@@ -989,7 +1124,7 @@ function renderDistricts(){
   sheetBody.innerHTML='<ul class="list">'+slugs.map(s=>{
     const o=opById[s], c=poiCount[s];
     return `<li data-op="${s}"><span class="swatch" style="background:${o.color}"></span>
-      <span class="nm">${opName(s)}</span><span class="cnt">${c? c+' ★':''}</span></li>`;
+      <span class="nm">${opName(s)}</span><span class="cnt">${c||''}</span></li>`;
   }).join('')+'</ul>';
   sheetBody.querySelectorAll('[data-op]').forEach(li=>li.addEventListener('click',()=>selectOpstina(li.dataset.op)));
 }
@@ -1006,12 +1141,12 @@ function renderDistrict(slug){
   const pois=POIS.filter(p=>p.op===slug);
   sheetTitle.textContent=opName(slug);
   sheetSub.innerHTML=`<span class="swatch" style="background:${o.color}"></span> ${t('officialMuni')}`;
-  let html=`<img class="op-logo" src="logos/${slug}.png" alt="" onerror="this.style.display='none'"><p>${aboutLoc(slug)}</p>`;
+  let html=`<img class="op-logo" src="logos3d/${slug}.png" alt="" onerror="this.style.display='none'"><p>${aboutLoc(slug)}</p>`;
   if(pois.length){
     html+=`<div class="head">${t('attractions')} (${pois.length})</div><ul class="list">`+
-      pois.map(p=>`<li data-poi="${p.id}"><span class="nm">${p.emoji} ${poiName(p)}</span></li>`).join('')+`</ul>`;
+      pois.map(p=>`<li data-poi="${p.id}">${thumb(p)}<span class="nm">${poiName(p)}</span></li>`).join('')+`</ul>`;
     if(pois.length>=2)
-      html+=`<button class="btn block" id="drBtn">🧭 ${t('districtRoute')} (${pois.length})</button>`;
+      html+=`<button class="btn block" id="drBtn">${IC.route} ${t('districtRoute')} (${pois.length})</button>`;
   }else{
     html+=`<div class="note">${t('noPlaces')}</div>`;
   }
@@ -1030,22 +1165,22 @@ function selectPoi(id){
 }
 function renderPoi(id){
   const poi=poiById[id]; const o=opById[poi.op]||{name:'',color:'#2b7a78'};
-  sheetTitle.textContent=`${poi.emoji} ${poiName(poi)}`;
+  sheetTitle.textContent=poiName(poi);
   sheetSub.innerHTML=`<span class="swatch" style="background:${o.color}"></span> ${opName(poi.op)}`;
   const [lat,lng]=poi.ll;
   let html='';
   if(poi.img) html+=`<img class="poi-photo" src="${poi.img}" alt="${poiName(poi)}" loading="lazy" onerror="this.style.display='none'">`;
   html+=`<p>${storyLoc(poi)}</p>`;
-  if(userLL) html+=`<div class="tag">📍 ${fmtDist(haversine(userLL,poi.ll))} ${t('fromYou')}</div>`;
+  if(userLL) html+=`<div class="tag">${IC.pin} ${fmtDist(haversine(userLL,poi.ll))} ${t('fromYou')}</div>`;
   const s=favs[id];
-  html+=`<div class="row" style="margin-top:8px">
-    <button class="favbtn ${s==='want'?'on':''}" data-fav="want">☆ ${t('favWant')}</button>
-    <button class="favbtn ${s==='visited'?'on':''}" data-fav="visited">✓ ${t('favVisited')}</button>
-  </div>`;
   const gmq=encodeURIComponent(poi.gq||`${poiName(poi)}, Beograd`);
-  html+=`<div class="row"><a class="btn" target="_blank" rel="noopener"
-      href="https://www.google.com/maps/search/?api=1&query=${gmq}">📍 ${t('openMaps')}</a></div>`;
-  if(poi.wiki) html+=`<a class="photo-credit" target="_blank" rel="noopener" href="${poi.wiki}">${t('photoSrc')} ↗</a>`;
+  html+=`<div class="actions">
+    <button class="favbtn ${s==='want'?'on':''}" data-fav="want">${IC.star} ${t('favWant')}</button>
+    <button class="favbtn ${s==='visited'?'on':''}" data-fav="visited">${IC.check} ${t('favVisited')}</button>
+    <a class="btn wide" target="_blank" rel="noopener"
+      href="https://www.google.com/maps/search/?api=1&query=${gmq}">${IC.pin} ${t('openMaps')}</a>
+  </div>`;
+  if(poi.wiki) html+=`<a class="photo-credit" target="_blank" rel="noopener" href="${poi.wiki}">${t('photoSrc')} ${IC.arrow}</a>`;
   sheetBody.innerHTML=html;
   sheetBody.querySelectorAll('[data-fav]').forEach(b=>b.addEventListener('click',()=>setFav(id,b.dataset.fav)));
 }
@@ -1063,8 +1198,8 @@ function renderNearby(){
   else items=items.map(p=>({p,d:null}));
   sheetBody.innerHTML='<ul class="list">'+items.map(({p,d})=>{
     const o=opById[p.op]||{};
-    return `<li data-poi="${p.id}"><span class="swatch" style="background:${o.color||'#ccc'}"></span>
-      <span class="nm">${p.emoji} ${poiName(p)}<small>${opName(p.op)}</small></span>
+    return `<li data-poi="${p.id}">${thumb(p)}
+      <span class="nm">${poiName(p)}<small><span class="swatch" style="background:${o.color||'#ccc'}"></span>${opName(p.op)}</small></span>
       ${d!=null?`<span class="dist">${fmtDist(d)}</span>`:''}</li>`;
   }).join('')+'</ul>';
   sheetBody.querySelectorAll('[data-poi]').forEach(li=>li.addEventListener('click',()=>selectPoi(li.dataset.poi)));
@@ -1077,13 +1212,13 @@ function renderSaved(){
   sheetSub.textContent='';
   const want=POIS.filter(p=>favs[p.id]==='want');
   const vis=POIS.filter(p=>favs[p.id]==='visited');
-  const li=p=>`<li data-poi="${p.id}"><span class="swatch" style="background:${(opById[p.op]||{}).color||'#ccc'}"></span>
-    <span class="nm">${p.emoji} ${poiName(p)}<small>${opName(p.op)}</small></span></li>`;
+  const li=p=>`<li data-poi="${p.id}">${thumb(p)}
+    <span class="nm">${poiName(p)}<small><span class="swatch" style="background:${(opById[p.op]||{}).color||'#ccc'}"></span>${opName(p.op)}</small></span></li>`;
   let html='';
   if(!want.length&&!vis.length){ html=`<div class="note">${t('savedEmpty')}</div>`; }
   else{
-    if(want.length) html+=`<div class="head">★ ${t('savedWant')} (${want.length})</div><ul class="list">${want.map(li).join('')}</ul>`;
-    if(vis.length)  html+=`<div class="head">✓ ${t('savedVisited')} (${vis.length})</div><ul class="list">${vis.map(li).join('')}</ul>`;
+    if(want.length) html+=`<div class="head">${t('savedWant')} (${want.length})</div><ul class="list">${want.map(li).join('')}</ul>`;
+    if(vis.length)  html+=`<div class="head">${t('savedVisited')} (${vis.length})</div><ul class="list">${vis.map(li).join('')}</ul>`;
   }
   sheetBody.innerHTML=html;
   sheetBody.querySelectorAll('[data-poi]').forEach(el=>el.addEventListener('click',()=>selectPoi(el.dataset.poi)));
@@ -1095,14 +1230,14 @@ function renderRoutes(){
   sheetTitle.textContent=t('routesTitle');
   sheetSub.textContent='';
   let html=`<div class="head">${t('presetsHead')}</div><ul class="list">`+
-    PRESETS.map(pr=>`<li data-preset="${pr.id}"><span class="nm">${pr.emoji} ${presetName(pr)}
-      <small>${pr.stops.length} ★</small></span></li>`).join('')+`</ul>`;
+    PRESETS.map(pr=>`<li data-preset="${pr.id}">${thumb(poiById[pr.stops[0]])}<span class="nm">${presetName(pr)}
+      <small>${IC.pin} ${pr.stops.length}</small></span></li>`).join('')+`</ul>`;
   html+=`<div class="head">${t('customHead')}</div>
-    <button class="btn block ghost" id="ownBtn">➕ ${t('makeOwn')}</button>`;
+    <button class="btn block ghost" id="ownBtn">${IC.plus} ${t('makeOwn')}</button>`;
   sheetBody.innerHTML=html;
   sheetBody.querySelectorAll('[data-preset]').forEach(li=>li.addEventListener('click',()=>{
     const pr=PRESETS.find(x=>x.id===li.dataset.preset);
-    drawRoute(pr.stops.map(id=>poiById[id]),{title:pr.emoji+' '+presetName(pr),intro:pr.intro,presetId:pr.id});
+    drawRoute(pr.stops.map(id=>poiById[id]),{title:presetName(pr),intro:pr.intro,presetId:pr.id});
   }));
   document.getElementById('ownBtn').addEventListener('click',enterSelect);
 }
@@ -1167,9 +1302,10 @@ async function drawRoute(pois,opts={}){
     if(j.routes&&j.routes[0]){ geom=j.routes[0].geometry; dist=j.routes[0].distance; dur=j.routes[0].duration; ok=true; }
   }catch(e){}
   if(ok){
-    L.geoJSON(geom,{style:{color:'#2b7a78',weight:5,opacity:.85,lineJoin:'round'}}).addTo(routeGroup);
+    L.geoJSON(geom,{style:{color:'#141414',weight:9,opacity:.9,lineJoin:'round'}}).addTo(routeGroup);
+    L.geoJSON(geom,{style:{color:'#C6F432',weight:5,opacity:1,lineJoin:'round'}}).addTo(routeGroup);
   }else{
-    L.polyline(pois.map(p=>p.ll),{color:'#2b7a78',weight:4,opacity:.8,dashArray:'6,8'}).addTo(routeGroup);
+    L.polyline(pois.map(p=>p.ll),{color:'#C6F432',weight:4,opacity:.95,dashArray:'6,8'}).addTo(routeGroup);
     for(let i=0;i<pois.length-1;i++) dist+=haversine(pois[i].ll,pois[i+1].ll);
     dur=dist/1.35; toast(t('routingErr'));
   }

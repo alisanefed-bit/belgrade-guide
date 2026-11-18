@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#1B1B1B">
+<meta name="theme-color" content="#F1ECE2">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Beograd">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -42,7 +42,7 @@
   *{box-sizing:border-box}
   html,body{margin:0;height:100%;background:#1B1B1B;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink)}
   body{overflow:hidden;overscroll-behavior:none;-webkit-text-size-adjust:100%}
-  #map{position:fixed;inset:0;z-index:0;background:#1B1B1B}
+  #map{position:fixed;top:0;left:0;right:0;bottom:auto;height:100vh;height:100lvh;min-height:100%;z-index:0;background:#1B1B1B} /* iOS 26: inset:0 обрывается над нижней панелью Safari — берём «большую» высоту экрана */
 
   /* Заголовок (матовая пилюля) */
   .topbar{
@@ -391,6 +391,95 @@
   .mapctl{gap:12px}
   .leaflet-bar a:first-child{margin-bottom:12px!important}
 
+  /* ═══════════ ПРОБА 2: бумага · палитра · единый тёмный #3B342D ═══════════ */
+  :root{
+    --paper:#F1ECE2; --paper-hi:#F8F4EC; --ink:#3B342D;
+    --ink-2:rgba(59,52,45,.72); --ink-3:rgba(59,52,45,.5); --hair:rgba(59,52,45,.16);
+    --grain:url('paper.png');
+    --accent:#3B342D; --on-accent:#F8F4EC;
+    --dk:var(--paper-hi); --dk2:#EFE9DE; --dk3:#E6DFD2; --line:var(--hair);
+    --txt:var(--ink); --txt2:var(--ink-2); --txt3:var(--ink-3);
+  }
+  html,body,#map,.leaflet-container{background:var(--paper)!important}
+  body{color:var(--ink)}
+  .leaflet-gl-layer::after{content:'';position:absolute;inset:0;z-index:101;pointer-events:none;background:var(--grain) 0 0/320px 320px repeat}
+  #loader{background:var(--paper)}
+
+  /* кнопки на карте — бумажные круги с тонким контуром */
+  .langbtn,.mapbtn,.leaflet-bar a,.leaflet-touch .leaflet-bar a{background:var(--paper-hi)!important;color:var(--ink)!important;
+    border:1px solid var(--hair)!important;box-shadow:0 2px 8px rgba(59,52,45,.14)!important}
+  .leaflet-bar a:hover{background:#fff!important}
+  .langcur{background:var(--ink);color:var(--paper-hi);border-color:var(--paper)}
+  .langsw{background:var(--paper-hi);border:1px solid var(--hair);box-shadow:0 8px 22px rgba(59,52,45,.16)}
+  .langsw button{color:var(--ink-3)}
+  .langsw button.on{background:var(--ink);color:var(--paper-hi)}
+  #locBtn.active{background:var(--ink)!important;color:var(--paper-hi)!important}
+  #pinsBtn.off{color:var(--ink-3)!important}
+
+  /* навигация, карточка, трей, тост — бумага с той же крошкой */
+  .tabbar,.sheet,.tray,.langsw{background:var(--paper-hi) var(--grain) 0 0/320px 320px repeat!important}
+  .tabbar{border:1px solid var(--hair);box-shadow:0 6px 20px rgba(59,52,45,.14)}
+  .tab{color:var(--ink-2)}
+  .tab .lbl{color:var(--paper-hi)}
+  .tab.active{background:var(--ink);color:var(--paper-hi)}
+  .tab.active svg{background:transparent;color:var(--paper-hi)}
+  .sheet{border:1px solid var(--hair);box-shadow:0 -10px 34px rgba(59,52,45,.16)}
+  .sheet-grab{background:var(--hair)}
+  .sheet-close{background:var(--dk2);color:var(--ink)}
+  .list li{background:var(--dk2)}
+  .list li:active{background:var(--dk3)}
+  .list .cnt{background:var(--dk3);color:var(--ink-2)}
+  .list .dist{color:var(--ink)}
+  .thumb{background:var(--dk3)}
+  .thumb-empty{background:var(--dk3) radial-gradient(circle,var(--ink) 0 3px,transparent 4px)}
+  .btn{background:var(--ink);color:var(--paper-hi)}
+  .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--ink)}
+  .favbtn{background:transparent!important;border:1px solid var(--ink)!important;color:var(--ink)!important}
+  .favbtn.on{background:var(--ink)!important;border-color:var(--ink)!important;color:var(--paper-hi)!important}
+  .tray{border:1px solid var(--hair)}
+  .tray-btn{background:var(--ink);color:var(--paper-hi)}
+  .tray-btn.ghost{background:var(--dk3);color:var(--ink)}
+  .toast{background:var(--ink);color:var(--paper-hi);border:none}
+
+  /* метки */
+  .poi-pin{border-color:var(--paper-hi);border-radius:4px;box-shadow:0 1px 3px rgba(59,52,45,.35)}
+  .poi-pin::after{border-top-color:var(--paper-hi)}
+  .poi-pin.sel{box-shadow:0 0 0 1.5px var(--ink),0 2px 6px rgba(59,52,45,.35)}
+  .poi-pin.noimg{background:var(--dk3) radial-gradient(circle,var(--ink) 0 4px,transparent 5px)}
+  .poi-pin .fav-badge{border-color:var(--paper-hi)}
+  .poi-pin.fav-want .fav-badge{background:var(--ink)}
+  .poi-pin.fav-want .fav-badge::before{background:var(--paper-hi)}
+  .poi-pin.fav-visited .fav-badge{background:var(--paper-hi)}
+  .poi-pin.fav-visited .fav-badge::before{border-color:var(--ink)}
+  .stopnum{background:var(--ink);color:var(--paper-hi);border-color:var(--paper-hi)}
+  .op-badge{border-color:var(--paper-hi)}
+
+  /* карточка района — инверсия: тёмная, текст бумажный */
+  .sheet.inv{--ink:#F1ECE2;--paper-hi:#262019;--ink-2:rgba(241,236,226,.78);--ink-3:rgba(241,236,226,.55);--hair:rgba(241,236,226,.14);
+    --dk:#262019;--dk2:#352E27;--dk3:#433B33;--line:var(--hair);--txt:var(--ink);--txt2:var(--ink-2);--txt3:var(--ink-3);
+    --accent:#F1ECE2;--on-accent:#262019;color:var(--ink);border-color:transparent;box-shadow:0 -10px 34px rgba(59,52,45,.35)}
+  .sheet.inv .sheet-body p{color:var(--ink-2)}
+
+  /* маршрут активен — иконка вкладки «Маршруты» в тёмном круге */
+  .tab.has-route:not(.active) svg{background:var(--ink);color:var(--paper-hi)}
+  /* выбор начала и конца */
+  .list li.opt{cursor:pointer}
+  .opt .rd{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--ink);flex:none;margin-left:6px;display:grid;place-items:center}
+  .opt.on .rd{background:var(--ink)}
+  .opt.on .rd::after{content:'';width:7px;height:7px;border-radius:50%;background:var(--paper-hi)}
+  .opt.chk .rd{border-radius:6px}
+  .opt.chk.on .rd::after{width:9px;height:5px;border-radius:0;background:none;border:solid var(--paper-hi);border-width:0 0 2px 2px;transform:translateY(-1px) rotate(-45deg)}
+  .opt .nm small{display:block;color:var(--ink-3);margin-top:3px}
+  .endrow .num{display:grid;place-items:center}
+  .endpt{width:28px;height:28px;border-radius:8px;background:var(--ink);color:var(--paper-hi);border:2px solid var(--paper-hi);
+    display:grid;place-items:center;box-shadow:0 2px 6px rgba(59,52,45,.35);box-sizing:border-box}
+  /* + и − ровно по центру: вместо символов шрифта — рисованные иконки */
+  .leaflet-control-zoom a{display:grid!important;place-items:center;font-size:0!important;line-height:0!important;text-indent:0!important}
+  .leaflet-control-zoom a span{display:none}
+  .leaflet-control-zoom a::before{content:'';width:18px;height:18px;background:currentColor;
+    -webkit-mask:var(--ic) center/contain no-repeat;mask:var(--ic) center/contain no-repeat}
+  .leaflet-control-zoom-in{--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 4v16M4 12h16' stroke='black' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E")}
+  .leaflet-control-zoom-out{--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 12h16' stroke='black' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E")}
 </style>
 </head>
 <body>
@@ -475,7 +564,7 @@ const STR = {
    officialMuni:"Официальная община",attractions:"Достопримечательности",noPlaces:"Отмеченных мест пока нет.",
    nearbyTitle:"Рядом с вами",nearbySub:"Места по удалённости",fromYou:"от вас",
    routesTitle:"Маршруты",presetsHead:"Готовые маршруты",customHead:"Свой маршрут",
-   makeOwn:"Составить свой маршрут",makeOwnHint:"Тапайте по местам на карте, чтобы добавить их в маршрут",
+   makeOwn:"Составить свой маршрут",endsTitle:"Начало и конец",fromHead:"Откуда начнём",toHead:"Где закончим",optFirst:"С первого места маршрута",optLast:"На последнем месте",optMe:"Моё местоположение",optMap:"Точка на карте",optLoop:"Вернуться в начало",optOrder:"Расставить места в удобном порядке",buildRoute:"Построить маршрут",pickStart:"Тапните на карте, откуда начнём",pickEnd:"Тапните на карте, где закончим",startPt:"Старт",endPt:"Финиш",pointSet:"точка выбрана · изменить",clearRoute:"Сбросить маршрут",activeRoute:"Активный маршрут",makeOwnHint:"Тапайте по местам на карте, чтобы добавить их в маршрут",
    districtRoute:"Маршрут по району",selected:"Выбрано",build:"Построить",cancel:"Отмена",
    stopsN:"{0} остановок · {1} · ~{2}",routing:"Строим маршрут…",
    routingErr:"Не удалось построить по улицам — показана прямая линия",needTwo:"Выберите хотя бы 2 места",
@@ -493,7 +582,7 @@ const STR = {
    officialMuni:"Official municipality",attractions:"Sights",noPlaces:"No marked places yet.",
    nearbyTitle:"Near you",nearbySub:"Sights by distance",fromYou:"from you",
    routesTitle:"Routes",presetsHead:"Ready-made routes",customHead:"Your own route",
-   makeOwn:"Build your own route",makeOwnHint:"Tap places on the map to add them to the route",
+   makeOwn:"Build your own route",endsTitle:"Start and finish",fromHead:"Where to start",toHead:"Where to finish",optFirst:"From the first place",optLast:"At the last place",optMe:"My location",optMap:"Point on the map",optLoop:"Back to the start",optOrder:"Arrange places in the best order",buildRoute:"Build route",pickStart:"Tap the map where to start",pickEnd:"Tap the map where to finish",startPt:"Start",endPt:"Finish",pointSet:"point set · change",clearRoute:"Clear route",activeRoute:"Active route",makeOwnHint:"Tap places on the map to add them to the route",
    districtRoute:"Route through district",selected:"Selected",build:"Build",cancel:"Cancel",
    stopsN:"{0} stops · {1} · ~{2}",routing:"Building route…",
    routingErr:"Couldn't route along streets — showing a straight line",needTwo:"Pick at least 2 places",
@@ -511,7 +600,7 @@ const STR = {
    officialMuni:"Званична општина",attractions:"Знаменитости",noPlaces:"Још нема обележених места.",
    nearbyTitle:"У вашој близини",nearbySub:"Места по удаљености",fromYou:"од вас",
    routesTitle:"Руте",presetsHead:"Готове руте",customHead:"Сопствена рута",
-   makeOwn:"Направи своју руту",makeOwnHint:"Додирните места на мапи да их додате у руту",
+   makeOwn:"Направи своју руту",endsTitle:"Почетак и крај",fromHead:"Одакле крећемо",toHead:"Где завршавамо",optFirst:"Од првог места руте",optLast:"На последњем месту",optMe:"Моја локација",optMap:"Тачка на мапи",optLoop:"Повратак на почетак",optOrder:"Поређај места најбољим редом",buildRoute:"Направи руту",pickStart:"Додирните мапу одакле крећемо",pickEnd:"Додирните мапу где завршавамо",startPt:"Старт",endPt:"Циљ",pointSet:"тачка изабрана · промени",clearRoute:"Поништи руту",activeRoute:"Активна рута",makeOwnHint:"Додирните места на мапи да их додате у руту",
    districtRoute:"Рута кроз општину",selected:"Изабрано",build:"Направи",cancel:"Откажи",
    stopsN:"{0} станица · {1} · ~{2}",routing:"Правимо руту…",
    routingErr:"Није успело рутирање улицама — приказана права линија",needTwo:"Изаберите бар 2 места",
@@ -940,16 +1029,18 @@ const BG_STYLE={
     mask:{type:'geojson',data:'mask.geojson'}
   },
   layers:[
-    {id:'bg',type:'background',paint:{'background-color':'#1B1B1B'}},
-    // светлые дороги «за городом»: внутри общин их закрывает непрозрачная заливка land, снаружи — проступают сквозь полупрозрачную маску
-    {id:'roads-out',type:'line',source:'om','source-layer':'transportation',paint:{'line-color':'rgba(255,255,255,0.6)','line-width':['interpolate',['linear'],['zoom'],10,0.5,12,1,14,1.8,16,3,18,5]}},
-    {id:'land',type:'fill',source:'districts',paint:{'fill-color':['coalesce',['get','color'],'#dddddd'],'fill-antialias':false}},
-    {id:'water',type:'fill',source:'om','source-layer':'water',paint:{'fill-color':'rgba(0,0,0,0.34)'}},
-    {id:'landcover',type:'fill',source:'om','source-layer':'landcover',minzoom:11,paint:{'fill-color':'rgba(0,0,0,0.2)'}},
-    {id:'building',type:'fill',source:'om','source-layer':'building',minzoom:13.5,paint:{'fill-color':'rgba(0,0,0,0.24)','fill-antialias':false}},
-    {id:'mask',type:'fill',source:'mask',paint:{'fill-color':'#1B1B1B','fill-opacity':0.74}},
-    {id:'roads',type:'line',source:'om','source-layer':'transportation',paint:{'line-color':'rgba(255,255,255,0.78)','line-width':['interpolate',['linear'],['zoom'],10,0.6,12,1.2,14,2.1,16,3.6,18,6]}},
-    {id:'border',type:'line',source:'districts',paint:{'line-color':['coalesce',['get','color'],'#999'],'line-width':1.4,'line-opacity':.9}}
+    {id:'bg',type:'background',paint:{'background-color':'#F1ECE2'}},
+    {id:'land',type:'fill',source:'districts',paint:{'fill-color':['match',['get','slug'],'stari-grad','#FC3030','vracar','#E7B780','savski-venac','#8FD969','novi-beograd','#95CBFB','zemun','#F6765E','palilula','#FFCF49','vozdovac','#C77DD6','zvezdara','#4F7DFF','rakovica','#E0607E','cukarica','#2BA59B','#dddddd'],'fill-antialias':false}},
+    {id:'water',type:'fill',source:'om','source-layer':'water',paint:{'fill-color':'#E4DED2'}},
+    {id:'streets',type:'line',source:'om','source-layer':'transportation',
+      filter:['all',['in',['get','class'],['literal',['motorway','trunk','primary','secondary','tertiary']]],['!=',['get','brunnel'],'tunnel']],
+      layout:{'line-cap':'round','line-join':'round'},
+      paint:{'line-color':'#3B342D','line-opacity':.5,'line-width':['interpolate',['linear'],['zoom'],11,['match',['get','class'],['motorway','trunk','primary'],.9,.5],14,['match',['get','class'],['motorway','trunk','primary'],1.6,1.1],17,['match',['get','class'],['motorway','trunk','primary'],3,2.2]]}},
+    {id:'streets-minor',type:'line',source:'om','source-layer':'transportation',minzoom:13.3,
+      filter:['all',['==',['get','class'],'minor'],['!=',['get','brunnel'],'tunnel']],
+      layout:{'line-cap':'round','line-join':'round'},
+      paint:{'line-color':'#3B342D','line-opacity':.38,'line-width':['interpolate',['linear'],['zoom'],13.3,.5,16,1.1,18,2]}},
+    {id:'cut',type:'line',source:'districts',paint:{'line-color':'#F1ECE2','line-width':2}}
   ]
 };
 L.maplibreGL({style:BG_STYLE}).addTo(map);
@@ -962,7 +1053,7 @@ const badgeLayer = L.layerGroup();
 let pinsHidden = localStorage.getItem('bg_pins_hidden')==='1';
 if(!pinsHidden){ poiLayer.addTo(map); badgeLayer.addTo(map); }
 
-const DCOLOR={"stari-grad":"#FC3030","vracar":"#E7B780","savski-venac":"#8FD969","novi-beograd":"#95CBFB","zemun":"#F6765E","palilula":"#FFCF49","vozdovac":"#A940A4","zvezdara":"#0263FF","rakovica":"#923545","cukarica":"#055E00"};
+const DCOLOR={"stari-grad":"#FC3030","vracar":"#E7B780","savski-venac":"#8FD969","novi-beograd":"#95CBFB","zemun":"#F6765E","palilula":"#FFCF49","vozdovac":"#C77DD6","zvezdara":"#4F7DFF","rakovica":"#E0607E","cukarica":"#2BA59B"};
 function renderOpstine(geo){
   const gj = L.geoJSON(geo,{
     style:f=>({color:'#ffffff',weight:0,opacity:0,fillColor:'#000',fillOpacity:0}),
@@ -971,8 +1062,8 @@ function renderOpstine(geo){
       const col=DCOLOR[p.slug]||p.color;
       let c; try{ c=layer.getCenter(); }catch(e){ c=layer.getBounds().getCenter(); }
       opById[p.slug]={layer,name:p.name,color:col,center:c};
-      layer.on('click',()=>selectOpstina(p.slug));
-      layer.on('mouseover',()=>{ if(layer!==activeLayer) layer.setStyle({weight:2,opacity:.85,color:'#ffffff'}); });
+      layer.on('click',e=>{ if(picking){ picking(e.latlng); return; } selectOpstina(p.slug); });
+      layer.on('mouseover',()=>{ if(layer!==activeLayer) layer.setStyle({weight:2,opacity:.85,color:'#3B342D'}); });
       layer.on('mouseout',()=>{ if(layer!==activeLayer) layer.setStyle({weight:0,opacity:0}); });
       // маленький круглый логотип в центре района (3D-фигура — в карточке района)
       const badge=L.divIcon({className:'',iconSize:[32,32],iconAnchor:[16,16],
@@ -1006,7 +1097,7 @@ function addPois(){
     const icon=L.divIcon({className:'',iconSize:[36,36],iconAnchor:[18,42],
       html:poi.img?`<div class="poi-pin" style="background-image:url(img/bw/${poi.id}.jpg)"><b class="fav-badge"></b></div>`:`<div class="poi-pin noimg"><b class="fav-badge"></b></div>`});
     const m=L.marker(poi.ll,{icon}).addTo(poiLayer);
-    m.on('click',()=>{ if(selecting) toggleSelect(poi.id); else selectPoi(poi.id); });
+    m.on('click',()=>{ if(picking){ picking(L.latLng(poi.ll)); return; } if(selecting) toggleSelect(poi.id); else selectPoi(poi.id); });
     poiMarkers[poi.id]=m;
     setPinFav(poi.id);
   });
@@ -1087,7 +1178,7 @@ function closeSheet(){ sheet.classList.remove('open'); mapctl.classList.remove('
 function clearActive(){ if(activeLayer){ activeLayer.setStyle({weight:0,opacity:0}); activeLayer=null; } }
 function highlightOp(slug){
   clearActive(); const o=opById[slug]; if(!o) return;
-  activeLayer=o.layer; o.layer.setStyle({weight:3.5,opacity:1,color:'#ffffff'}); o.layer.bringToFront();
+  activeLayer=o.layer; o.layer.setStyle({weight:2.5,opacity:1,color:'#3B342D'}); o.layer.bringToFront();
 }
 
 function render(){
@@ -1099,6 +1190,7 @@ function render(){
     case 'nearby':    renderNearby(); break;
     case 'routes':    renderRoutes(); break;
     case 'route':     renderRoute(); break;
+    case 'ends':      renderEnds(); break;
     case 'saved':     renderSaved(); break;
   }
 }
@@ -1136,6 +1228,7 @@ function selectOpstina(slug){
   map.fitBounds(o.layer.getBounds(),{padding:[40,40],maxZoom:14});
   currentView={type:'district',slug}; renderDistrict(slug); openSheet();
 }
+new MutationObserver(()=>sheet.classList.toggle('inv',!!currentView&&currentView.type==='district')).observe(sheetBody,{childList:true});
 function renderDistrict(slug){
   const o=opById[slug]; highlightOp(slug);
   const pois=POIS.filter(p=>p.op===slug);
@@ -1229,7 +1322,11 @@ function showRoutes(){ currentView={type:'routes'}; renderRoutes(); openSheet();
 function renderRoutes(){
   sheetTitle.textContent=t('routesTitle');
   sheetSub.textContent='';
-  let html=`<div class="head">${t('presetsHead')}</div><ul class="list">`+
+  let html='';
+  if(lastRoute){ const lr=lastRoute;
+    html+=`<div class="head">${t('activeRoute')}</div><ul class="list"><li data-cur>${thumb(poiById[lr.pois[0]])}<span class="nm">${lr.opts.title||t('routesTitle')}<small>${IC.pin} ${lr.pois.length}</small></span></li></ul>
+      <button class="btn block ghost" id="clrBtn">${IC_X} ${t('clearRoute')}</button>`; }
+  html+=`<div class="head">${t('presetsHead')}</div><ul class="list">`+
     PRESETS.map(pr=>`<li data-preset="${pr.id}">${thumb(poiById[pr.stops[0]])}<span class="nm">${presetName(pr)}
       <small>${IC.pin} ${pr.stops.length}</small></span></li>`).join('')+`</ul>`;
   html+=`<div class="head">${t('customHead')}</div>
@@ -1240,6 +1337,11 @@ function renderRoutes(){
     drawRoute(pr.stops.map(id=>poiById[id]),{title:presetName(pr),intro:pr.intro,presetId:pr.id});
   }));
   document.getElementById('ownBtn').addEventListener('click',enterSelect);
+  if(lastRoute){
+    document.getElementById('clrBtn').addEventListener('click',clearRoute);
+    sheetBody.querySelector('[data-cur]').addEventListener('click',()=>{ currentView=lastRoute; renderRoute(); openSheet();
+      try{ map.fitBounds(L.featureGroup(routeGroup.getLayers()).getBounds(),{padding:[60,60]}); }catch(e){} });
+  }
 }
 
 /* — Режим выбора мест — */
@@ -1290,43 +1392,126 @@ trayBuild.addEventListener('click',()=>{
 });
 
 /* — Построение и отрисовка маршрута — */
-async function drawRoute(pois,opts={}){
+const OSRM='https://routing.openstreetmap.de/routed-foot';
+TABMAP.ends='routesBtn';
+let picking=null;
+const endsGroup=L.layerGroup().addTo(map);
+const IC_START='<svg viewBox="0 0 24 24" width="14" height="14"><circle cx="12" cy="12" r="5" fill="currentColor"/></svg>';
+const IC_FLAG='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 21V4M6 4h11l-2.5 4L17 12H6"/></svg>';
+function endIcon(w){ return L.divIcon({className:'',iconSize:[28,28],iconAnchor:[14,14],html:`<div class="endpt">${w==='start'?IC_START:IC_FLAG}</div>`}); }
+
+function drawRoute(pois,opts={}){
   exitSelect();
-  routeGroup.clearLayers();
-  const coords=pois.map(p=>`${p.ll[1]},${p.ll[0]}`).join(';');
+  currentView={type:'ends',pois,opts,ends:{start:'first',end:'last',opt:!opts.presetId}};
+  renderEnds(); openSheet();
+}
+function renderEnds(){
+  const cv=currentView, e=cv.ends;
+  sheetTitle.textContent=t('endsTitle');
+  sheetSub.textContent=(cv.opts.title||t('routesTitle'))+' · '+cv.pois.length;
+  const note=g=>e[g]==='map'&&e[g+'LL']?`<small>${t('pointSet')}</small>`:'';
+  const opt=(g,v,label)=>`<li class="opt${e[g]===v?' on':''}" data-g="${g}" data-v="${v}"><span class="rd"></span><span class="nm">${label}${v==='map'?note(g):''}</span></li>`;
+  sheetBody.innerHTML=
+    `<div class="head">${t('fromHead')}</div><ul class="list">${opt('start','first',t('optFirst'))}${opt('start','me',t('optMe'))}${opt('start','map',t('optMap'))}</ul>`+
+    `<div class="head">${t('toHead')}</div><ul class="list">${opt('end','last',t('optLast'))}${opt('end','loop',t('optLoop'))}${opt('end','me',t('optMe'))}${opt('end','map',t('optMap'))}</ul>`+
+    `<ul class="list"><li class="opt chk${e.opt?' on':''}" data-g="opt"><span class="rd"></span><span class="nm">${t('optOrder')}</span></li></ul>`+
+    `<button class="btn block" id="goBtn">${IC.route} ${t('buildRoute')}</button>`;
+  sheetBody.querySelectorAll('li.opt').forEach(li=>li.addEventListener('click',()=>{
+    const g=li.dataset.g, v=li.dataset.v;
+    if(g==='opt') e.opt=!e.opt;
+    else if(v==='map'){ startPick(g); return; }
+    else { e[g]=v; if(v==='me'&&!userLL) startLocate(true); }
+    renderEnds();
+  }));
+  document.getElementById('goBtn').addEventListener('click',()=>buildRoute(cv.pois,cv.opts,e));
+}
+function startPick(g){
+  const cv=currentView;
+  sheet.classList.remove('open');
+  toast(t(g==='start'?'pickStart':'pickEnd'));
+  picking=ll=>{
+    picking=null;
+    cv.ends[g]='map'; cv.ends[g+'LL']=[ll.lat,ll.lng];
+    endsGroup.eachLayer(m=>{ if(m.options.w===g) endsGroup.removeLayer(m); });
+    L.marker(cv.ends[g+'LL'],{icon:endIcon(g),w:g,zIndexOffset:700}).addTo(endsGroup);
+    if(currentView===cv){ renderEnds(); openSheet(); }
+  };
+}
+function getMe(){
+  return new Promise(res=>{
+    if(userLL) return res(userLL);
+    startLocate(true); let n=0;
+    const iv=setInterval(()=>{ if(userLL||++n>40){ clearInterval(iv); if(!userLL) toast(t('geoNo')); res(userLL); } },250);
+  });
+}
+async function buildRoute(pois,opts,e){
+  routeGroup.clearLayers(); endsGroup.clearLayers();
   toast(t('routing'));
-  let dist=0,dur=0,ok=false,geom=null;
+  let S=null,E=null;
+  if(e.start==='me') S=await getMe(); else if(e.start==='map') S=e.startLL||null;
+  if(e.end==='me') E=await getMe(); else if(e.end==='map') E=e.endLL||null;
+  const loop=e.end==='loop';
+  const pts=[...(S?[S]:[]),...pois.map(p=>p.ll),...(E?[E]:[])];
+  const cs=pts.map(ll=>`${ll[1]},${ll[0]}`).join(';');
+  let order=pois.slice(), geom=null, dist=0, dur=0, ok=false;
   try{
-    const url=`https://routing.openstreetmap.de/routed-foot/route/v1/foot/${coords}?overview=full&geometries=geojson`;
-    const r=await fetch(url); const j=await r.json();
-    if(j.routes&&j.routes[0]){ geom=j.routes[0].geometry; dist=j.routes[0].distance; dur=j.routes[0].duration; ok=true; }
-  }catch(e){}
+    if(e.opt && pois.length>1){
+      // OSRM trip: фиксируем начало и конец, середину раскладывает сам
+      const q=loop?'roundtrip=true&source=first':'roundtrip=false&source=first&destination=last';
+      const j=await (await fetch(`${OSRM}/trip/v1/foot/${cs}?${q}&overview=full&geometries=geojson`)).json();
+      if(j.trips&&j.trips[0]){
+        const off=S?1:0;
+        order=pois.map((p,i)=>({p,k:j.waypoints[i+off].waypoint_index})).sort((a,b)=>a.k-b.k).map(x=>x.p);
+        geom=j.trips[0].geometry; dist=j.trips[0].distance; dur=j.trips[0].duration; ok=true;
+      }
+    }else{
+      const cs2=loop?cs+';'+`${pts[0][1]},${pts[0][0]}`:cs;
+      const j=await (await fetch(`${OSRM}/route/v1/foot/${cs2}?overview=full&geometries=geojson`)).json();
+      if(j.routes&&j.routes[0]){ geom=j.routes[0].geometry; dist=j.routes[0].distance; dur=j.routes[0].duration; ok=true; }
+    }
+  }catch(err){}
   if(ok){
-    L.geoJSON(geom,{style:{color:'#141414',weight:9,opacity:.9,lineJoin:'round'}}).addTo(routeGroup);
-    L.geoJSON(geom,{style:{color:'#C6F432',weight:5,opacity:1,lineJoin:'round'}}).addTo(routeGroup);
+    L.geoJSON(geom,{style:{color:'#F8F4EC',weight:8,opacity:1,lineJoin:'round'}}).addTo(routeGroup);
+    L.geoJSON(geom,{style:{color:'#3B342D',weight:4,opacity:1,lineJoin:'round'}}).addTo(routeGroup);
   }else{
-    L.polyline(pois.map(p=>p.ll),{color:'#C6F432',weight:4,opacity:.95,dashArray:'6,8'}).addTo(routeGroup);
-    for(let i=0;i<pois.length-1;i++) dist+=haversine(pois[i].ll,pois[i+1].ll);
+    const line=[...(S?[S]:[]),...order.map(p=>p.ll),...(E?[E]:[])];
+    if(loop) line.push(line[0]);
+    L.polyline(line,{color:'#3B342D',weight:3,opacity:.9,dashArray:'6,8'}).addTo(routeGroup);
+    for(let i=0;i<line.length-1;i++) dist+=haversine(line[i],line[i+1]);
     dur=dist/1.35; toast(t('routingErr'));
   }
-  pois.forEach((p,i)=>{
+  order.forEach((p,i)=>{
     const ic=L.divIcon({className:'',iconSize:[24,24],iconAnchor:[12,12],html:`<div class="stopnum">${i+1}</div>`});
     L.marker(p.ll,{icon:ic,zIndexOffset:600}).addTo(routeGroup);
   });
-  try{ map.fitBounds(L.featureGroup(routeGroup.getLayers()).getBounds(),{padding:[60,60]}); }catch(e){}
-  currentView={type:'route',pois:pois.map(p=>p.id),opts,dist,dur};
-  renderRoute(); openSheet();
+  if(S) L.marker(S,{icon:endIcon('start'),zIndexOffset:700}).addTo(routeGroup);
+  if(E) L.marker(E,{icon:endIcon('end'),zIndexOffset:700}).addTo(routeGroup);
+  try{ map.fitBounds(L.featureGroup(routeGroup.getLayers()).getBounds(),{padding:[60,60]}); }catch(err){}
+  currentView={type:'route',pois:order.map(p=>p.id),opts,dist,dur,ends:{start:S?e.start:null,end:E?e.end:(loop?'loop':null)}};
+  lastRoute=currentView; markRoute(); renderRoute(); openSheet();
 }
+function endRow(cv,w){
+  const e=cv.ends; if(!e) return '';
+  const v=e[w]; if(!v) return '';
+  const label=v==='me'?t('optMe'):v==='map'?t('optMap'):t('optLoop');
+  return `<li class="endrow"><span class="num">${w==='start'?IC_START:IC_FLAG}</span><span class="nm">${label}<small>${t(w==='start'?'startPt':'endPt')}</small></span></li>`;
+}
+let lastRoute=null;
+const IC_X='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>';
+function markRoute(){ document.getElementById('routesBtn').classList.toggle('has-route',!!lastRoute); }
+function clearRoute(){ routeGroup.clearLayers(); endsGroup.clearLayers(); lastRoute=null; markRoute(); showRoutes(); }
 function renderRoute(){
   const cv=currentView; const pois=cv.pois.map(id=>poiById[id]);
   sheetTitle.textContent=cv.opts.title||t('routesTitle');
   sheetSub.textContent=t('stopsN',pois.length,fmtDist(cv.dist),fmtDur(cv.dur));
   let html='';
   if(cv.opts.intro){ html+=`<p>${introLoc(cv.opts.presetId,cv.opts.intro)}</p>`; }
-  html+='<ul class="list">'+pois.map((p,i)=>
+  html+='<ul class="list">'+endRow(cv,'start')+pois.map((p,i)=>
     `<li data-poi="${p.id}"><span class="num">${i+1}</span>
-      <span class="nm">${poiName(p)}<small>${opName(p.op)}</small></span></li>`).join('')+'</ul>';
+      <span class="nm">${poiName(p)}<small>${opName(p.op)}</small></span></li>`).join('')+endRow(cv,'end')+'</ul>';
+  html+=`<button class="btn block ghost" id="clrBtn">${IC_X} ${t('clearRoute')}</button>`;
   sheetBody.innerHTML=html;
+  document.getElementById('clrBtn').addEventListener('click',clearRoute);
   sheetBody.querySelectorAll('[data-poi]').forEach(li=>li.addEventListener('click',()=>selectPoi(li.dataset.poi)));
 }
 

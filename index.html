@@ -480,9 +480,37 @@
     -webkit-mask:var(--ic) center/contain no-repeat;mask:var(--ic) center/contain no-repeat}
   .leaflet-control-zoom-in{--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 4v16M4 12h16' stroke='black' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E")}
   .leaflet-control-zoom-out{--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 12h16' stroke='black' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E")}
+  /* ═══════════ ВЕСЬ ЭКРАН НА ЛЮБОМ УСТРОЙСТВЕ ═══════════
+     iOS 26 с иконки на экране «Домой» отдаёт окно короче экрана (на высоту верхней шторки),
+     снизу остаётся пустая полоса. --app-h — реальная высота экрана, --vb-fix — на сколько окно короче. */
+  html,body{height:var(--app-h,100%)}
+  #map{height:var(--app-h,100lvh)!important}
+  :root{--dock:calc(var(--tabbar-h) + var(--tabbar-gap) + env(safe-area-inset-bottom,0px) - var(--vb-fix,0px))}
+  .tabbar,.tray{bottom:calc(var(--tabbar-gap) + env(safe-area-inset-bottom,0px) - var(--vb-fix,0px))!important}
+  /* +/− привязаны к экрану, как и остальные кнопки, — не заезжают под меню */
+  .leaflet-bottom{position:fixed!important}
+  .sheet:not(.open){transform:translateY(calc(100% + var(--dock) + 20px + var(--vb-fix,0px)))}
+
 </style>
 </head>
 <body>
+<script>
+/* реальная высота экрана: в режиме «с иконки» iOS может отдавать окно короче экрана */
+function fitApp(){
+  const de=document.documentElement;
+  const st=navigator.standalone===true||matchMedia('(display-mode: standalone)').matches;
+  const ih=window.innerHeight; let H=ih;
+  if(st){
+    const portrait=ih>=window.innerWidth;
+    const sh=portrait?Math.max(screen.width,screen.height):Math.min(screen.width,screen.height);
+    if(sh>ih && sh-ih<140) H=sh;
+  }
+  de.style.setProperty('--app-h',H+'px');
+  de.style.setProperty('--vb-fix',(H-ih)+'px');
+}
+fitApp();
+['resize','orientationchange','pageshow'].forEach(e=>addEventListener(e,()=>{ fitApp(); setTimeout(fitApp,300); }));
+</script>
   <div id="loader">
     <picture>
       <source srcset="loader.webp" type="image/webp">

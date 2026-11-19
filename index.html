@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#F1ECE2">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Beograd">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -489,6 +489,9 @@
   .tabbar,.tray{bottom:calc(var(--tabbar-gap) + env(safe-area-inset-bottom,0px) - var(--vb-fix,0px))!important}
   /* +/− привязаны к экрану, как и остальные кнопки, — не заезжают под меню */
   .leaflet-bottom{position:fixed!important}
+  /* под белыми часами iOS — лёгкое затемнение, чтобы их было видно на светлой карте */
+  body::before{content:'';position:fixed;top:0;left:0;right:0;height:calc(env(safe-area-inset-top,0px) + 10px);z-index:700;pointer-events:none;
+    background:linear-gradient(rgba(59,52,45,.38),rgba(59,52,45,0))}
   .sheet:not(.open){transform:translateY(calc(100% + var(--dock) + 20px + var(--vb-fix,0px)))}
 
 </style>
@@ -500,10 +503,14 @@ function fitApp(){
   const de=document.documentElement;
   const st=navigator.standalone===true||matchMedia('(display-mode: standalone)').matches;
   const ih=window.innerHeight; let H=ih;
-  if(st){
+  // окно короче экрана только когда страница заходит под верхнюю шторку (black-translucent):
+  // тогда сверху есть safe-area, а снизу iOS недодаёт ту же высоту. В режиме default окно и так верное.
+  const pr=document.createElement('div'); pr.style.cssText='position:fixed;top:0;left:0;visibility:hidden;pointer-events:none;height:env(safe-area-inset-top,0px)';
+  document.documentElement.appendChild(pr); const safeTop=pr.getBoundingClientRect().height; pr.remove();
+  if(st && safeTop>0){
     const portrait=ih>=window.innerWidth;
     const sh=portrait?Math.max(screen.width,screen.height):Math.min(screen.width,screen.height);
-    if(sh>ih && sh-ih<140) H=sh;
+    if(sh>ih && sh-ih<=safeTop+4) H=sh;
   }
   de.style.setProperty('--app-h',H+'px');
   de.style.setProperty('--vb-fix',(H-ih)+'px');
